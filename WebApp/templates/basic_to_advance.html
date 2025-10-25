@@ -1,0 +1,26 @@
+{% extends "website_base.html" %}
+{% load static %}
+{% block content %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Add 'active' class to the About Us link
+    document.getElementById("cource-level").classList.add("active");
+    document.getElementById("basic-to-advance-link").classList.add("active");
+  });
+</script>
+
+   <!-- Page Title -->
+    <div class="page-title accent-background">
+      <div class="container">
+        <h1>Basic To Advance</h1>
+        <nav class="breadcrumbs">
+          <ol> 
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li class="current">Basic To Advance</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+{% endblock content %}

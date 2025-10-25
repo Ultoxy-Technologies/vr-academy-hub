@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-language Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/i18next@23.7.7/dist/umd/i18next.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .text {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌍 Multi-language Translation Example</h2>
+  
+  <!-- Buttons to switch language -->
+  <div>
+    <button onclick="changeLang('en')">English</button>
+    <button onclick="changeLang('hi')">हिंदी (Hindi)</button>
+    <button onclick="changeLang('mr')">मराठी (Marathi)</button>
+  </div>
+
+  <!-- Translatable text -->
+  <div class="text">
+    <p id="line1"></p>
+    <p id="line2"></p>
+  </div>
+
+  <script>
+    // Initialize i18next with translations
+    i18next.init({
+      lng: 'en', // default language
+      resources: {
+        en: {
+          translation: {
+            line1: "How are you?",
+            line2: "Where are you?"
+          }
+        },
+        hi: {
+          translation: {
+            line1: "तुम कैसे हो?",
+            line2: "तुम कहाँ हो?"
+          }
+        },
+        mr: {
+          translation: {
+            line1: "तुम्ही कसे आहेत?",
+            line2: "तुम्ही कुठे आहात?"
+          }
+        }
+      }
+    }, function(err, t) {
+      updateContent();
+    });
+
+    // Update text content
+    function updateContent() {
+      document.getElementById('line1').innerHTML = i18next.t('line1');
+      document.getElementById('line2').innerHTML = i18next.t('line2');
+    }
+
+    // Change language dynamically
+    function changeLang(lang) {
+      i18next.changeLanguage(lang, () => updateContent());
+    }
+  </script>
+
+</body>
+</html>

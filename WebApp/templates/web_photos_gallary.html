@@ -1,0 +1,152 @@
+{% extends "website_base.html" %}
+{% block title %}Photos - VRACADEMYHUB{% endblock title %}
+{% load static %}
+{% block style %}
+{% block links %}
+
+{% endblock links %}
+ 
+
+ 
+
+{% endblock style %}
+{% block content %} 
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Add 'active' class to the About Us link
+    document.getElementById("gallery-link").classList.add("active");
+    document.getElementById("photos-link").classList.add("active");
+  });
+</script>
+
+
+<link rel="stylesheet" href="{% static 'website/css/uikit.css' %}" />
+
+<style>
+  
+
+/* Optional: Customize caption styles */
+.uk-lightbox .uk-lightbox-caption {
+    font-size: 16px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px; 
+    bottom: 40px;
+}
+ 
+.image {
+    width: 100%; /* Ensures the image spans the full width of its container */
+    height: 300px; /* Set a fixed height */
+    object-fit: cover; /* Ensures the image fills the container without distorting */
+}
+</style>
+ 
+ 
+ 
+                
+
+<!-- ======= Blog Single Section ======= -->
+<section id="" class=" ">
+
+    
+ {% load static %}
+
+{% if categories %}
+<div class="container " data-aos="fade-up">
+  <style>
+    .category-title {
+      font-size: 2rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+      color: #343a40;
+    }
+
+    .category-title::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, #0d6efd, #6610f2);
+      left: 50%;
+      bottom: -10px;
+      transform: translateX(-50%);
+      border-radius: 50px;
+    }
+
+    .image-wrapper {
+      overflow: hidden;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .image-wrapper img {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .image-wrapper:hover img {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .uk-inline {
+      border-radius: 10px;
+      display: block;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      opacity: 0.6;
+    }
+  </style>
+
+  {% for category in categories %}
+    <h2 class="category-title">{{ category.category_name }}</h2>
+
+    <div class="row uk-child-width-1-2@s uk-child-width-1-4@m g-4" uk-grid uk-lightbox="animation: scale">
+      {% for photo in category.photos.all %}
+        <div class="image-wrapper" data-aos="zoom-in">
+          <a class="uk-inline d-block" href="{{ photo.image.url }}" {% if photo.caption %} data-caption="{{ photo.caption }}"{% endif %}>
+            <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Photo' }}"
+                 class="img-fluid rounded-3"
+                 style="height: 250px; object-fit: cover; width: 100%;" loading="lazy">
+          </a>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center text-muted py-4 empty-state">
+          <p>No photos in this category yet.</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-sm-8 text-center">
+      <img src="https://img.icons8.com/ios-filled/100/cccccc/image-gallery.png" alt="No images" class="mb-3" />
+      <h3 class="text-muted">No Images Found</h3>
+      <p class="text-secondary">Please check back later when new content is added.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+    
+ 
+  </section><!-- End Blog Single Section -->
+ 
+
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.7/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.7/dist/js/uikit-icons.min.js"></script>
+
+ 
+{% endblock content %}

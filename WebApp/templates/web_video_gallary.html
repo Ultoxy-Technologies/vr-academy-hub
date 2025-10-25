@@ -1,0 +1,156 @@
+{% extends "website_base.html" %}
+{% block title %}Videos - VRACADEMYHUB{% endblock title %}
+{% load static %}
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Add 'active' class to the About Us link
+    document.getElementById("gallery-link").classList.add("active");
+    document.getElementById("videos-link").classList.add("active");
+  });
+</script>
+
+{% block style %}
+{% block links %}
+
+{% endblock links %}
+ 
+
+.heading-title{
+  font-size: 70px;
+}
+
+@media (max-width: 990px) {
+  .heading-title{
+      font-size: 60px;
+  }
+  
+}
+
+@media (max-width: 500px) {
+  .heading-title{
+      font-size: 30px;
+  }
+  
+}
+
+
+
+
+
+
+{% endblock style %}
+{% block content %} 
+
+
+<link rel="stylesheet" href="{% static 'website/css/uikit.css' %}" />
+
+<style>
+ 
+h4 {
+  display: block;
+  margin-block-start: 0.2em;
+  margin-block-end: 0.2em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+  unicode-bidi: isolate;
+}
+
+.video-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 10px; /* Rounded corners for the video container */
+}
+
+/* Transparent overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* Slightly dark overlay with transparency */
+    z-index: 1;
+}
+
+/* Play button styling */
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px; /* Adjust size as needed */
+    color: white;
+    z-index: 2;
+    pointer-events: none; /* Allow clicks to pass through to the link */
+}
+
+.video-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+</style>
+ 
+{% if video_data %}
+<!-- ======= Blog Single Section ======= -->
+<section id="blog" class="blog mt-3">
+    <div class="container" data-aos="fade-up">
+
+      <div class="row">
+        <div class="blog-author d-flex align-items-center">
+            <div class="container text-center ">
+ 
+
+                <div class="row">
+                    {% for video in video_data %}
+                    <div class="col-sm-3 mt-3 ">
+                        <div class="video-container" style="position: relative;"  >
+                            <a href="{{video.video_url}}" target="_blank">
+                                <img src="{{video.thumbnail_url}}" alt="" style="width: 100%;" loading="lazy" >
+                                <!-- Transparent layer -->
+                                <div class="overlay"></div>
+                                <!-- Play button overlay -->
+                                <div class="play-button">
+                                    &#9658; <!-- This is a triangle play icon, you can replace it with a custom icon -->
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div><!-- End blog author bio -->
+    </div>
+ 
+    
+
+    <br><br>
+    
+
+    </div>
+  </section><!-- End Blog Single Section -->
+  {% else %}
+  <div class="container mt-4 mb-3">
+    <div class="row">
+      <div class="col-sm-12 text-center  ">
+        <h3 style="color: rgb(97, 97, 97);">No Videos Found</h3>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+    
+</div>
+
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.7/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.7/dist/js/uikit-icons.min.js"></script>
+
+ 
+{% endblock content %}

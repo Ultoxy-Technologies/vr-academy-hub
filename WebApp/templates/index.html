@@ -1,0 +1,1599 @@
+{% extends "website_base.html" %}
+{% load static %}
+{% block content %}
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Add 'active' class to the About Us link
+    document.getElementById("home-link").classList.add("active");
+  });
+</script>
+
+<!-- Hero Section (Enhanced) -->
+<section id="hero" class="hero section">
+  <!-- Animated Overlay Shapes -->
+  <div class="hero-animated-shapes">
+    <span class="shape shape-1"></span>
+    <span class="shape shape-2"></span>
+    <span class="shape shape-3"></span>
+    <span class="shape shape-4"></span>
+  </div>
+  <img src="{% static 'website/img/hero-bg-abstract.jpg' %}" alt="VR Trading Academy Background" data-aos="fade-in" class=""  loading="lazy">
+  <div class="container">
+    <div class="row justify-content-center" data-aos="zoom-out">
+      <div class="col-xl-7 col-lg-9 text-center">
+        <h1 class="hero-gradient-text p-3">Master Share Market &amp; Forex Trading</h1>
+        <p>Join <span class="hero-highlight">VR Academy Hub</span> for expert live webinars, tutorials, and practical training to become a successful trader.</p>
+      </div>
+    </div>
+    <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
+      <a href="#about" class="btn-get-started">Get Started</a>
+    </div>
+
+ 
+  <!-- Down Arrow -->
+<div class="scroll-down text-center mt-5">
+  <a href="#slider" class="down-arrow">
+    <i class="bi bi-chevron-double-down" style="font-size: 2rem; color: var(--accent-color);"></i>
+  </a>
+</div>
+  </div>
+
+
+<style>
+  .scroll-down .down-arrow {
+  display: inline-block;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(10px); }
+  60% { transform: translateY(5px); }
+}
+
+</style>
+<script>
+  <script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</script>
+</section>
+
+
+
+
+
+<style>
+  /* ================== Gallery Slider ================== */
+.gallery-swiper {
+  width: 100%;
+  padding: 40px 0;
+  background: transparent; /* fixed typo */
+  position: relative;
+  z-index: 1;
+}
+
+
+.gallery-swiper .swiper-slide {
+  border-radius: 12px;
+  overflow: hidden;
+  transform: scale(0.9);
+  opacity: 0.6;
+  transition: transform 0.4s, opacity 0.4s;
+}
+
+.gallery-swiper .swiper-slide-active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gallery-swiper .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Swiper pagination bullets */
+.gallery-swiper .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.gallery-swiper .swiper-pagination-bullet-active {
+  background: var(--accent); /* your theme accent color */
+}
+
+@media (max-width: 768px) {
+  .gallery-swiper {
+    padding: 30px 0;
+  }
+}
+
+</style>
+<!-- ============================= -->
+<!-- Slider Section -->
+<section id="slider" class="section py-5 " >
+  <div class="container">
+    <div class="swiper gallery-swiper" data-aos="fade-up" data-aos-delay="100">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="https://d2hpp4ok8w7j4q.cloudfront.net/assets/what%20is%20stock%20market.jpg" alt="Slide 1" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://www.bizzbuzz.news/h-upload/2025/03/12/1957769-stock-market-update-key-nifty-50-levels-8-buysell-recommendations-for-wednesday.webp" alt="Slide 2" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://www.samco.in/knowledge-center/wp-content/uploads/cache/2025/04/Indian-Stock-Markets-Surge-Sensex-Rises-1400-Points-Nifty-Crosses-22800/2166831135.webp" alt="Slide 3" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://goelasf.in/wp-content/uploads/2022/11/technical-analysis-chart-1.jpg" alt="Slide 4" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://appreciatewealth.com/blog/wp-content/uploads/2024/10/tech-analysis.png" alt="Slide 4" loading="lazy"></div>
+      </div>
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const gallerySwiper = new Swiper('.gallery-swiper', {
+    loop: true,
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+    slidesPerView: 1.3,
+    centeredSlides: true,
+    spaceBetween: 20,
+    speed: 900,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      768: { slidesPerView: 1.6 },
+      1024: { slidesPerView: 1.8 },
+    }
+  });
+});
+
+</script>
+
+
+
+
+
+<!-- ======= About =======-->
+<section class="about__v4 section mb-5 p-4" id="about">
+  <div class="container" style="background:#fff; border-radius:28px; box-shadow:0 10px 40px rgba(36,135,206,0.09); overflow:hidden; position:relative;">
+    <!-- Decorative Animated Circles -->
+    <div class="animated-bg-circles">
+      <span class="circle circle-1"></span>
+      <span class="circle circle-2"></span>
+      <span class="circle circle-3"></span>
+    </div>
+    <div class="row p-2 align-items-center">
+      <div class="col-md-6 order-md-2 mb-4 mt-4">
+        <div class="row justify-content-end">
+          <div class="col-md-11 mb-4 mb-md-0">
+            <span class="subtitle text-uppercase mb-3" data-aos="fade-up" data-aos-delay="0">About Us</span>
+            <h2 class="mb-4 gradient-text" data-aos="fade-up" data-aos-delay="100">Learn Trading Skills to Secure Your Financial Future</h2>
+            <div data-aos="fade-up" data-aos-delay="200">
+              <p>At <span class="highlight">VR Academy Hub</span>, we are committed to transforming aspiring traders into seasoned market professionals through comprehensive education and practical training.</p>
+              <p>Our platform offers expert-led <span class="highlight">live webinars</span>, interactive tutorials, and a strong <span class="highlight">community support</span> system designed to build confidence and skills in forex and share market trading.</p>
+            </div>
+            <h4 class="small fw-bold mt-4 mb-3" data-aos="fade-up" data-aos-delay="300">Our Core Values</h4>
+            <ul class="d-flex flex-row flex-wrap list-unstyled gap-3 features" data-aos="fade-up" data-aos-delay="400">
+              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Practical Learning</span></li>
+              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Transparency & Integrity</span></li>
+              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Community Support</span></li>
+              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Continuous Innovation</span></li>
+              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Empowerment through Education</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4" style="padding-bottom: 30px;">
+        <div class="img-wrap position-relative" style="z-index:2;">
+          <img class="img-fluid rounded-4 box-shadow-lg" src="{% static 'website/img/index-about-us.png' %}"  loading="lazy" alt="Trading Education Image" data-aos="fade-up" data-aos-delay="0">
+          <div class="mission-statement p-4 rounded-4 d-flex gap-4 align-items-center animate-mission">
+            <div class="mission-icon d-none d-md-flex align-items-center justify-content-center me-3">
+              <i class="bi bi-stars"></i>
+            </div>
+            <div>
+              <h3 class="text-uppercase fw-bold">Our Mission</h3>
+              <p class="fs-5 mb-0">To empower individuals with the knowledge, skills, and confidence to successfully navigate financial markets and achieve financial independence.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End About-->
+
+<style>
+/* Animated Decorative Circles for Background */
+.animated-bg-circles {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index:1;
+}
+.animated-bg-circles .circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.10;
+  animation: float 14s infinite alternate;
+  background: var(--accent-color, #2487ce);
+  filter: blur(1px);
+}
+.animated-bg-circles .circle-1 {
+  width: 160px; height: 160px; top: -50px; left: -60px;
+  background: #2487ce; animation-delay: 0s;
+}
+.animated-bg-circles .circle-2 {
+  width: 90px; height: 90px; bottom: 30px; left: 45%;
+  background: #00bcd4; animation-delay: 4s;
+}
+.animated-bg-circles .circle-3 {
+  width: 110px; height: 110px; top: 65%; right: -40px;
+  background: #ff9800; animation-delay: 8s;
+}
+@keyframes float {
+  0% { transform: translateY(0) scale(1);}
+  100% { transform: translateY(35px) scale(1.08);}
+}
+
+/* Gradient Heading */
+.gradient-text {
+  background: linear-gradient(90deg, #2487ce 0%, #00bcd4 55%, #ff9800 100%);
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: gradient-move 4s linear infinite;
+}
+@keyframes gradient-move {
+  to { background-position: 200% center; }
+}
+
+/* Highlighted Words */
+.highlight {
+  color: #ff9800;
+  font-weight: 500;
+}
+
+/* Subtitle */
+.about__v4 .subtitle {
+  background-color: rgba(var(--accent-color-rgb, 36,135,206), 0.14);
+  color: var(--heading-color, #263045);
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 10px;
+  letter-spacing: 1.1px;
+}
+
+/* Features list icons */
+.about__v4 .features li .icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  background: linear-gradient(135deg, #2487ce 60%, #00bcd4 100%);
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 0 4px 16px rgba(36,135,206,0.06);
+  font-size: 1.05rem;
+  transition: background 0.2s;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(63,81,181,0.10);}
+  70% { box-shadow: 0 0 0 10px rgba(63,81,181,0.01);}
+  100% { box-shadow: 0 0 0 0 rgba(63,81,181,0.10);}
+}
+
+.about__v4 .features li .text {
+  font-size: 1rem;
+  color: #263045;
+  font-weight: 500;
+}
+
+/* Mission Statement - Centered Over Image Bottom */
+.about__v4 .img-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.about__v4 .mission-statement {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  width: 88%;
+  z-index: 3;
+  background: linear-gradient(110deg, var(--accent-color, #2487ce) 80%, #00bcd4 100%);
+  box-shadow: 0 7px 30px rgba(36,135,206,0.13);
+  border-radius: 16px;
+  padding: 22px 20px 22px 28px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  animation: fadeInUp 1.4s cubic-bezier(.2,1.2,.4,1);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(60px) translateX(-50%);}
+  to { opacity: 1; transform: translateY(0) translateX(-50%);}
+}
+
+/* Mission Statement Heading */
+.about__v4 .mission-statement h3 {
+  font-size: 1rem;
+  color: var(--contrast-color, #fff);
+  margin-bottom: 10px;
+  letter-spacing: 1.3px;
+}
+
+/* Mission Statement Paragraph */
+.about__v4 .mission-statement p {
+  color: var(--contrast-color, #fff);
+  font-size: 1.15rem;
+}
+
+/* Mission Icon */
+.about__v4 .mission-icon {
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  line-height: 50px;
+  display: inline-block;
+  background: rgba(255,255,255,0.13);
+  text-align: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 9px rgba(36,135,206,0.07);
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.7s infinite;
+}
+
+/* Mission Icon Icon */
+.about__v4 .mission-icon i {
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+/* Box Shadow for Image */
+.box-shadow-lg {
+  box-shadow: 0 8px 32px rgba(36,135,206,0.11);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .about__v4 .mission-statement {
+    width: 95%;
+    padding: 14px 10px 14px 18px;
+    font-size: 1rem;
+  }
+}
+@media (max-width: 768px) {
+  .about__v4 .mission-statement {
+    position: static;
+    transform: none;
+    margin-top: 18px;
+    width: 100%;
+  }
+  .about__v4 .features li .text {
+    font-size: 0.92rem;
+  }
+  .gradient-text {
+    font-size: 1.3rem;
+  }
+}
+</style>
+
+
+
+
+
+
+
+
+        
+
+
+<!-- Forex Explanation Section (Enhanced Design) -->
+<section id="forex-info" class="py-5 position-relative" style="background: linear-gradient(120deg, #eef3fa 0%, #e0ecff 100%); overflow: hidden;">
+  <!-- Decorative Animated Circles -->
+  <div class="animated-bg-circles">
+    <span class="circle circle-1"></span>
+    <span class="circle circle-2"></span>
+    <span class="circle circle-3"></span>
+  </div>
+  <div class="container position-relative" style="z-index:2;">
+    <div class="row justify-content-center text-center mb-4">
+      <div class="col-lg-8">
+        <h2 class="fw-bold gradient-text mb-3">How Does Forex Work?</h2>
+        <p class="lead" style="color: var(--default-color); font-size: 1.16rem;">
+          <span class="highlight">Forex</span>, or foreign exchange, is the global marketplace where currencies are exchanged. It’s the largest and most liquid financial market in the world.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-4 align-items-center">
+      <!-- Info Box 1 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-currency-exchange"></i>
+            </div>
+            <h5 class="card-title fw-bold">Currency Pairs</h5>
+            <p class="card-text">
+              Currencies are traded in pairs, and traders seek to profit by predicting how one currency will perform against another.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box 2 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <h5 class="card-title fw-bold">24/5 Market</h5>
+            <p class="card-text">
+              Forex trading runs 24 hours a day, 5 days a week, allowing traders around the world to participate anytime.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box 3 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+            <h5 class="card-title fw-bold">Influencing Factors</h5>
+            <p class="card-text">
+              Prices are influenced by economics, politics, and news, which makes understanding market trends crucial.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Custom CSS & Animations -->
+<style>
+  /* Decorative Animated Circles */
+  .animated-bg-circles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+  .animated-bg-circles .circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.14;
+    animation: float 14s infinite alternate;
+    background: var(--accent-color, #3f51b5);
+    filter: blur(1px);
+  }
+  .animated-bg-circles .circle-1 {
+    width: 160px; height: 160px; top: -50px; left: -60px;
+    background: #3f51b5;
+    animation-delay: 0s;
+  }
+  .animated-bg-circles .circle-2 {
+    width: 90px; height: 90px; bottom: 30px; left: 38%;
+    background: #00bcd4;
+    animation-delay: 4s;
+  }
+  .animated-bg-circles .circle-3 {
+    width: 110px; height: 110px; top: 60%; right: -40px;
+    background: #ff9800;
+    animation-delay: 8s;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) scale(1);}
+    100% { transform: translateY(35px) scale(1.08);}
+  }
+
+  /* Gradient animated heading */
+  .gradient-text {
+    background: linear-gradient(90deg, #3f51b5 0%, #00bcd4 60%, #ff9800 100%);
+    background-size: 200% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: gradient-move 4s linear infinite;
+  }
+  @keyframes gradient-move {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  /* Highlighted words in text */
+  .highlight {
+    color: #ff9800;
+    font-weight: 500;
+  }
+
+  /* Card Animations & Design */
+  .animated-card {
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 3px 18px rgba(63,81,181,0.07), 0 1.5px 5px rgba(0,188,212,0.04);
+    transition: transform 0.35s cubic-bezier(.2,1.2,.4,1), box-shadow 0.35s cubic-bezier(.2,1.2,.4,1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    will-change: transform, opacity;
+    animation: card-in 1.1s cubic-bezier(.2,1.2,.4,1) forwards;
+  }
+  .animated-card:nth-child(1) { animation-delay: 0.1s; }
+  .animated-card:nth-child(2) { animation-delay: 0.3s; }
+  .animated-card:nth-child(3) { animation-delay: 0.5s; }
+  @keyframes card-in {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .animated-card:hover,
+  .animated-card:focus-within {
+    transform: translateY(-12px) scale(1.025) rotate(-1deg);
+    box-shadow: 0 16px 32px rgba(63,81,181,0.13), 0 5px 18px rgba(0,188,212,0.14);
+  }
+
+  /* Icon Styling & Pulse Animation */
+  .icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px; height: 56px;
+    margin: 0 auto 10px auto;
+    background: linear-gradient(120deg, #eaf0fb 60%, #fff 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(63,81,181,0.08);
+    animation: pulse 2.2s infinite;
+  }
+  .icon-wrap i {
+    font-size: 2.2rem;
+    color: var(--accent-color, #3f51b5);
+    transition: color 0.2s;
+  }
+  .animated-card:hover .icon-wrap i {
+    color: #ff9800;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(63,81,181,0.07);}
+    70% { box-shadow: 0 0 0 12px rgba(63,81,181,0.03);}
+    100% { box-shadow: 0 0 0 0 rgba(63,81,181,0.07);}
+  }
+
+  /* Card text and heading color */
+  .animated-card .card-title {
+    color: #263045;
+    font-size: 1.08rem;
+    margin-bottom: 0.5rem;
+  }
+  .animated-card .card-text {
+    color: #576175;
+    font-size: 0.97rem;
+  }
+
+  /* Responsive adjustments */
+  #forex-info h2,
+  .gradient-text {
+    font-size: 2.4rem;
+  }
+  @media (max-width: 992px) {
+    #forex-info h2,
+    .gradient-text {
+      font-size: 2rem;
+    }
+    .animated-bg-circles .circle-1 {
+      width: 90px; height: 90px; left: -30px; top: -25px;
+    }
+    .animated-bg-circles .circle-2 {
+      width: 55px; height: 55px; left: 61%; bottom: 10px;
+    }
+    .animated-bg-circles .circle-3 {
+      width: 60px; height: 60px; right: -20px; top: 70%;
+    }
+  }
+  @media (max-width: 768px) {
+    #forex-info h2,
+    .gradient-text {
+      font-size: 1.5rem;
+    }
+    .icon-wrap { width: 38px; height: 38px; }
+    .icon-wrap i { font-size: 1.2rem; }
+    .animated-card .card-title { font-size: 0.97rem;}
+    .animated-card .card-text { font-size: 0.93rem;}
+  }
+</style>
+
+
+
+
+<!-- What You Need to Start Section (Enhanced) -->
+<section id="forex-start" class="py-5 position-relative" style="background: linear-gradient(135deg, #f9fafc 0%, #eaf0fb 100%); overflow: hidden;">
+  <!-- Decorative Animated Circles -->
+  <div class="animated-bg-circles">
+    <span class="circle circle-1"></span>
+    <span class="circle circle-2"></span>
+    <span class="circle circle-3"></span>
+  </div>
+  <div class="container position-relative" style="z-index: 2;">
+    <!-- Section Header -->
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-8">
+        <h2 class="fw-bold gradient-text mb-3">What You Need to Start</h2>
+        <p class="lead" style="color: var(--default-color); font-size: 1.175rem;">
+          To start trading forex, you need internet access, a trading device, a broker like <span class="highlight">VR Trading</span>, and a trading platform such as <span class="highlight">MetaTrader</span>. It's also important to understand basic terms like <span class="highlight">spread</span>, <span class="highlight">leverage</span>, <span class="highlight">lot size</span>, and <span class="highlight">margin</span>. Most importantly, adopt a learning mindset — <span class="fw-semibold text-primary">patience</span> and <span class="fw-semibold text-primary">discipline</span> are key.
+        </p>
+      </div>
+    </div>
+
+    <!-- Info Cards with Animation -->
+    <div class="row g-4 justify-content-center">
+      <!-- Card 1 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-globe"></i>
+            </div>
+            <h5 class="card-title fw-bold">Internet Access</h5>
+            <p class="card-text">
+              A stable internet connection to trade efficiently and monitor the market in real time.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-laptop"></i>
+            </div>
+            <h5 class="card-title fw-bold">Trading Device</h5>
+            <p class="card-text">
+              A computer, tablet, or smartphone to access trading platforms and monitor your trades.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-building"></i>
+            </div>
+            <h5 class="card-title fw-bold">Broker</h5>
+            <p class="card-text">
+              A reliable broker like VR Trading that provides access to the Forex market.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card animated-card shadow border-0 h-100 text-center">
+          <div class="card-body">
+            <div class="icon-wrap mb-3">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+            <h5 class="card-title fw-bold">Trading Platform</h5>
+            <p class="card-text">
+              A platform like MetaTrader to place trades, analyze charts, and manage positions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Custom CSS & Animations -->
+<style>
+  /* Decorative Animated Circles */
+  .animated-bg-circles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+  .animated-bg-circles .circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    animation: float 12s infinite alternate;
+    background: var(--accent-color, #3f51b5);
+    filter: blur(1px);
+  }
+  .animated-bg-circles .circle-1 {
+    width: 220px; height: 220px; top: -60px; left: -80px;
+    background: #3f51b5;
+    animation-delay: 0s;
+  }
+  .animated-bg-circles .circle-2 {
+    width: 120px; height: 120px; bottom: 20px; left: 40%;
+    background: #00bcd4;
+    animation-delay: 3s;
+  }
+  .animated-bg-circles .circle-3 {
+    width: 150px; height: 150px; top: 40%; right: -50px;
+    background: #ff9800;
+    animation-delay: 6s;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) scale(1);}
+    100% { transform: translateY(30px) scale(1.07);}
+  }
+
+  /* Gradient animated heading */
+  .gradient-text {
+    background: linear-gradient(90deg, #3f51b5 0%, #00bcd4 50%, #ff9800 100%);
+    background-size: 200% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: gradient-move 4s linear infinite;
+  }
+  @keyframes gradient-move {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  /* Highlighted words in text */
+  .highlight {
+    color: #ff9800;
+    font-weight: 500;
+  }
+
+  /* Card Animations & Design */
+  .animated-card {
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 3px 20px rgba(63,81,181,0.07), 0 1.5px 5px rgba(0,188,212,0.04);
+    transition: transform 0.35s cubic-bezier(.2,1.2,.4,1), box-shadow 0.35s cubic-bezier(.2,1.2,.4,1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+    will-change: transform, opacity;
+    animation: card-in 1.3s cubic-bezier(.2,1.2,.4,1) forwards;
+  }
+  .animated-card:nth-child(1) { animation-delay: 0.1s; }
+  .animated-card:nth-child(2) { animation-delay: 0.3s; }
+  .animated-card:nth-child(3) { animation-delay: 0.5s; }
+  .animated-card:nth-child(4) { animation-delay: 0.7s; }
+  @keyframes card-in {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .animated-card:hover,
+  .animated-card:focus-within {
+    transform: translateY(-12px) scale(1.025) rotate(-1deg);
+    box-shadow: 0 16px 32px rgba(63,81,181,0.13), 0 5px 18px rgba(0,188,212,0.14);
+  }
+
+  /* Icon Styling & Pulse Animation */
+  .icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px; height: 60px;
+    margin: 0 auto 10px auto;
+    background: linear-gradient(135deg, #eaf0fb 60%, #fff 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(63,81,181,0.07);
+    animation: pulse 2s infinite;
+  }
+  .icon-wrap i {
+    font-size: 2.4rem;
+    color: var(--accent-color, #3f51b5);
+    transition: color 0.2s;
+  }
+  .animated-card:hover .icon-wrap i {
+    color: #ff9800;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(63,81,181,0.12);}
+    70% { box-shadow: 0 0 0 12px rgba(63,81,181,0.03);}
+    100% { box-shadow: 0 0 0 0 rgba(63,81,181,0.12);}
+  }
+
+  /* Card text and heading color */
+  .animated-card .card-title {
+    color: #263045;
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+  .animated-card .card-text {
+    color: #576175;
+    font-size: 0.98rem;
+  }
+
+  /* Responsive adjustments */
+  #forex-start h2,
+  .gradient-text {
+    font-size: 2.55rem;
+  }
+  @media (max-width: 992px) {
+    #forex-start h2,
+    .gradient-text {
+      font-size: 2rem;
+    }
+    .animated-bg-circles .circle-1 {
+      width: 120px; height: 120px; left: -40px; top: -35px;
+    }
+    .animated-bg-circles .circle-2 {
+      width: 70px; height: 70px; left: 60%; bottom: 10px;
+    }
+    .animated-bg-circles .circle-3 {
+      width: 80px; height: 80px; right: -30px; top: 50%;
+    }
+  }
+  @media (max-width: 768px) {
+    #forex-start h2,
+    .gradient-text {
+      font-size: 1.6rem;
+    }
+    .icon-wrap { width: 48px; height: 48px; }
+    .icon-wrap i { font-size: 1.5rem; }
+    .animated-card .card-title { font-size: 1rem;}
+    .animated-card .card-text { font-size: 0.94rem;}
+  }
+</style>
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+<!-- Getting Started: Modern Step-by-Step Timeline Section -->
+<section id="getting-started" class="py-5 position-relative" style="background: linear-gradient(120deg, #f6fafd 0%, #dde8fa 100%); overflow: hidden;">
+  <!-- Decorative Animated Circles -->
+  <div class="animated-bg-circles">
+    <span class="circle circle-1"></span>
+    <span class="circle circle-2"></span>
+    <span class="circle circle-3"></span>
+  </div>
+  <div class="container position-relative" style="z-index:2;">
+    <!-- Section Header -->
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-8">
+        <h2 class="fw-bold gradient-text mb-3">Getting Started: Step-by-Step</h2>
+        <p class="lead" style="color: var(--default-color); font-size: 1.15rem;">
+          Follow these steps to start your Forex trading journey with confidence.
+        </p>
+      </div>
+    </div>
+
+    <!-- Animated Timeline Stepper -->
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+        <div class="timeline">
+          <!-- Step 1 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-building"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Choose Broker</h5>
+              <p class="mb-0">Choose the right broker (we recommend VR Academy) to start trading safely.</p>
+            </div>
+            <span class="timeline-number">1</span>
+          </div>
+          <!-- Step 2 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-gear"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Understand Conditions</h5>
+              <p class="mb-0">Understand trading conditions like spread, leverage, and margin.</p>
+            </div>
+            <span class="timeline-number">2</span>
+          </div>
+          <!-- Step 3 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Open Demo Account</h5>
+              <p class="mb-0">Open a demo account with virtual funds to practice trading risk-free.</p>
+            </div>
+            <span class="timeline-number">3</span>
+          </div>
+          <!-- Step 4 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-laptop"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Choose Platform</h5>
+              <p class="mb-0">Choose a trading platform like MetaTrader 5 for smooth trading experience.</p>
+            </div>
+            <span class="timeline-number">4</span>
+          </div>
+          <!-- Step 5 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-currency-exchange"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Select Currency Pair</h5>
+              <p class="mb-0">Select a currency pair to trade and start monitoring market movements.</p>
+            </div>
+            <span class="timeline-number">5</span>
+          </div>
+          <!-- Step 6 -->
+          <div class="timeline-step">
+            <div class="timeline-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="timeline-content">
+              <h5 class="fw-bold mb-1">Try Strategies</h5>
+              <p class="mb-0">Try some basic trading strategies to gain practical experience and confidence.</p>
+            </div>
+            <span class="timeline-number">6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Custom CSS & Timeline Animation -->
+<style>
+  /* Decorative Animated Circles */
+  .animated-bg-circles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+  .animated-bg-circles .circle {
+    position: absolute; border-radius: 50%; opacity: 0.13; animation: float 15s infinite alternate;
+    background: var(--accent-color, #3f51b5); filter: blur(1px);
+  }
+  .animated-bg-circles .circle-1 { width: 160px; height: 160px; top: -50px; left: -60px; background: #3f51b5; animation-delay: 0s; }
+  .animated-bg-circles .circle-2 { width: 90px; height: 90px; bottom: 30px; left: 40%; background: #00bcd4; animation-delay: 4s; }
+  .animated-bg-circles .circle-3 { width: 110px; height: 110px; top: 60%; right: -40px; background: #ff9800; animation-delay: 8s; }
+  @keyframes float { 0% { transform: translateY(0) scale(1);} 100% { transform: translateY(35px) scale(1.08);} }
+
+  /* Gradient Heading */
+  .gradient-text {
+    background: linear-gradient(90deg, #3f51b5 0%, #00bcd4 55%, #ff9800 100%);
+    background-size: 200% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: gradient-move 4s linear infinite;
+  }
+  @keyframes gradient-move { to { background-position: 200% center; } }
+
+  /* Timeline Styles */
+  .timeline {
+    position: relative;
+    margin: 0 auto;
+    padding: 0 0 0 40px;
+    border-left: 4px solid #e0e5f6;
+    max-width: 800px;
+  }
+  .timeline-step {
+    position: relative;
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    animation: timeline-in 0.95s cubic-bezier(.2,1.2,.4,1) forwards;
+  }
+  .timeline-step:nth-child(1) { animation-delay: 0.1s; }
+  .timeline-step:nth-child(2) { animation-delay: 0.22s; }
+  .timeline-step:nth-child(3) { animation-delay: 0.34s; }
+  .timeline-step:nth-child(4) { animation-delay: 0.46s; }
+  .timeline-step:nth-child(5) { animation-delay: 0.58s; }
+  .timeline-step:nth-child(6) { animation-delay: 0.7s; }
+  @keyframes timeline-in {
+    to { opacity: 1; transform: translateY(0) scale(1);}
+  }
+  .timeline-step:last-child { margin-bottom: 0; }
+  .timeline-icon {
+    position: absolute;
+    left: -48px;
+    top: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0e5f6 70%, #fff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(63,81,181,0.09);
+    z-index: 2;
+    font-size: 2rem;
+    color: var(--accent-color, #3f51b5);
+    border: 2.5px solid #fff;
+    animation: pulse 2s infinite;
+    transition: background 0.25s;
+  }
+  .timeline-step:hover .timeline-icon, .timeline-step:focus-within .timeline-icon {
+    background: linear-gradient(135deg, #ff9800 60%, #fff 100%);
+    color: #fff;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(63,81,181,0.10);}
+    70% { box-shadow: 0 0 0 12px rgba(63,81,181,0.02);}
+    100% { box-shadow: 0 0 0 0 rgba(63,81,181,0.10);}
+  }
+  .timeline-content {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 13px rgba(0,188,212,0.04), 0 1.5px 5px rgba(63,81,181,0.07);
+    padding: 18px 22px 16px 32px;
+    margin-left: 32px;
+    text-align: left;
+    position: relative;
+    z-index: 1;
+    transition: box-shadow 0.25s;
+  }
+  .timeline-step:hover .timeline-content, .timeline-step:focus-within .timeline-content {
+    box-shadow: 0 8px 18px rgba(63,81,181,0.09), 0 4px 8px rgba(0,188,212,0.11);
+  }
+  .timeline-number {
+    position: absolute;
+    left: -68px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    color: #ff9800;
+    font-weight: bold;
+    border: 2.5px solid #ff9800;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(255,152,0,0.09);
+    z-index: 3;
+    animation: bounce 2.7s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(-50%) scale(1);}
+    20% { transform: translateY(-60%) scale(1.07);}
+    40% { transform: translateY(-45%) scale(0.97);}
+    60% { transform: translateY(-50%) scale(1);}
+  }
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .timeline { padding-left: 20px; }
+    .timeline-icon, .timeline-number { left: -32px;}
+    .timeline-number { left: -48px; width: 24px; height: 24px; font-size: 0.95rem;}
+    .timeline-content { padding: 15px 12px 13px 20px;}
+  }
+  @media (max-width: 768px) {
+    #getting-started h2, .gradient-text { font-size: 1.5rem; }
+    .timeline { border-width: 2.5px; }
+    .timeline-icon { width: 38px; height: 38px; font-size: 1.2rem; left: -20px; }
+    .timeline-number { width: 18px; height: 18px; font-size: 0.8rem; left: -30px;}
+    .timeline-content { font-size: 0.97rem; padding-left: 13px;}
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ================= FAQ Section with Professional Visuals and Responsive Icons ================= -->
+<section id="faq" class="section py-5" style="background: linear-gradient(120deg, #f9fbfd 80%, #eaf6fd 100%); position: relative; overflow: hidden;">
+  <div class="faq-decor-bg"></div>
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <p class="faq-subtitle">
+        Everything you need to know about VR Academy Hub and forex trading courses.
+      </p>
+    </div>
+    <div class="accordion faq-accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
+      <!-- FAQ Item 1 -->
+       <div class="row">
+        <div class="col-sm-6">
+<div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading1">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
+            <span class="faq-q-icon"><i class="bi bi-question-circle"></i></span>
+            <span class="faq-q-text">What is forex trading and how does it work?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>Forex trading</strong>, or foreign exchange trading, involves buying one currency and selling another in pairs. It is the world's largest financial market, operating 24/5, where traders speculate on currency price movements to make profits by predicting whether one currency will strengthen or weaken against another.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 2 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+            <span class="faq-q-icon"><i class="bi bi-person-plus"></i></span>
+            <span class="faq-q-text">Do I need prior experience to join the trading courses?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            <strong>No prior experience is needed.</strong> VR Academy Hub caters to beginners by providing step-by-step tutorials and foundational lessons, while also offering advanced topics for experienced traders to sharpen their skills.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 3 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading3">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+            <span class="faq-q-icon"><i class="bi bi-journal-text"></i></span>
+            <span class="faq-q-text">What topics does VR Academy Hub cover?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            The training includes <strong>forex trading strategies, options trading, technical and fundamental analysis, risk management, chart reading,</strong> and practical trading skills to build confidence in live markets.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 4 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+            <span class="faq-q-icon"><i class="bi bi-laptop"></i></span>
+            <span class="faq-q-text">Are courses online or in-person?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Courses are primarily <strong>online</strong>, providing live webinars, video tutorials, and interactive sessions accessible from anywhere. This approach offers flexibility for learners to join from their preferred locations.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 5 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading5">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+            <span class="faq-q-icon"><i class="bi bi-camera-video"></i></span>
+            <span class="faq-q-text">How do I access live webinars and tutorials?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Once you register on the platform, you receive access credentials to join live sessions and on-demand tutorials. Notifications and updates are sent for upcoming classes.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 6 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading6">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
+            <span class="faq-q-icon"><i class="bi bi-cash-stack"></i></span>
+            <span class="faq-q-text">What are the course fees? Are there any free classes?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            VR Academy Hub offers a mix of <strong>paid advanced courses and free introductory sessions/webinars</strong> to help learners start with minimal investment.
+          </div>
+        </div>
+      </div>
+
+        </div>
+
+      <div class="col-sm-6">
+
+      <!-- FAQ Item 7 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading7">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
+            <span class="faq-q-icon"><i class="bi bi-chat-left-dots"></i></span>
+            <span class="faq-q-text">Do you provide personalized trading advice?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Yes, learners can get guidance during interactive sessions, Q&amp;A forums, and sometimes <strong>one-on-one mentorship</strong> tailored to their trading goals.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 8 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading8">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse8" aria-expanded="false" aria-controls="faqCollapse8">
+            <span class="faq-q-icon"><i class="bi bi-hourglass-split"></i></span>
+            <span class="faq-q-text">How long does it take to become proficient in trading?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse8" class="accordion-collapse collapse" aria-labelledby="faqHeading8" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Duration depends on individual learning pace, but the programs focus on practical understanding and confidence-building, which typically take <strong>weeks to months</strong> with consistent effort.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 9 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading9">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse9" aria-expanded="false" aria-controls="faqCollapse9">
+            <span class="faq-q-icon"><i class="bi bi-award"></i></span>
+            <span class="faq-q-text">Is certification provided?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse9" class="accordion-collapse collapse" aria-labelledby="faqHeading9" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Many courses offer <strong>certifications upon completion</strong>, validating the skills learned and boosting credibility for aspiring traders.
+          </div>
+        </div>
+      </div> 
+      <!-- FAQ Item 11 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading11">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse11" aria-expanded="false" aria-controls="faqCollapse11">
+            <span class="faq-q-icon"><i class="bi bi-currency-exchange"></i></span>
+            <span class="faq-q-text">Can beginners trade with small capital?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse11" class="accordion-collapse collapse" aria-labelledby="faqHeading11" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Yes, training includes <strong>risk management strategies</strong> suitable for beginners aiming to start with small investments or virtual trading before real capital deployment.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 12 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading12">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse12" aria-expanded="false" aria-controls="faqCollapse12">
+            <span class="faq-q-icon"><i class="bi bi-pc-display"></i></span>
+            <span class="faq-q-text">What setup do I need to join?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse12" class="accordion-collapse collapse" aria-labelledby="faqHeading12" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            A <strong>reliable internet connection</strong>, a computer or smartphone, and access to the platform are needed. Some courses recommend using demo accounts for practice.
+          </div>
+        </div>
+      </div>
+      <!-- FAQ Item 13 -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="faqHeading13">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse13" aria-expanded="false" aria-controls="faqCollapse13">
+            <span class="faq-q-icon"><i class="bi bi-controller"></i></span>
+            <span class="faq-q-text">Are there resources for practicing without real money?</span>
+          </button>
+        </h2>
+        <div id="faqCollapse13" class="accordion-collapse collapse" aria-labelledby="faqHeading13" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Yes, <strong>demo accounts and trading simulators</strong> are encouraged for learners to practice strategies risk-free before trading with real funds.
+          </div>
+        </div>
+      </div>
+      </div>
+
+
+       </div>
+      
+    </div>
+  </div>
+</section>
+
+<style>
+/* Decorative background for FAQ */
+.faq-decor-bg {
+  position: absolute;
+  top: -80px;
+  left: -120px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, #eaf6fd 70%, #fff 100%);
+  border-radius: 50%;
+  opacity: 0.25;
+  z-index: 1;
+  animation: faqCircleMove 9s infinite alternate;
+}
+@keyframes faqCircleMove {
+  0% { transform: scale(1) translateY(0);}
+  100% { transform: scale(1.12) translateY(30px);}
+}
+
+/* FAQ Title and Subtitle */
+.faq-title {
+  color: #233d63;
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.7rem;
+}
+.faq-subtitle {
+  color: #386086;
+  font-size: 1.13rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Accordion Styling */
+.faq-accordion .accordion-item {
+  border-radius: 15px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(21,151,214,0.07);
+  margin-bottom: 21px;
+  border: none;
+  background: #fff;
+  transition: box-shadow 0.23s;
+}
+.faq-accordion .accordion-button {
+  background: none;
+  font-weight: 600;
+  font-size: 1.07rem;
+  color: #233d63 !important;
+  letter-spacing: 0.01em;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 1.15rem 1.4rem 1.15rem 2.7rem;
+  transition: background 0.2s, color 0.2s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.faq-accordion .accordion-button:not(.collapsed) {
+  background: linear-gradient(100deg, #eaf6fd 70%, #fff 100%);
+  color: #1597d6 !important;
+  font-weight: 700;
+}
+.faq-accordion .accordion-body {
+  background: none;
+  font-size: 1.03rem;
+  color: #386086 !important;
+  padding: 1.08rem 1.6rem 1.35rem 2.7rem;
+  border-top: 1px solid #eaf6fd;
+  line-height: 1.7;
+}
+.faq-accordion .accordion-button::after {
+  color: #1597d6;
+  opacity: 0.7;
+}
+.faq-q-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #00bcd4;
+  background: #eaf6fd;
+  border-radius: 50%;
+  width: 2.1rem;
+  height: 2.1rem;
+  margin-right: 0.3rem;
+  box-shadow: 0 2px 8px rgba(21,151,214,0.10);
+}
+.faq-q-text {
+  flex: 1 1 0%;
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .faq-title { font-size: 2rem; }
+  .faq-accordion .accordion-button,
+  .faq-accordion .accordion-body {
+    font-size: 0.99rem;
+    padding-left: 2.3rem;
+    padding-right: 1rem;
+  }
+  .faq-q-icon { width: 1.7rem; height: 1.7rem; font-size: 1.08rem; }
+}
+@media (max-width: 768px) {
+  .faq-title { font-size: 1.55rem; }
+  .faq-accordion .accordion-button,
+  .faq-accordion .accordion-body {
+    font-size: 0.97rem;
+    padding-left: 2rem;
+    padding-right: 0.7rem;
+  }
+  .faq-q-icon { width: 1.3rem; height: 1.3rem; font-size: 0.95rem; margin-right: 0.18rem;}
+}
+@media (max-width: 576px) {
+  .faq-accordion .accordion-button,
+  .faq-accordion .accordion-body {
+    padding-left: 1.6rem;
+    padding-right: 0.5rem;
+  }
+  .faq-q-icon { width: 1.15rem; height: 1.15rem; font-size: 0.81rem; }
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="hero-start-today">
+    <!-- Glowing gradient shapes -->
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+
+    <!-- Floating icons -->
+    <div class="icon-shape icon1"><i class="bi bi-graph-up-arrow"></i></div>
+    <div class="icon-shape icon2"><i class="bi bi-currency-exchange"></i></div>
+    <div class="icon-shape icon3"><i class="bi bi-lightning-charge-fill"></i></div>
+
+    <div class="hero-start-today-content">
+      <h1>Start Today!</h1>
+      <p>
+        From <strong>Mumbai to Pune</strong>, <strong>VR Training Academy</strong> is guiding Indian traders 
+        to succeed in the global forex market. Sign up in just 5 minutes, 
+        access a <strong>free demo course</strong>, and start trading with confidence!
+      </p>
+      <button class="cta-btn">Join Now</button>
+      <div class="sub-text">No credit card required • Free lifetime demo</div>
+    </div>
+  </section>
+<style> 
+    .hero-start-today {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 80px 15px;
+    }
+
+    /* Decorative background shapes */
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+      filter: blur(50px);
+      opacity: 0.5;
+    }
+
+    .shape1 { width: 250px; height: 250px; top: 10%; left: 5%; background: #ff9800; animation: float 7s ease-in-out infinite; }
+    .shape2 { width: 300px; height: 300px; bottom: 10%; right: 10%; background: #3f51b5; animation: float 9s ease-in-out infinite; }
+    .shape3 { width: 150px; height: 150px; top: 60%; left: 40%; background: #ff9800; animation: float 11s ease-in-out infinite; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .hero-start-today-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 60px 40px;
+      animation: fadeInUp 1.5s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-start-today h1 {
+      font-size: 3rem;
+      font-weight: 1000;
+      background: linear-gradient(90deg, #3f51b5, #ff9800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+    }
+
+    .hero-start-today p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #334155;
+      margin-bottom: 35px;
+    }
+
+    .cta-btn {
+      background: linear-gradient(90deg, #3f51b5, #ff9800);
+      border: none;
+      padding: 14px 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(63, 81, 181, 0.4);
+    }
+
+    .cta-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(255, 152, 0, 0.6);
+    }
+
+    .sub-text {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-top: 20px;
+    }
+
+    /* Floating icon shapes */
+    .icon-shape {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3f51b5, #ff9800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      box-shadow: 0 5px 15px rgba(63, 81, 181, 0.4);
+      animation: floatIcon 5s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .icon1 { top: 20%; right: 15%; animation-delay: 1s; }
+    .icon2 { bottom: 20%; left: 10%; animation-delay: 2.5s; }
+    .icon3 { top: 30%; left: 20%; animation-delay: 4s; }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-start-today h1 { font-size: 2.2rem; }
+      .hero-start-today p { font-size: 1rem; }
+      .hero-start-today-content { padding: 40px 25px; }
+    }
+  </style>
+{% endblock content %}
