@@ -9,5 +9,6 @@ urlpatterns = [
     path('advance-to-pro', advance_to_pro, name='advance_to_pro'),
     path('awards-recognition', awards, name='awards'),
     path('trusted-broker', trusted_broker, name='trusted_broker'),
+    path('contact-us', contct_us, name='contact_us'), 
     
 ]

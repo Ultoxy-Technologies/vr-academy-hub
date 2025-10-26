@@ -40,7 +40,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'WebApp',
     'AdminApp',
+    'StudentApp',
+
+    
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+
+JAZZMIN_SETTINGS = {
+    "icons": {
+        "yourapp.Enquiry": "fas fa-envelope-open-text",  # or any FontAwesome icon
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -114,6 +127,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'AdminApp.CustomUser'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -137,8 +151,7 @@ LOGIN_URL = '/accounts/login/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-
+ 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

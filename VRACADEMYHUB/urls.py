@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from WebApp import urls
+from StudentApp import urls as student_urls
 
 from django.conf import settings
 from django.conf.urls.static import static 
@@ -25,4 +26,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(urls)),
+    path('student/', include(student_urls)),
+    path('register/', urls.register_user, name='register_user'),
+
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

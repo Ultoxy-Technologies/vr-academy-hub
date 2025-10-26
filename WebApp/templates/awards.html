@@ -22,4 +22,1234 @@
       </div>
     </div><!-- End Page Title -->
 
+     <style>
+    :root {
+  --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Nunito",  sans-serif;
+  --nav-font: "Inter",  sans-serif;
+}
+
+/* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #2d465e; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #0d83fd; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+}
+
+/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
+:root {
+  --nav-color: #212529;  /* The default color of the main navmenu links */
+  --nav-hover-color: #0d83fd; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
+  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #212529; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #0d83fd; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+}
+
+/* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
+
+.light-background {
+  --background-color: #f3f9ff;
+  --surface-color: #ffffff;
+}
+
+.dark-background {
+  --background-color: #0d83fd;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --surface-color: #409dfd;
+  --contrast-color: #ffffff;
+}
+
+/* Smooth scroll */
+:root {
+  scroll-behavior: smooth;
+}
+ 
+/*--------------------------------------------------------------
+# Hero Section
+--------------------------------------------------------------*/
+.hero {
+  position: relative;
+  padding-top: 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color), transparent 95%) 50%, color-mix(in srgb, var(--accent-color), transparent 98%) 25%, transparent 50%);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--accent-color), transparent 92%), transparent 40%);
+  pointer-events: none;
+}
+
+.hero .hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero .hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.hero .hero-content h1 .accent-text {
+  color: var(--accent-color);
+}
+
+@media (max-width: 992px) {
+  .hero .hero-content {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .hero .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero .hero-content .hero-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 575px) {
+  .hero .hero-content h1 {
+    font-size: 2rem;
+  }
+}
+
+.hero .company-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-radius: 50px;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.hero .company-badge i {
+  font-size: 1.25rem;
+}
+
+.hero .btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+  padding: 0.75rem 2.5rem;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.hero .btn-primary:hover {
+  background-color: color-mix(in srgb, var(--accent-color), black 20%);
+  border-color: color-mix(in srgb, var(--accent-color), black 20%);
+}
+
+.hero .btn-link {
+  color: var(--heading-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.hero .btn-link:hover {
+  color: var(--accent-color);
+}
+
+.hero .btn-link i {
+  font-size: 1.5rem;
+  vertical-align: middle;
+}
+
+.hero .hero-image {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.hero-image {
+  /* center the image vertically & horizontally inside its column */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* keep existing absolute badge positioning working */
+  min-height: 260px;  /* ensures a comfortable vertical center area (adjust if needed) */
+  padding-top: 0;     /* avoid extra offset from page spacing */
+  padding-bottom: 0;
+  z-index: 1;
+}
+
+.hero-image img.img-fluid.mb-5 {
+  /* remove the existing bottom margin that caused misalignment and ensure responsive sizing */
+  margin-bottom: 0 !important;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain; /* keeps the image proportion and avoids cropping */
+}
+
+/* Slight tweak for small screens to preserve spacing */
+@media (max-width: 767.98px) {
+  .hero-image {
+    min-height: 180px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+
+.hero .hero-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.hero .customers-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+  background-color: var(--surface-color);
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  animation: float-badge 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hero .customers-badge .customer-avatars {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.hero .customers-badge .avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-color);
+  margin-left: -8px;
+}
+
+.hero .customers-badge .avatar:first-child {
+  margin-left: 0;
+}
+
+.hero .customers-badge .avatar.more {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hero .customers-badge p {
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+}
+
+@media (max-width: 992px) {
+  .hero .customers-badge {
+    position: static;
+    margin: 1rem auto;
+    max-width: 250px;
+  }
+}
+
+.hero .stats-row {
+  position: relative;
+  z-index: 1;
+  margin-top: 5rem;
+  background-color: var(--surface-color);
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding-bottom: 2rem;
+}
+
+.hero .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.hero .stat-item .stat-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-radius: 50px;
+  transition: 0.3s;
+}
+
+.hero .stat-item .stat-icon i {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+.hero .stat-item:hover .stat-icon {
+  background-color: var(--accent-color);
+}
+
+.hero .stat-item:hover .stat-icon i {
+  color: var(--contrast-color);
+}
+
+.hero .stat-item .stat-content {
+  flex-grow: 1;
+}
+
+.hero .stat-item .stat-content h4 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.hero .stat-item .stat-content p {
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  margin: 0;
+}
+
+@media (max-width: 575px) {
+  .hero .stat-item {
+    padding: 1.5rem;
+  }
+}
+
+@keyframes float-badge {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+ 
+  </style>
+ <section id="hero" class="hero section">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="hero-content" data-aos="fade-up" data-aos-delay="200">
+          <div class="company-badge mb-4">
+            <i class="bi bi-award-fill me-2"></i>
+            Verified Achievements
+          </div>
+
+          <h1 class="mb-4">
+            Awards & Certifications  
+            at <br><span class="accent-text">VR Academy Hub</span>
+          </h1>
+
+          <p class="mb-4 mb-md-5">
+            Explore verified certificates, industry awards, and professional badges earned by our learners
+            and instructors. Quickly verify credentials or browse shareable certificates.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="" class="btn btn-primary me-0 me-sm-2 mx-1">Explore Certificates</a> 
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="hero-image" data-aos="zoom-out" data-aos-delay="300">
+          <img src="{% static 'website/img/illustration-1.webp' %}" alt="Certificates Illustration" class="img-fluid mb-5">
+
+           
+        </div>
+      </div>
+    </div>
+
+    <div class="row stats-row gy-4 mt-5" data-aos="fade-up" data-aos-delay="500">
+      <div class="col-lg-4 col-md-6">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="bi bi-card-checklist"></i>
+          </div>
+          <div class="stat-content">
+            <h4>128 Verified Certificates</h4>
+            <p class="mb-0">Industry-recognized credentials</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <div class="stat-content">
+            <h4>12k+ Learners</h4>
+            <p class="mb-0">Active traders and certified students</p>
+          </div>
+        </div>
+      </div>
+        
+      <div class="col-lg-4 col-md-6">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="bi bi-person-badge"></i>
+          </div>
+          <div class="stat-content">
+            <h4>52 Certified Instructors</h4>
+            <p class="mb-0">Expert mentors & examiners</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- /Hero Section -->
+
+  <!-- Vendor JS Files -->
+ <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Main JS File -->
+  <script>
+    
+(function() {
+  "use strict";
+ 
+  function aosInit() {
+    AOS.init({
+      duration: 600,
+      easing: 'ease-in-out',
+      once: true,
+      mirror: false
+    });
+  }
+  window.addEventListener('load', aosInit);
+ 
+})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <style>
+    :root{
+      --bg: #f7f9fb;
+      --card-bg: #ffffff;
+      --muted: #6c757d;
+      --primary: #0d6efd;
+      --accent: #ffd166;
+      --shadow-1: 0 10px 30px rgba(15,30,50,0.07);
+      --shadow-2: 0 20px 40px rgba(10,20,40,0.06);
+      --radius: 14px;
+    }
+
+    /* Base */
+    *{box-sizing:border-box}
+    body{font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:var(--bg); color:#07122a; margin:0;}
+    main { padding: 36px 0 64px; }
+
+    /* Header */
+    .display-6 { font-weight:700; }
+
+    /* Grid */
+    .cert-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 991.98px){
+      .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 575.98px){
+      .cert-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Card */
+    .cert-card{
+      background: linear-gradient(180deg, var(--card-bg), #fbfdff);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-1);
+      transition: transform .28s cubic-bezier(.2,.9,.25,1), box-shadow .28s;
+      cursor: pointer;
+      position: relative;
+      min-height: 340px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      outline: none;
+    }
+
+    .cert-card:focus { box-shadow: var(--shadow-2); transform: translateY(-6px); }
+    .cert-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-2); }
+
+    /* Media */
+    .card-media {
+      position: relative;
+      width:100%;
+      height: 260px;
+      overflow: hidden;
+      background: linear-gradient(180deg,#eef6ff,#f7fbff);
+    }
+    .card-media img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transition: transform .6s ease;
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .cert-card:hover .card-media img,
+    .cert-card:focus .card-media img {
+      transform: scale(1.06);
+    }
+
+    /* Tag */
+    .tag{
+      position:absolute;
+      left:12px;
+      top:12px;
+      background: rgba(255,255,255,0.95);
+      color:var(--primary);
+      padding:6px 10px;
+      font-weight:600;
+      font-size:.85rem;
+      border-radius:999px;
+      box-shadow: 0 6px 18px rgba(10,20,40,0.06);
+    }
+    .tag-gold{ color:#8a5b00; background: linear-gradient(90deg,#fff7e6,#fff1d0); }
+    .tag-free{ color:#d8573c; background: rgba(255,240,238,0.95); }
+
+    /* Body */
+    .card-body { padding: 14px 16px; flex: 1 1 auto; }
+    .card-title{ font-size:1.05rem; margin:0 0 6px; font-weight:700; color:#07122a; }
+    .meta{ font-size:.88rem; color:var(--muted); }
+
+    /* Overlay (bottom) - partially hidden initially */
+    .card-overlay{
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 56%;
+      background: linear-gradient(180deg, rgba(2,6,23,0.88), rgba(2,6,23,0.95));
+      color: #fff;
+      transform: translateY(40%);
+      transition: transform .36s cubic-bezier(.2,.9,.25,1), opacity .28s;
+      opacity: 0;
+      display:flex;
+      align-items:flex-end;
+      padding: 18px;
+      pointer-events: none;
+    }
+
+    .cert-card:hover .card-overlay,
+    .cert-card:focus .card-overlay,
+    .cert-card.overlay-mobile--visible .card-overlay {
+      transform: translateY(0%);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-inner{ width:100%; }
+    .overlay-title{ font-weight:700; font-size:1.05rem; color:#fff; }
+    .overlay-sub{ font-size:.92rem; color: rgba(255,255,255,0.92); }
+    .overlay-desc{ font-size:.95rem; color: rgba(255,255,255,0.92); }
+
+    .overlay-actions .btn { --bs-btn-padding-y: .28rem; --bs-btn-padding-x: .6rem; border-radius: 8px; }
+    .share-btn { color: #fff; opacity:.95; }
+    .share-btn:hover { text-decoration: none; color:#fff; }
+    .preview-btn { min-width: 72px; }
+
+    .preview-btn:focus, .share-btn:focus { outline: 3px solid rgba(255,255,255,0.12); outline-offset: 2px; }
+
+    .cert-card.overlay-mobile--visible .card-overlay { transform: translateY(0%); opacity: 1; pointer-events: auto; }
+
+    /* Entrance animation */
+    @keyframes cardAppear { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .cert-card { animation: cardAppear .45s cubic-bezier(.22,.9,.16,1) both; }
+
+    /* Modal / viewer styles (embedded) */
+    .viewer-shell { background: #0b1220; display:flex; align-items:center; justify-content:center; min-height:56vh; max-height:75vh; overflow:hidden; position:relative; }
+    .viewer-viewport { width:100%; height:100%; outline:none; touch-action:none; display:flex; align-items:center; justify-content:center; position:relative; }
+    .viewer-viewport img { max-width:100%; max-height:100%; user-select:none; -webkit-user-drag:none; will-change:transform; transform-origin:center center; transition: transform 180ms cubic-bezier(.2,.9,.25,1); box-shadow:0 18px 46px rgba(2,10,30,0.5); border-radius:6px; background:#111; }
+    .modal-meta { background:#fff; border-top:1px solid rgba(2,6,23,0.04); }
+    .modal-header .modal-controls .btn { min-width:36px; height:36px; padding:0 8px; display:inline-flex; align-items:center; justify-content:center; }
+    @media (max-width:720px) { .modal-header .modal-controls { flex-wrap:wrap; gap:.4rem; } .viewer-shell { min-height:44vh; max-height:60vh; } }
+    @media (max-width:576px) { .modal-dialog { max-width:96vw; margin:12px; } .viewer-shell { min-height:38vh; max-height:55vh; } }
+
+    /* small helpers */
+    .text-white-85 { color: rgba(255,255,255,0.85); }
+  </style>
+<main class="py-5">
+    <div class="container"> 
+
+      <section class="cert-grid" aria-label="Certificates list">
+        <!-- Card 1 -->
+        <article class="cert-card" tabindex="0" data-cert-id="C-1001">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://www.shutterstock.com/image-vector/elegant-certificate-template-modern-achievement-600nw-2549781805.jpg"
+                 alt="Certificate: Advanced Web Design"
+                 data-full="https://www.shutterstock.com/image-vector/elegant-certificate-template-modern-achievement-600nw-2549781805.jpg">
+            <div class="tag">Verified</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">Advanced Web Design</h3>
+            <div class="meta small">VR Academy • Oct 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">Advanced Web Design</div>
+                  <div class="overlay-sub text-white-85">Issued to: Jane Doe • ID: <strong>C-1001</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Practical course covering responsive design, accessibility, and UX principles. Verified by VR Academy Hub.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="cert-card" tabindex="0" data-cert-id="C-1002">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg"
+                 alt="Certificate: Blitz Trading Mastery"
+                 data-full="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg">
+            <div class="tag tag-gold">Award</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">Blitz Trading Mastery</h3>
+            <div class="meta small">Kamal Preet • Sep 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">Blitz Trading Mastery</div>
+                  <div class="overlay-sub text-white-85">Issued to: A. Singh • ID: <strong>C-1002</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Intensive swing trading strategies with live examples and case studies.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="cert-card" tabindex="0" data-cert-id="C-1003">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp"
+                 alt="Certificate: AI Based Investing"
+                 data-full="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp">
+            <div class="tag tag-free">Free</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">AI Based Investing</h3>
+            <div class="meta small">Dipak & Saikat • Jun 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">AI Based Investing</div>
+                  <div class="overlay-sub text-white-85">Issued to: R. Sharma • ID: <strong>C-1003</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Foundations of algorithmic and AI-assisted investment strategies with hands-on projects.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+<article class="cert-card" tabindex="0" data-cert-id="C-1002">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg"
+                 alt="Certificate: Blitz Trading Mastery"
+                 data-full="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg">
+            <div class="tag tag-gold">Award</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">Blitz Trading Mastery</h3>
+            <div class="meta small">Kamal Preet • Sep 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">Blitz Trading Mastery</div>
+                  <div class="overlay-sub text-white-85">Issued to: A. Singh • ID: <strong>C-1002</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Intensive swing trading strategies with live examples and case studies.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="cert-card" tabindex="0" data-cert-id="C-1003">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp"
+                 alt="Certificate: AI Based Investing"
+                 data-full="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp">
+            <div class="tag tag-free">Free</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">AI Based Investing</h3>
+            <div class="meta small">Dipak & Saikat • Jun 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">AI Based Investing</div>
+                  <div class="overlay-sub text-white-85">Issued to: R. Sharma • ID: <strong>C-1003</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Foundations of algorithmic and AI-assisted investment strategies with hands-on projects.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+<article class="cert-card" tabindex="0" data-cert-id="C-1002">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg"
+                 alt="Certificate: Blitz Trading Mastery"
+                 data-full="https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Award-Certificate-Template-scaled.jpg">
+            <div class="tag tag-gold">Award</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">Blitz Trading Mastery</h3>
+            <div class="meta small">Kamal Preet • Sep 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">Blitz Trading Mastery</div>
+                  <div class="overlay-sub text-white-85">Issued to: A. Singh • ID: <strong>C-1002</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Intensive swing trading strategies with live examples and case studies.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="cert-card" tabindex="0" data-cert-id="C-1003">
+          <div class="card-media">
+            <img loading="lazy"
+                 src="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp"
+                 alt="Certificate: AI Based Investing"
+                 data-full="https://cdn.venngage.com/template/thumbnail/small/95f1e2aa-cfae-4b41-94e4-9eadfcb9e7d3.webp">
+            <div class="tag tag-free">Free</div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title">AI Based Investing</h3>
+            <div class="meta small">Dipak & Saikat • Jun 2025</div>
+          </div>
+
+          <div class="card-overlay" aria-hidden="true">
+            <div class="overlay-inner">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="overlay-title">AI Based Investing</div>
+                  <div class="overlay-sub text-white-85">Issued to: R. Sharma • ID: <strong>C-1003</strong></div>
+                </div>
+                <div class="rating" aria-hidden="true">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                  <i class="bi bi-star text-warning"></i>
+                </div>
+              </div>
+
+              <p class="overlay-desc text-white-85 mt-2">Foundations of algorithmic and AI-assisted investment strategies with hands-on projects.</p>
+
+              <div class="overlay-actions mt-3 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-light preview-btn" data-action="preview" type="button">Preview</button>
+                <button class="btn btn-sm btn-link text-white share-btn" data-action="share" aria-label="Share certificate" type="button"><i class="bi bi-share-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- Certificate Modal (popup) -->
+  <div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header py-2 d-flex align-items-center">
+          <h5 class="modal-title" id="certificateModalLabel">Certificate Preview</h5>
+
+          <div class="modal-controls ms-3 d-flex align-items-center" role="toolbar" aria-label="Image controls">
+            <button class="btn btn-sm btn-outline-secondary me-1" id="btnZoomOut" title="Zoom out ( - )" aria-label="Zoom out">−</button>
+            <button class="btn btn-sm btn-outline-secondary me-2" id="btnZoomIn" title="Zoom in ( + )" aria-label="Zoom in">+</button>
+
+            <button class="btn btn-sm btn-outline-secondary me-1" id="btnFit" title="Fit to view ( 0 )" aria-label="Fit to view">Fit</button>
+            <button class="btn btn-sm btn-outline-secondary me-2" id="btnReset" title="Reset ( 0 )" aria-label="Reset">Reset</button>
+
+            <button class="btn btn-sm btn-outline-secondary me-1" id="btnRotateLeft" title="Rotate left" aria-label="Rotate left">
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary me-2" id="btnRotateRight" title="Rotate right" aria-label="Rotate right">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+
+            <a id="btnDownload" class="btn btn-sm btn-primary me-1" href="#" download aria-label="Download certificate">
+              <i class="bi bi-download me-1"></i>Download
+            </a>
+
+            <button class="btn btn-sm btn-outline-primary" id="btnShare" title="Share" aria-label="Share certificate">
+              <i class="bi bi-share-fill"></i>
+            </button>
+          </div>
+
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-0">
+          <div class="viewer-shell">
+            <div class="viewer-viewport" id="viewerViewport" tabindex="0" role="region" aria-label="Certificate image viewport">
+              <img id="viewerImage" alt="Certificate preview" src="" draggable="false" />
+            </div>
+          </div>
+
+          <div class="modal-meta p-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 id="metaTitle" class="mb-1">Certificate title</h5>
+                <div class="small text-muted" id="metaIssuer">Issuer • Date</div>
+              </div>
+              <div class="text-end small text-muted" id="metaId">ID: C-0000</div>
+            </div>
+
+            <p id="metaDesc" class="mt-2 mb-2 text-muted small">Short description of the certificate and verification info.</p>
+
+            <div class="d-flex gap-2">
+              <a id="metaDownload" class="btn btn-sm btn-outline-primary" href="#" download>
+                <i class="bi bi-download me-1"></i>Download Image
+              </a>
+              <button id="metaClose" class="btn btn-sm btn-outline-secondary ms-auto" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Single-file JS: gallery interactions + modal viewer with controls
+    (function () {
+      "use strict";
+
+      const MIN_SCALE = 0.5;
+      const MAX_SCALE = 6;
+      const SCALE_STEP = 0.2;
+      const PAN_STEP = 20;
+
+      // Elements
+      const certGrid = document.querySelector('.cert-grid');
+      const modalEl = document.getElementById('certificateModal');
+      const viewerViewport = document.getElementById('viewerViewport');
+      const viewerImage = document.getElementById('viewerImage');
+      const btnZoomIn = document.getElementById('btnZoomIn');
+      const btnZoomOut = document.getElementById('btnZoomOut');
+      const btnReset = document.getElementById('btnReset');
+      const btnFit = document.getElementById('btnFit');
+      const btnRotateLeft = document.getElementById('btnRotateLeft');
+      const btnRotateRight = document.getElementById('btnRotateRight');
+      const btnDownload = document.getElementById('btnDownload');
+      const btnShare = document.getElementById('btnShare');
+
+      const metaTitle = document.getElementById('metaTitle');
+      const metaIssuer = document.getElementById('metaIssuer');
+      const metaId = document.getElementById('metaId');
+      const metaDesc = document.getElementById('metaDesc');
+      const metaDownload = document.getElementById('metaDownload');
+
+      const bsModal = (modalEl && window.bootstrap) ? new bootstrap.Modal(modalEl, { keyboard: true }) : null;
+
+      let state = { scale: 1, translateX: 0, translateY: 0, rotation: 0 };
+      let pointerDown = false;
+      let lastPointer = { x: 0, y: 0 };
+
+      // Utils
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+      function applyTransform() {
+        if (!viewerImage) return;
+        const { scale, translateX, translateY, rotation } = state;
+        viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${scale})`;
+      }
+      function resetState() { state = { scale: 1, translateX: 0, translateY: 0, rotation: 0 }; applyTransform(); }
+      function changeScale(delta) {
+        const prev = state.scale;
+        state.scale = clamp(state.scale + delta, MIN_SCALE, MAX_SCALE);
+        if (state.scale <= 1) { state.translateX = 0; state.translateY = 0; }
+        applyTransform();
+        if (Math.abs(state.scale - prev) > 0.001) {
+          viewerImage.style.transition = 'transform 160ms cubic-bezier(.2,.9,.25,1)';
+          setTimeout(() => viewerImage.style.transition = '', 170);
+        }
+      }
+      function rotate(delta) { state.rotation = (state.rotation + delta) % 360; applyTransform(); }
+
+      function fitToView() {
+        if (!viewerImage || !viewerViewport) return;
+        const imgW = viewerImage.naturalWidth || viewerImage.width;
+        const imgH = viewerImage.naturalHeight || viewerImage.height;
+        const vpRect = viewerViewport.getBoundingClientRect();
+        const vpW = Math.max(1, vpRect.width);
+        const vpH = Math.max(1, vpRect.height);
+        if (imgW === 0 || imgH === 0) { state.scale = 1; applyTransform(); return; }
+        const scaleX = vpW / imgW;
+        const scaleY = vpH / imgH;
+        const fitScale = Math.min(scaleX, scaleY, 1);
+        state.scale = clamp(fitScale, MIN_SCALE, MAX_SCALE);
+        state.translateX = 0;
+        state.translateY = 0;
+        state.rotation = 0;
+        applyTransform();
+      }
+
+      // Pointer handlers for pan/drag
+      function onPointerDown(e) {
+        if (e.button !== 0) return;
+        pointerDown = true;
+        lastPointer.x = e.clientX;
+        lastPointer.y = e.clientY;
+        try { e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId); } catch {}
+      }
+      function onPointerMove(e) {
+        if (!pointerDown) return;
+        if (state.scale <= 1) return;
+        const dx = e.clientX - lastPointer.x;
+        const dy = e.clientY - lastPointer.y;
+        lastPointer.x = e.clientX;
+        lastPointer.y = e.clientY;
+        state.translateX += dx;
+        state.translateY += dy;
+        applyTransform();
+      }
+      function onPointerUp(e) {
+        pointerDown = false;
+        try { e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId); } catch {}
+      }
+
+      // Wheel zoom
+      function onWheel(e) {
+        if (!viewerViewport.contains(e.target)) return;
+        e.preventDefault();
+        const delta = -Math.sign(e.deltaY) * SCALE_STEP;
+        changeScale(delta);
+      }
+
+      // Keyboard shortcuts inside modal
+      function onKeydown(e) {
+        if (!modalEl.classList.contains('show')) return;
+        if (e.key === '+' || e.key === '=') { e.preventDefault(); changeScale(SCALE_STEP); }
+        else if (e.key === '-' || e.key === '_') { e.preventDefault(); changeScale(-SCALE_STEP); }
+        else if (e.key === '0') { e.preventDefault(); resetState(); fitToView(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); state.translateX -= PAN_STEP; applyTransform(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); state.translateX += PAN_STEP; applyTransform(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); state.translateY -= PAN_STEP; applyTransform(); }
+        else if (e.key === 'ArrowDown') { e.preventDefault(); state.translateY += PAN_STEP; applyTransform(); }
+      }
+
+      // Open modal for a card with metadata
+      function openCertificateModal({ src = '', title = '', issued_to = '', id = '', date = '', description = '' } = {}) {
+        if (!modalEl || !viewerImage) return;
+        viewerImage.src = src || '';
+        viewerImage.alt = title || 'Certificate preview';
+        btnDownload && btnDownload.setAttribute('href', src || '#');
+        metaDownload && metaDownload.setAttribute('href', src || '#');
+        if (src) {
+          try {
+            const filename = (src.split('/').pop().split('?')[0]) || (id || 'certificate');
+            btnDownload && btnDownload.setAttribute('download', filename);
+            metaDownload && metaDownload.setAttribute('download', filename);
+          } catch (err) {}
+        } else {
+          btnDownload && btnDownload.removeAttribute('download');
+        }
+        metaTitle && (metaTitle.textContent = title || 'Certificate');
+        metaIssuer && (metaIssuer.textContent = (issued_to || '') + (date ? ' • ' + date : ''));
+        metaId && (metaId.textContent = id ? 'ID: ' + id : '');
+        metaDesc && (metaDesc.textContent = description || '');
+        viewerImage.onload = () => { resetState(); setTimeout(() => fitToView(), 60); };
+        if (bsModal) {
+          bsModal.show();
+          setTimeout(() => viewerViewport && viewerViewport.focus(), 220);
+        } else {
+          if (src) window.open(src, '_blank', 'noopener');
+        }
+      }
+
+      // Share current (from modal) or card
+      function shareCurrent(title) {
+        const url = window.location.href.split('#')[0];
+        if (navigator.share) {
+          navigator.share({ title: title || 'Certificate', text: title || '', url }).catch(() => {});
+        } else {
+          copyToClipboard(url);
+          showToast('Page link copied to clipboard');
+        }
+      }
+
+      // Copy utility and toast
+      function copyToClipboard(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          ta.remove();
+        }
+      }
+      function showToast(msg = 'Done', ms = 1200) {
+        const t = document.createElement('div');
+        t.textContent = msg;
+        Object.assign(t.style, {
+          position: 'fixed', left: '50%', bottom: '28px', transform: 'translateX(-50%)',
+          background: '#07122a', color: '#fff', padding: '8px 14px', borderRadius: '10px', zIndex: 1200, opacity: '0', transition: 'opacity .18s'
+        });
+        document.body.appendChild(t);
+        requestAnimationFrame(() => t.style.opacity = '1');
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 240); }, ms);
+      }
+
+      // Toggle overlay on mobile tap
+      function toggleMobileOverlay(card) {
+        const isShown = card.classList.toggle('overlay-mobile--visible');
+        const overlay = card.querySelector('.card-overlay');
+        if (overlay) overlay.style.pointerEvents = isShown ? 'auto' : 'none';
+      }
+
+      // Share card
+      function shareCard(card) {
+        if (!card) return;
+        const title = card.querySelector('.card-title')?.textContent || 'Certificate';
+        const certId = card.dataset.certId || '';
+        const url = window.location.href.split('#')[0] + '#cert-' + (certId || '');
+        if (navigator.share) {
+          navigator.share({ title, text: 'Check this certificate: ' + title, url }).catch(() => {});
+        } else {
+          copyToClipboard(url);
+          showToast('Link copied to clipboard');
+        }
+      }
+
+      // Wire events
+      function init() {
+        // Grid click delegation
+        certGrid && certGrid.addEventListener('click', (e) => {
+          const previewBtn = e.target.closest('.preview-btn');
+          const shareBtn = e.target.closest('.share-btn');
+          if (previewBtn) { e.stopPropagation(); const card = previewBtn.closest('.cert-card'); if (card) openCardPreview(card); return; }
+          if (shareBtn) { e.stopPropagation(); const card = shareBtn.closest('.cert-card'); if (card) shareCard(card); return; }
+          const card = e.target.closest('.cert-card');
+          if (card && window.matchMedia("(max-width: 991.98px)").matches) toggleMobileOverlay(card);
+        });
+
+        // Keyboard: Enter to preview, Escape to close overlays & modal
+        certGrid && certGrid.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const card = e.target.closest && e.target.closest('.cert-card');
+            if (card) openCardPreview(card);
+          } else if (e.key === 'Escape') {
+            document.querySelectorAll('.overlay-mobile--visible').forEach(c => {
+              c.classList.remove('overlay-mobile--visible');
+              const overlay = c.querySelector('.card-overlay');
+              if (overlay) overlay.style.pointerEvents = 'none';
+            });
+            if (bsModal) bsModal.hide();
+          }
+        });
+
+        // Modal controls
+        btnZoomIn && btnZoomIn.addEventListener('click', () => changeScale(SCALE_STEP));
+        btnZoomOut && btnZoomOut.addEventListener('click', () => changeScale(-SCALE_STEP));
+        btnReset && btnReset.addEventListener('click', () => { resetState(); fitToView(); });
+        btnFit && btnFit.addEventListener('click', fitToView);
+        btnRotateLeft && btnRotateLeft.addEventListener('click', () => rotate(-90));
+        btnRotateRight && btnRotateRight.addEventListener('click', () => rotate(90));
+        btnShare && btnShare.addEventListener('click', () => shareCurrent(metaTitle?.textContent));
+
+        // Pointer & wheel
+        viewerViewport && viewerViewport.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointermove', onPointerMove);
+        viewerViewport && viewerViewport.addEventListener('wheel', onWheel, { passive: false });
+
+        // Keyboard shortcuts when modal open
+        modalEl && modalEl.addEventListener('keydown', onKeydown);
+
+        // Clear image when modal closed
+        modalEl && modalEl.addEventListener('hidden.bs.modal', () => {
+          resetState();
+          if (viewerImage) { viewerImage.src = ''; viewerImage.alt = ''; }
+        });
+      }
+
+      // Open preview for a card
+      function openCardPreview(card) {
+        const img = card.querySelector('.card-media img');
+        const full = img?.dataset?.full || img?.src || '';
+        const title = card.querySelector('.card-title')?.textContent?.trim() || 'Certificate Preview';
+        const meta = (card.querySelector('.meta')?.textContent || '').trim();
+        const issued_to = meta.split('•')[0]?.trim() || '';
+        const date = meta.split('•')[1]?.trim() || '';
+        const id = card.dataset.certId || '';
+        const desc = card.querySelector('.overlay-desc')?.textContent?.trim() || '';
+        openCertificateModal({ src: full, title, issued_to, id, date, description: desc });
+      }
+
+      // Expose openCertificateModal globally
+      window.openCertificateModal = openCertificateModal;
+
+      // Initialize everything
+      init();
+    })();
+  </script>
 {% endblock content %}

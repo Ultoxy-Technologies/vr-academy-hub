@@ -57,11 +57,11 @@
           </li>
           <li><a id="awards-link" href="{% url 'awards' %}">Awards & recognition</a></li>
           <li><a id="trusted-broker-link" href="{% url 'trusted_broker' %}">Our trusted broker</a></li>
-          <li><a id="contact-link" href="#contact"></a></li>
+          <li><a id="about-link" href="{% url 'contact_us' %}">Contact Us</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
-      <a class="btn-getstarted" href="#about">Register Now</a>
+      <a class="btn-getstarted" href="{% url 'register_user' %}">Register Now</a>
     </div>
   </header>
 
@@ -152,6 +152,45 @@
   <!-- Main JS File -->
   <script src="{% static 'website/js/main.js' %}"></script>
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    {% for msg in messages %}
+        {% if msg.tags == 'success' %}
+        swal({
+          title: "Done !",
+          text: "{{msg}}",
+          icon: "success",
+          button: "OK",
+        });
+
+        {% elif msg.tags == 'error' %}
+        swal({
+          title: "Error",
+          text: "{{msg}}",
+          icon: "error",
+          button: "OK",
+        });
+         
+        {% elif msg.tags == 'warning' %}
+        swal({
+          title: "Warning",
+          text: "{{msg}}",
+          icon: "warning",
+          button: "OK",
+        });
+         
+        {% elif msg.tags == 'info' %}
+        swal({
+          title: "Oops",
+          text: "{{msg}}",
+          icon: "info",
+          button: "OK",
+        });
+         
+        {% endif %}
+    {% endfor %}
+</script>
+ 
 </body>
 
 </html>

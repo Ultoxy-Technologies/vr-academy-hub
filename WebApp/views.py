@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from AdminApp.models import PhotoGalleryCategories, PhotoGallery, VideoGallery
+from django.contrib import messages
+from AdminApp.models import Enquiry
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -14,6 +17,29 @@ def basic_to_advance(request):
 def advance_to_pro(request):
     return render(request, 'advance_to_pro.html')
 
+def contct_us(request):
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        email = request.POST.get("email", "").strip()
+        message = request.POST.get("message", "").strip()
+
+        # Basic validation
+        if not name or not phone or not email or not message:
+            messages.error(request, "All fields are required.")
+        else:
+            # Save to database
+            Enquiry.objects.create(
+                full_name=name,
+                phone=phone,
+                email=email,
+                message=message
+            )
+            messages.success(request, "Thank you! Your enquiry has been submitted.")
+            return redirect("/contact-us")  # redirect to the same page
+
+    return render(request, 'contct_us.html')
+ 
 
 def web_photos_gallary(request): 
     categories = PhotoGalleryCategories.objects.prefetch_related('photos').all()
@@ -60,3 +86,15 @@ def trusted_broker(request):
 # Contact Us page
 def contact(request):
     return render(request, 'contact.html')
+
+from .forms import CustomUserForm
+
+def register_user(request):
+    if request.method == 'POST':
+        form = CustomUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')  # redirect to login page after successful registration
+    else:
+        form = CustomUserForm()
+    return render(request, 'register.html', {'form': form})

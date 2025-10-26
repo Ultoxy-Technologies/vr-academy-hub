@@ -1,5 +1,3 @@
 from django.contrib import admin
 
 # Register your models here.
-
-from AdminApp.models import CustomUser, Enquiry
