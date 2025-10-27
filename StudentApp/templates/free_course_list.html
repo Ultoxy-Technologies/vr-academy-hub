@@ -1,0 +1,395 @@
+{% extends 'student_base.html' %}
+{% block title %} 
+{% endblock title %}
+{% load static %}
+{% block content %}
+ 
+</style>
+<main id="main" class="main">
+
+
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="pagetitle">
+                <h1>Free Courses </h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Free Courses </a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container" style="max-width:97%;">
+                <div class="text-lg-end text-start">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="courses-section">
+  <div class="container py-5">
+    <h2 class="section-title text-center mb-4">Available Free Courses</h2>
+
+    <div class="controls text-center mb-4">
+      <input class="search-input" type="search" placeholder="Search courses..." aria-label="Search courses" />
+    </div>
+
+    <div class="row g-4 course-grid">
+      {% for course in courses %}
+ 
+      <div class="col-sm-6 col-md-4">
+        <article class="card course-card" aria-labelledby="course-title-{{ course.id }}">
+          <a href="{% url 'free_course_video' course.id %}" class="thumbnail-link" aria-label="Watch {{ course.title }} video">
+            {% if course.thumbnail %}
+            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }} thumbnail" class="course-thumb" />
+            {% else %}
+            <div class="course-thumb placeholder">
+              <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" fill="currentColor"/>
+              </svg>
+            </div>
+            {% endif %}
+            <div class="thumb-overlay">
+              <svg class="play-icon-lg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" fill="currentColor"/>
+              </svg>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <h3 id="course-title-{{ course.id }}" class="card-title">{{ course.title }}</h3>
+            <p class="card-text">{{ course.description|truncatechars:120 }}</p>
+
+            <div class="meta">
+              {% if course.duration %}
+              <span class="meta-item" title="Duration">
+                <svg viewBox="0 0 24 24" class="meta-icon"><path d="M12 7v6l4 2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                {{ course.duration }}
+              </span>
+              {% endif %}
+              {% if course.level %}
+              <span class="meta-item" title="Level">
+                <svg viewBox="0 0 24 24" class="meta-icon"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z" fill="currentColor"/></svg>
+                {{ course.level }}
+              </span>
+              {% endif %}
+              {% if course.lessons_count %}
+              <span class="meta-item" title="Lessons">
+                <svg viewBox="0 0 24 24" class="meta-icon"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                {{ course.lessons_count }}
+              </span>
+              {% endif %}
+            </div>
+
+            {% if course.progress is not none %}
+            <div class="progress-wrap" aria-hidden="true">
+              <div class="progress-bar" style="--progress: {{ course.progress }}%"></div>
+            </div>
+            {% endif %}
+
+            <div class="actions mt-3">
+              <a href="{% url 'free_course_video' course.id %}" class="btn primary-btn" role="button">Watch Video</a>
+
+              {% if course.certificate_template %}
+              <a href="{% url 'download_certificate' course.id %}" class="btn outline-btn" role="button" title="Download certificate">
+                <svg viewBox="0 0 24 24" class="btn-icon"><path d="M12 2v20M5 7h14" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                Certificate
+              </a>
+              {% else %}
+              <span class="badge no-cert">No Certificate</span>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <p class="text-center text-muted">No courses available at the moment.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+:root{
+  /* Designed for transparent page background */
+  --card-bg: rgba(255,255,255,0.86);
+  --card-bg-2: rgba(255,255,255,0.7);
+  --glass-border: rgba(16,24,40,0.06);
+  --accent-1: #7c4dff;
+  --accent-2: #ffb86b;
+  --text: #0b1a2b;
+  --muted: #4e647a;
+  --radius: 14px;
+  --glass-blur: 6px;
+}
+
+.courses-section{
+  background: transparent; /* transparent as requested */
+  color: var(--text);
+  padding-top: 28px;
+  padding-bottom: 48px;
+}
+
+/* Section title */
+.section-title{
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* Search (optional) */
+.controls .search-input{
+  max-width: 520px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(16,24,40,0.06);
+  background: rgba(255,255,255,0.6);
+  color: var(--text);
+  outline: none;
+  box-shadow: 0 6px 18px rgba(20,30,40,0.06);
+}
+
+/* Grid spacing */
+.course-grid{
+  align-items: stretch;
+}
+
+/* Card */
+.course-card{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--card-bg), var(--card-bg-2));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  transition: transform .30s cubic-bezier(.2,.9,.2,1), box-shadow .30s;
+  box-shadow: 0 8px 22px rgba(14,24,34,0.06);
+  position: relative;
+}
+
+/* Hover lift */
+.course-card:hover{
+  transform: translateY(-8px);
+  box-shadow: 0 22px 48px rgba(14,24,34,0.12);
+}
+
+/* Thumbnail area */
+.thumbnail-link{
+  display:block;
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  background: linear-gradient(135deg,var(--accent-1),var(--accent-2));
+}
+
+.course-thumb{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition: transform .5s ease;
+  filter: contrast(0.95) saturate(1.02);
+}
+
+.thumbnail-link:hover .course-thumb{ transform: scale(1.04); }
+
+.course-thumb.placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  color: rgba(255,255,255,0.95);
+  font-weight:600;
+}
+
+/* play icons */
+.thumb-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.06) 100%);
+  opacity:0;
+  transition: opacity .22s;
+}
+
+.thumbnail-link:hover .thumb-overlay{ opacity:1; }
+
+.play-icon, .play-icon-lg{
+  width:28px;
+  height:28px;
+  color: rgba(255,255,255,0.95);
+}
+
+.play-icon-lg{
+  width:56px;
+  height:56px;
+  color: #fff;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18));
+}
+
+/* Card body */
+.card-body{
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+}
+
+.card-title{
+  margin:0;
+  font-size: 1.02rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.18;
+}
+
+.card-text{
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin:0;
+  flex: 0 0 auto;
+}
+
+/* Meta */
+.meta{
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+  flex-wrap:wrap;
+}
+.meta-item{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  color: var(--muted);
+  font-size:0.85rem;
+  background: rgba(16,24,40,0.02);
+  padding:6px 10px;
+  border-radius:999px;
+  border: 1px solid rgba(16,24,40,0.03);
+}
+.meta-icon{ width:14px; height:14px; color: var(--muted); }
+
+/* Progress */
+.progress-wrap{
+  height:8px;
+  background: rgba(16,24,40,0.03);
+  border-radius:999px;
+  margin-top:10px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  width: calc(var(--progress,0) * 1%);
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  transition: width .6s cubic-bezier(.2,.9,.2,1);
+}
+
+/* Actions */
+.actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:auto;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:600;
+  text-decoration:none;
+  cursor:pointer;
+  border: none;
+}
+
+/* Primary gradient button */
+.primary-btn{
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  color: #02121a;
+  box-shadow: 0 8px 20px rgba(124,77,255,0.12);
+  flex:1;
+  justify-content:center;
+}
+
+/* Outline for certificate */
+.outline-btn{
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(16,24,40,0.06);
+  padding:8px 10px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:10px;
+}
+
+.btn-icon{ width:16px; height:16px; color: var(--text); }
+
+/* Badge when no certificate */
+.badge.no-cert{
+  padding:6px 10px;
+  background: rgba(16,24,40,0.02);
+  border-radius:999px;
+  color: var(--muted);
+  font-weight:600;
+  border:1px solid rgba(16,24,40,0.03);
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px){
+  .thumbnail-link{ height: 140px; }
+  .actions{ flex-direction:column-reverse; gap:8px; }
+  .primary-btn{ width:100%; }
+}
+
+/* Subtle entrance animation */
+.course-card{
+  transform-origin: center bottom;
+  animation: floatIn .42s cubic-bezier(.2,.9,.2,1) both;
+}
+@keyframes floatIn{
+  from { opacity:0; transform: translateY(14px) scale(.996); }
+  to { opacity:1; transform: translateY(0) scale(1); }
+}
+</style>
+
+<script>
+/* Subtle tilt on pointer move for desktop (progressive enhancement) */
+(function(){
+  if (typeof window.PointerEvent === 'undefined') return;
+  document.querySelectorAll('.course-card').forEach(card=>{
+    let rect = null;
+    card.addEventListener('pointermove', (e)=>{
+      rect = rect || card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `translateY(-8px) rotateX(${(-y*3)}deg) rotateY(${x*4}deg)`;
+    });
+    card.addEventListener('pointerleave', ()=>{
+      card.style.transform = '';
+    });
+  });
+})();
+</script>
+
+</main><!-- End #main -->
+
+ 
+ 
+ 
+{% endblock content %}

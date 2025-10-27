@@ -29,12 +29,129 @@ Dashboard
             </div>
         </div>
     </div>
+<div class="dashboard-stats container my-4">
+  <div class="row text-center g-3">
+    <div class="col-md-3 col-6">
+      <div class="stat-card enrolled">
+        <div class="icon"><i class="bi bi-book"></i></div>
+        <h3>{{ total_courses }}</h3>
+        <p>Total Courses</p>
+      </div>
+    </div>
 
+    <div class="col-md-3 col-6">
+      <div class="stat-card bg-warning" >
+        <div class="icon"><i class="bi bi-clock-history"></i></div>
+        <h3>
+          {% if total_watch_hours >= 1 %}
+            {{ total_watch_hours }}h {{ total_watch_minutes|add:"-"|divisibleby:60 }}m
+          {% else %}
+            {{ total_watch_minutes }} min
+          {% endif %}</h3>
+        <p>Videos Watched</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card completed">
+        <div class="icon"><i class="bi bi-play-circle"></i></div>
+        <h3>{{ total_watched_videos }}</h3>
+        <p>Videos Watched</p>
+      </div>
+    </div>
 
+    <div class="col-md-3 col-6">
+      <div class="stat-card certificates">
+        <div class="icon"><i class="bi bi-award"></i></div>
+        <h3>{{ total_certificates }}</h3>
+        <p>Certificates Earned</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- End Page Title -->
+<style>
+    .dashboard-stats {
+  max-width: 900px;
+}
 
-   
+.stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem 1rem;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: 0.6s;
+}
+
+.stat-card:hover::before {
+  left: 125%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.85;
+}
+
+.stat-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+.stat-card p {
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Unique color glows for each card */
+.stat-card.enrolled {
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+}
+.stat-card.progress {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+}
+.stat-card.completed {
+  background: linear-gradient(135deg, #00bcd4, #26c6da);
+}
+.stat-card.certificates {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .stat-card h3 {
+    font-size: 1.4rem;
+  }
+  .stat-card .icon {
+    font-size: 1.6rem;
+  }
+}
+
+</style>
+
 
 </main><!-- End #main -->
 

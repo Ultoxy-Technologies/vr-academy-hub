@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery
+from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry
 
 
 
@@ -120,9 +120,22 @@ from django.utils.html import format_html
 from django.utils.timezone import localtime
 from .models import CustomUser
 
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
+from django.utils.timezone import localtime
+from django.contrib.auth.forms import AdminPasswordChangeForm
+from django.shortcuts import redirect
+from django.urls import path
+from django.template.response import TemplateResponse
+from django.contrib import messages
+from .models import CustomUser
+
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    change_password_form = AdminPasswordChangeForm  # ✅ Enable password change form
+
     # 🧩 List view configuration
     list_display = (
         'id',
@@ -131,29 +144,31 @@ class CustomUserAdmin(UserAdmin):
         'email_link',
         'location_info',
         'dob_display',
-        'is_active_colored',   # Styled column
-        'is_active',           # Actual field (for list_editable)
+        'is_active_colored',
+        'is_active',
         'date_joined_display',
     )
     list_display_links = ('id', 'name')
     ordering = ('-date_joined',)
     list_per_page = 20
-    search_fields = ('name', 'mobile_number', 'email', 'dist', 'village')
+    search_fields = ('name', 'mobile_number', 'email', 'dist', 'village', 'taluka')
     list_filter = ('is_active', 'dist', 'taluka', 'village', 'date_joined')
-
-    # ✅ Allow inline editing of is_active
     list_editable = ('is_active',)
+    readonly_fields = ('last_login', 'date_joined')
 
     # 🧠 Field organization
     fieldsets = (
         ('👤 Personal Information', {
-            'fields': ('username', 'name', 'dob', 'mobile_number', 'email')
+            'fields': ('name', 'dob', 'mobile_number', 'email', 'password')
         }),
         ('🏡 Location Details', {
             'fields': ('dist', 'taluka', 'village'),
         }),
+        ('📝 Additional Info', {
+            'fields': ('action',),
+        }),
         ('🔒 Permissions & Status', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('is_active', 'is_staff'),
         }),
         ('📅 Important Dates', {
             'classes': ('collapse',),
@@ -165,37 +180,36 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         ('👤 Basic Info', {
             'classes': ('wide',),
-            'fields': ('mobile_number', 'name', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
+            'fields': (
+                'mobile_number', 'name', 'email', 'password1', 'password2',
+                'dist', 'taluka', 'village', 'dob', 'action',
+                'is_active', 'is_staff'
+            ),
         }),
     )
 
-    readonly_fields = ('last_login', 'date_joined')
-
     # 🎨 Custom display functions
     def email_link(self, obj):
-        """Clickable email link"""
         if obj.email:
             return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
         return format_html('<span style="color:gray;">—</span>')
     email_link.short_description = "Email"
 
     def location_info(self, obj):
-        """Concise location summary"""
-        return f"{obj.village}, {obj.taluka}, {obj.dist}"
+        if obj.village or obj.taluka or obj.dist:
+            return f"{obj.village}, {obj.taluka}, {obj.dist}"
+        return "—"
     location_info.short_description = "Location"
 
     def dob_display(self, obj):
-        """Show formatted DOB"""
         return obj.dob.strftime('%d %b %Y') if obj.dob else "—"
     dob_display.short_description = "DOB"
 
     def date_joined_display(self, obj):
-        """Show formatted join date"""
         return localtime(obj.date_joined).strftime('%d %b %Y, %I:%M %p')
     date_joined_display.short_description = "Joined On"
 
     def is_active_colored(self, obj):
-        """Color-coded status"""
         color = "green" if obj.is_active else "red"
         text = "🟢 Active" if obj.is_active else "🔴 Inactive"
         return format_html('<span style="color:{}; font-weight:bold;">{}</span>', color, text)
@@ -226,7 +240,8 @@ class CustomUserAdmin(UserAdmin):
         writer = csv.writer(response)
         writer.writerow([
             'Name', 'Mobile', 'Email', 'District',
-            'Taluka', 'Village', 'DOB', 'Active', 'Date Joined'
+            'Taluka', 'Village', 'DOB', 'Action',
+            'Active', 'Date Joined'
         ])
         for obj in queryset:
             writer.writerow([
@@ -237,11 +252,49 @@ class CustomUserAdmin(UserAdmin):
                 obj.taluka,
                 obj.village,
                 obj.dob.strftime('%Y-%m-%d') if obj.dob else '',
+                obj.action or '',
                 'Yes' if obj.is_active else 'No',
                 obj.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
             ])
         return response
     export_selected_users.short_description = "⬇️ Export selected users to CSV"
+
+    # ⚙️ Password change page inside admin
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<id>/change-password/',
+                self.admin_site.admin_view(self.change_user_password),
+                name='customuser_change_password',
+            ),
+        ]
+        return custom_urls + urls
+
+    def change_user_password(self, request, id, form_url=''):
+        """Custom password change page"""
+        user = self.get_object(request, id)
+        if not user:
+            messages.error(request, "User not found.")
+            return redirect('..')
+
+        if request.method == 'POST':
+            form = self.change_password_form(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"Password for {user.name or user.mobile_number} changed successfully!")
+                return redirect('..')
+        else:
+            form = self.change_password_form(user)
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': f'Change password: {user.name or user.mobile_number}',
+            'form': form,
+            'opts': self.model._meta,
+            'original': user,
+        }
+        return TemplateResponse(request, 'admin/auth/user/change_password.html', context)
 
 
 # -----------------------------
@@ -366,3 +419,76 @@ class VideoGalleryAdmin(admin.ModelAdmin):
             )
         return "—"
     video_preview.short_description = "Preview"
+
+
+
+
+ 
+# ----------------------------
+# Inline for FreeCourseProgress
+# ----------------------------
+class FreeCourseProgressInline(admin.TabularInline):
+    model = FreeCourseProgress
+    extra = 0
+    readonly_fields = ('student', 'watched_duration', 'completed', 'completed_at', 'certificate_ready_display')
+    can_delete = False
+    verbose_name = "Student Progress"
+    verbose_name_plural = "Students Progress"
+
+    def certificate_ready_display(self, obj):
+        if obj.certificate_ready:
+            return format_html('<span style="color:green;">✔ Ready</span>')
+        return format_html('<span style="color:red;">✖ Not Ready</span>')
+    certificate_ready_display.short_description = "Certificate Status"
+
+# ----------------------------
+# FreeCourse Admin
+# ----------------------------
+@admin.register(FreeCourse)
+class FreeCourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at', 'video_file_link', 'certificate_file_link')
+    search_fields = ('title', 'description')
+    readonly_fields = ('created_at',)
+    inlines = [FreeCourseProgressInline]
+    list_filter = ('created_at',)
+
+    # Show video file as clickable link
+    def video_file_link(self, obj):
+        if obj.video:
+            return format_html('<a href="{}" target="_blank">View Video</a>', obj.video.url)
+        return "-"
+    video_file_link.short_description = "Video"
+
+    # Show certificate file as clickable link
+    def certificate_file_link(self, obj):
+        if obj.certificate_template:
+            return format_html('<a href="{}" target="_blank">View Certificate</a>', obj.certificate_template.url)
+        return "-"
+    certificate_file_link.short_description = "Certificate"
+
+# ----------------------------
+# FreeCourseProgress Admin
+# ----------------------------
+@admin.register(FreeCourseProgress)
+class FreeCourseProgressAdmin(admin.ModelAdmin):
+    list_display = ('student', 'course', 'watched_duration', 'completed', 'completed_at', 'certificate_ready_display')
+    list_filter = ('completed', 'course')
+    search_fields = ('student__name', 'course__title')
+    readonly_fields = ('watched_duration', 'completed_at', 'certificate_ready_display')
+    actions = ['mark_completed_action']
+
+    def certificate_ready_display(self, obj):
+        if obj.certificate_ready:
+            return format_html('<span style="color:green;">✔ Ready</span>')
+        return format_html('<span style="color:red;">✖ Not Ready</span>')
+    certificate_ready_display.short_description = "Certificate Status"
+
+    # Admin action to mark selected progress as completed
+    def mark_completed_action(self, request, queryset):
+        updated = 0
+        for progress in queryset:
+            if not progress.completed:
+                progress.mark_completed()
+                updated += 1
+        self.message_user(request, f"{updated} progress records marked as completed.")
+    mark_completed_action.short_description = "Mark selected as Completed"

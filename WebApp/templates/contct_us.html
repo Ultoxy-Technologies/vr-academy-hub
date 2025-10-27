@@ -5,7 +5,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     // Add 'active' class to the About Us link
-    document.getElementById("trusted-broker-link").classList.add("active");
+    document.getElementById("contact-link").classList.add("active");
   });
 </script>
 
@@ -22,150 +22,99 @@
         </nav>
       </div>
     </div><!-- End Page Title -->
+   <style>
+ 
 
-    <style> 
-   body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f7f9fc;
-      color: #212529;
-      padding: 40px 20px;
-    }
     .card {
       border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
+
     .brand-logo {
-      width: 60px; height: 60px;
-      border-radius: 12px;
+      width: 65px;
+      height: 65px;
+      border-radius: 14px;
       background: linear-gradient(135deg, #3f51b5, #5c6bc0);
       color: #fff;
       font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(63, 81, 181, 0.4);
     }
-    .info-item i {
-      color: #3f51b5;
-      font-size: 1.3rem;
-      margin-right: 10px;
-    }
-    .info-item strong { display: block; }
+
     .form-control:focus {
       border-color: #3f51b5;
       box-shadow: 0 0 0 0.2rem rgba(63,81,181,0.15);
     }
+
     .btn-primary {
-      background-color: #3f51b5;
-      border-color: #3f51b5;
+      background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+      border: none;
     }
+
     .btn-primary:hover {
-      background-color: #303f9f;
+      background: linear-gradient(135deg, #303f9f, #5c6bc0);
     }
-    .text-muted small { font-size: 0.9rem; }
 
     .info-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background-color: #fff;
-}
-.info-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
+      transition: all 0.25s ease;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
+      border: 1px solid rgba(63, 81, 181, 0.1);
+    }
 
+    .info-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(63, 81, 181, 0.15);
+    }
 
-.icon-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-.btn i {
-  font-size: 0.9rem;
-}
-</style>
-<div class="container-lg mt-4 mb-4">
+    .info-card h6 {
+      color: #3f51b5;
+      font-weight: 600;
+    }
+
+    .info-card iframe {
+      border-radius: 10px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    }
+
+    h4, h5, h6 {
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-weight: 700;
+      color: #3f51b5;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title i {
+      margin-right: 8px;
+    }
+  </style>
+
+  <div class="container-lg mt-4 mb-5">
   <div class="row g-4 align-items-stretch">
     <!-- LEFT SIDE -->
     <div class="col-lg-7 d-flex flex-column">
       <div class="card mb-4 flex-fill">
         <div class="card-body">
-          <div class="d-flex align-items-center mb-3">
-            <div class="brand-logo bg-primary text-white d-flex justify-content-center align-items-center rounded fs-5 fw-bold" style="width:60px;height:60px;">VR</div>
+          <div class="d-flex align-items-center mb-4">
+            <div class="brand-logo">VR</div>
             <div class="ms-3">
               <h4 class="mb-0 fw-bold">VR Training Academy</h4>
               <small class="text-muted">Professional VR Training & Workshops — Shirdi</small>
             </div>
           </div>
 
-          <!-- INFO BOXES -->
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="info-card p-3 border rounded shadow-sm h-100 d-flex align-items-start">
-                <div class="me-3 text-primary fs-4">
-                  <i class="bi bi-geo-alt-fill"></i>
-                </div>
-                <div>
-                  <strong class="d-block">Airport Rd, near Kimaya Garden</strong>
-                  <small class="text-muted">Shirdi, Maharashtra 423109</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="info-card p-3 border rounded shadow-sm h-100 d-flex align-items-start">
-                <div class="me-3 text-primary fs-4">
-                  <i class="bi bi-envelope-fill"></i>
-                </div>
-                <div>
-                  <strong class="d-block">
-                    <a href="mailto:vrtrainingacademy@gmail.com" class="text-decoration-none text-dark">
-                      vrtrainingacademy@gmail.com
-                    </a>
-                  </strong>
-                  <small class="text-muted">General Enquiries</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="info-card p-3 border rounded shadow-sm h-100 d-flex align-items-start">
-                <div class="me-3 text-primary fs-4">
-                  <i class="bi bi-telephone-fill"></i>
-                </div>
-                <div>
-                  <strong class="d-block">
-                    <a href="tel:+919970360424" class="text-decoration-none text-dark">+91 99703 60424</a>
-                  </strong>
-                  <small class="text-muted">Primary</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="info-card p-3 border rounded shadow-sm h-100 d-flex align-items-start">
-                <div class="me-3 text-success fs-4">
-                  <i class="bi bi-whatsapp"></i>
-                </div>
-                <div>
-                  <strong class="d-block">
-                    <a href="tel:+919270201760" class="text-decoration-none text-dark">+91 92702 01760</a>
-                  </strong>
-                  <small class="text-muted">Alternate / WhatsApp</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ENQUIRY FORM CARD -->
-      <div class="card flex-fill">
-        <div class="card-body">
-          <h5 class="card-title fw-bold mb-3">Enquiry Form</h5>
-          <p class="text-muted">Fill out the form below and we’ll respond within one business day.</p>
+          <p class="text-muted mb-4">Fill out the form below and we’ll respond within one business day.</p>
 
           <form id="enquiryForm" method="post" novalidate>
             {% csrf_token %}
@@ -173,12 +122,12 @@
               <div class="col-md-6">
                 <label for="name" class="form-label">Full Name *</label>
                 <input type="text" id="name" name="name" class="form-control" required>
-                <div class="invalid-feedback">Please enter your name.</div>
+                <div class="invalid-feedback">Please enter your full name.</div>
               </div>
               <div class="col-md-6">
                 <label for="phone" class="form-label">Mobile *</label>
-                <input type="tel" id="phone" name="phone" class="form-control" pattern="^[0-9]{10,15}$" required>
-                <div class="invalid-feedback">Enter a valid phone number (10–15 digits).</div>
+                <input type="tel" id="phone" name="phone" class="form-control" pattern="^[0-9]{10}$" required>
+                <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
               </div>
             </div>
 
@@ -195,67 +144,163 @@
             </div>
 
             <div class="d-flex gap-2 mt-4">
-              <button type="submit" class="btn btn-primary px-4">Send Enquiry</button>
+              <button type="submit" class="btn btn-primary px-4 shadow-sm">Send Enquiry</button>
               <button type="reset" class="btn btn-outline-secondary">Reset</button>
             </div>
           </form>
-
         </div>
       </div>
     </div>
 
-    <!-- RIGHT SIDE -->
+    <!-- RIGHT SIDE CONTACT DETAILS -->
     <div class="col-lg-5 d-flex flex-column">
-      <div class="card flex-fill mb-4">
-        <div class="ratio ratio-4x3">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3755.895861161986!2d74.40943911115728!3d19.717057331457738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdc59cd1b88b7bb%3A0x8b2684e76050ae0d!2sVR%20Training%20Academy!5e0!3m2!1sen!2sin!4v1761439330375!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="card flex-fill border-0 shadow-sm">
+        <div class="card-body">
+          <h5 class="section-title"><i class="bi bi-person-lines-fill"></i> Contact Information</h5>
+
+          <div class="info-card p-3 mb-3 d-flex align-items-start">
+            <div class="me-3 text-primary fs-4">
+              <i class="bi bi-geo-alt-fill"></i>
+            </div>
+            <div>
+              <strong>Airport Rd, near Kimaya Garden</strong><br>
+              <small class="text-muted">Shirdi, Maharashtra 423109</small>
+            </div>
+          </div>
+
+          <div class="info-card p-3 mb-3 d-flex align-items-start">
+            <div class="me-3 text-primary fs-4">
+              <i class="bi bi-envelope-fill"></i>
+            </div>
+            <div>
+              <strong><a href="mailto:vrtrainingacademy@gmail.com" class="text-decoration-none text-dark">
+                vrtrainingacademy@gmail.com
+              </a></strong>
+              <small class="text-muted d-block">General Enquiries</small>
+            </div>
+          </div>
+
+          <div class="info-card p-3 mb-3 d-flex align-items-start">
+            <div class="me-3 text-primary fs-4">
+              <i class="bi bi-telephone-fill"></i>
+            </div>
+            <div>
+              <strong><a href="tel:+919970360424" class="text-decoration-none text-dark">+91 99703 60424</a></strong>
+              <small class="text-muted d-block">Primary Contact</small>
+            </div>
+          </div>
+
+          <div class="info-card p-3 d-flex align-items-start">
+            <div class="me-3 text-success fs-4">
+              <i class="bi bi-whatsapp"></i>
+            </div>
+            <div>
+              <strong><a href="tel:+919270201760" class="text-decoration-none text-dark">+91 92702 01760</a></strong>
+              <small class="text-muted d-block">Alternate / WhatsApp</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRANCH DETAILS SECTION -->
+  <div class="mt-5">
+    <h5 class="section-title mb-1"><i class="bi bi-building"></i> Our Branches</h5>
+
+    <div class="row g-4">
+      <!-- Branch 1 -->
+      <div class="col-md-6">
+        <div class="info-card p-3 h-100">
+          <h6>VR TRAINING ACADEMY — Branch No. 1</h6>
+          <p class="mb-2 small text-muted">Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</p>
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-telephone-fill text-primary me-2"></i>
+            <a href="tel:+919970360424" class="text-decoration-none text-dark small">+91 99703 60424</a>
+          </div>
+          <div class="ratio ratio-16x9">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3755.895861161986!2d74.40943911115728!3d19.717057331457738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdc59cd1b88b7bb%3A0x8b2684e76050ae0d!2sVR%20Training%20Academy!5e0!3m2!1sen!2sin!4v1761439330375!5m2!1sen!2sin"
+              style="border:0;" allowfullscreen loading="lazy"></iframe>
+          </div>
         </div>
       </div>
 
-      <!-- QUICK ACTIONS CARD -->
-      <div class="card flex-fill border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-            <div>
-              <h5 class="fw-bold mb-1 text-primary"><i class="bi bi-lightning-charge-fill me-2"></i>Quick Actions</h5>
-              <small class="text-muted">Get in touch instantly</small>
-            </div>
-            <div class="d-flex gap-2 mt-2 mt-sm-0">
-              <a href="tel:+919970360424" class="btn btn-primary btn-sm d-flex align-items-center">
-                <i class="bi bi-telephone-fill me-1"></i> Call
-              </a>
-              <a href="mailto:vrtrainingacademy@gmail.com" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
-                <i class="bi bi-envelope-fill me-1"></i> Email
-              </a>
-            </div>
+      <!-- Branch 2 -->
+      <div class="col-md-6">
+        <div class="info-card p-3 h-100">
+          <h6>VR TRAINING ACADEMY — Branch No. 2</h6>
+          <p class="mb-2 small text-muted">The Grand Center, UG-18, Pune Nashik Highway, Chakan</p>
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-telephone-fill text-primary me-2"></i>
+            <a href="tel:+918888888888" class="text-decoration-none text-dark small">+91 88888 88888</a>
           </div>
-
-          <div class="bg-light rounded p-3 mb-3">
-            <div class="d-flex align-items-center mb-2">
-              <div class="icon-circle bg-primary-subtle text-primary me-3">
-                <i class="bi bi-telephone-fill"></i>
-              </div>
-              <div>
-                <div class="fw-bold">+91 99703 60424</div>
-                <small class="text-muted">Primary Contact</small>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-success-subtle text-success me-3">
-                <i class="bi bi-whatsapp"></i>
-              </div>
-              <div>
-                <div class="fw-bold">+91 92702 01760</div>
-                <small class="text-muted">Alternate / WhatsApp</small>
-              </div>
-            </div>
+          <div class="ratio ratio-16x9">
+            <!-- Replace src below with your actual Google Map embed link -->
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.263205894717!2d73.84973!3d18.75864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
+              style="border:0;" allowfullscreen loading="lazy"></iframe>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 </div>
- 
+
+          <!-- ✅ Client-side Validation Script -->
+          <script>
+          document.getElementById('enquiryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let valid = true;
+
+            // Name validation – at least two words
+            const nameField = document.getElementById('name');
+            const nameValue = nameField.value.trim();
+            if (!/^[A-Za-z]+(\s+[A-Za-z]+)+$/.test(nameValue)) {
+              nameField.classList.add('is-invalid');
+              valid = false;
+            } else {
+              nameField.classList.remove('is-invalid');
+            }
+
+            // Mobile number validation – exactly 10 digits
+            const phoneField = document.getElementById('phone');
+            const phoneValue = phoneField.value.trim();
+            if (!/^\d{10}$/.test(phoneValue)) {
+              phoneField.classList.add('is-invalid');
+              valid = false;
+            } else {
+              phoneField.classList.remove('is-invalid');
+            }
+
+            // Email validation – standard email format
+            const emailField = document.getElementById('email');
+            const emailValue = emailField.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailValue)) {
+              emailField.classList.add('is-invalid');
+              valid = false;
+            } else {
+              emailField.classList.remove('is-invalid');
+            }
+
+            // Message validation
+            const messageField = document.getElementById('message');
+            const messageValue = messageField.value.trim();
+            if (messageValue.length < 3) {
+              messageField.classList.add('is-invalid');
+              valid = false;
+            } else {
+              messageField.classList.remove('is-invalid');
+            }
+
+            // If all valid → submit
+            if (valid) {
+              this.submit();
+            }
+          });
+          </script>
+
+
+
 {% endblock content %}

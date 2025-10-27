@@ -1,0 +1,229 @@
+{% extends 'student_base.html' %}
+{% block title %}
+Free Course Video
+{% endblock title %}
+{% load static %}
+{% block content %}
+ 
+</style>
+<main id="main" class="main">
+
+
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="pagetitle">
+                <h1>Free Course Video  </h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Free Course Video </a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container" style="max-width:97%;">
+                <div class="text-lg-end text-start">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-4">
+      <div class="course-card mx-auto p-3">
+        <h2 class="fw-semibold text-gradient mb-2 text-center">{{ course.title }}</h2>
+        <p class="text-muted text-center small mb-3">{{ course.description }}</p>
+
+        <div class="video-container">
+          <video id="courseVideo" class="video-player" controls>
+            <source src="{{ course.video.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="{% url 'download_certificate' course.id %}" 
+            class="btn btn-modern" 
+            id="downloadBtn" 
+            {% if not progress.certificate_ready %}disabled{% endif %}>
+            {% if progress.certificate_ready %}
+              Download Certificate
+            {% else %}
+              🎓 Watch full video to download certificate
+            {% endif %}
+          </a>
+        </div>
+
+        <div class="mt-3">
+          <div class="progress" style="height: 18px; border-radius: 10px;">
+            <div id="progressBar" 
+                class="progress-bar progress-bar-striped progress-bar-animated" 
+                role="progressbar" 
+                style="width:0%;" 
+                aria-valuenow="0" 
+                aria-valuemin="0" 
+                aria-valuemax="100"></div>
+          </div>
+          <small id="progressText" class="text-muted d-block text-center mt-1"></small>
+        </div>
+      </div>
+</div>
+
+<style>
+/* ========== CLEAN MODERN DESIGN ========== */
+body {
+  background: linear-gradient(135deg, #e0e2ff, #fff0dc);
+  background-attachment: fixed;
+  color: #fff;
+}
+
+.course-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 720px;
+}
+
+/* Title gradient */
+.text-gradient {
+  background: linear-gradient(90deg, #ffb300, #3f51b5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Video styling */
+.video-container {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+.video-player {
+  width: 100%;
+  max-height: 1000px;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  border: none;
+  outline: none;
+}
+
+/* Button */
+.btn-modern {
+  background: #4caf50;
+  border: none;
+  color: white;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+.btn-modern:hover {
+  background: #43a047;
+  transform: translateY(-1px);
+}
+
+/* Progress */
+.progress-bar {
+  transition: width 0.4s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .course-card {
+    padding: 1rem;
+  }
+  .video-player {
+    max-height: 300px;
+  }
+}
+</style>
+<script>
+const video = document.getElementById("courseVideo");
+const downloadBtn = document.getElementById("downloadBtn");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+let lastSentTime = 0;
+let savingInterval;
+let lastTime = 0; // 👈 store last valid position
+
+// Resume video from last saved progress
+video.addEventListener("loadedmetadata", function() {
+  const resumeTime = {{ progress.watched_duration|default:0 }};
+  if (resumeTime > 0 && resumeTime < video.duration) {
+    video.currentTime = resumeTime;
+  }
+  lastTime = video.currentTime; // initialize
+});
+
+// Prevent skipping forward
+video.addEventListener("seeking", function() {
+  if (video.currentTime > lastTime + 1) {
+    video.currentTime = lastTime; // revert if user tries to skip ahead
+  }
+});
+
+// Update progress normally
+video.addEventListener("timeupdate", function() {
+  const current = Math.floor(video.currentTime);
+  const total = Math.floor(video.duration);
+  const percent = (current / total) * 100;
+
+  progressBar.style.width = percent + "%";
+  progressText.textContent = `Watched: ${current}s / ${total}s (${percent.toFixed(1)}%)`;
+
+  // allow moving forward only through natural playback
+  if (current > lastTime) lastTime = current;
+});
+
+// Start interval when video plays
+video.addEventListener("play", function() {
+  savingInterval = setInterval(saveProgress, 5000);
+});
+
+// Stop interval when paused or ended
+video.addEventListener("pause", function() {
+  clearInterval(savingInterval);
+});
+video.addEventListener("ended", function() {
+  clearInterval(savingInterval);
+  saveProgress(true); // final save
+});
+
+// Function to send progress
+function saveProgress(final = false) {
+  const watched_seconds = Math.floor(video.currentTime);
+  const video_duration = Math.floor(video.duration);
+
+  if (watched_seconds <= lastSentTime && !final) return;
+  lastSentTime = watched_seconds;
+
+  fetch("", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": "{{ csrf_token }}",
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `watched_seconds=${watched_seconds}&video_duration=${video_duration}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.completed) {
+      downloadBtn.disabled = false;
+      downloadBtn.classList.remove("btn-secondary");
+      downloadBtn.classList.add("btn-success");
+      downloadBtn.textContent = "Download Certificate";
+    }
+  });
+}
+</script>
+
+</main><!-- End #main -->
+
+ 
+ 
+ 
+{% endblock content %}

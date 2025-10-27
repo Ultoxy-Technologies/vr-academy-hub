@@ -14041,7 +14041,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
-                        <h6>{{user.first_name}} {{user.last_name}}</h6>
+                        <h6>{{request.user}}</h6>
                         <span>Student </span>
                     </li>
                     <li>
@@ -14068,20 +14068,20 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{% url 'student_dashboard' %}">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{% url 'free_course_list' %}">
                 <i class="bi bi-mortarboard"></i>
-                <span>Courses</span>
+                <span>Free Courses</span>
             </a>
         </li>  
 
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{% url 'certificate_list' %}">
                 <i class="bi bi-award"></i>
                 <span>Certificates</span>
             </a>
@@ -14106,10 +14106,10 @@
         </div>
         <div class="modal-body text-left">
           <!-- ======= Note :- This space is for only note....   ======= --> <br>
-          <h5>Are you sure to Sign Out <b>"{{user.username}}"</b></h5>
+          <h5>Are you sure to Sign Out <b>"{{request.user}}"</b></h5>
         </div>
         <div class="modal-footer">
-          <a href=" " class="btn btn-danger px-3 ">Yes</a> &nbsp;
+          <a href="{% url 'logout' %}" class="btn btn-danger px-3 ">Yes</a> &nbsp;
           <button  type="button" class="btn btn-secondary bgcolor px-3" data-dismiss="modal">No</button>
         </div>
       </div>

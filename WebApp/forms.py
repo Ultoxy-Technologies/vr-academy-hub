@@ -1,9 +1,7 @@
 from django import forms
 from AdminApp.models import CustomUser
-
-
-from django import forms
 from django.core.exceptions import ValidationError
+
 
 class CustomUserForm(forms.ModelForm):
     password = forms.CharField(
@@ -18,13 +16,12 @@ class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'username',
             'name',
             'dob',
             'dist',
             'taluka',
             'village',
-            'mobile_number',
+            'mobile_number', 
             'email',
             'password',
         ]
@@ -69,7 +66,6 @@ class CustomUserForm(forms.ModelForm):
 
         if password and password_confirm and password != password_confirm:
             self.add_error("password_confirm", "Passwords do not match.")
-
         return cleaned_data
 
     def save(self, commit=True):
@@ -81,3 +77,38 @@ class CustomUserForm(forms.ModelForm):
             user.save()
         return user
 
+ 
+from django.contrib.auth import authenticate 
+
+class CustomUserLoginForm(forms.Form):
+    mobile_number = forms.CharField(
+        max_length=15,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter Mobile Number',
+            'class': 'form-control'
+        }),
+        label="Mobile Number"
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Enter Password',
+            'class': 'form-control'
+        }),
+        label="Password"
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        mobile_number = cleaned_data.get('mobile_number')
+        password = cleaned_data.get('password')
+
+        if mobile_number and password:
+            # Authenticate user
+            user = authenticate(mobile_number=mobile_number, password=password)
+            if not user:
+                raise forms.ValidationError("Invalid mobile number or password.")
+            elif not user.is_active:
+                raise forms.ValidationError("This account is inactive.")
+            
+            cleaned_data['user'] = user  # store user for later use
+        return cleaned_data

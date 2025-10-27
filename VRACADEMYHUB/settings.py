@@ -128,6 +128,7 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'AdminApp.CustomUser'
+LOGIN_URL = '/login'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -147,8 +148,6 @@ MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-LOGIN_URL = '/accounts/login/'
-
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
  
@@ -156,3 +155,43 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "VR ACADEMY HUB",
+    "site_header": "VR ACADEMY HUB",
+    "site_brand": "VR ACADEMY HUB",
+    "welcome_sign": "Welcome to VR ACADEMY HUB Dashboard",
+    "copyright": "© 2025 VR Training Academy",
+
+    # Optional — customize logo & icons
+    "site_logo": "website/img/logo.png",  # path inside STATIC files
+    "login_logo": "website/img/logo-for-admin-login.png",
+    "site_logo_classes": "img-circle",
+    "site_icon": None,
+
+    # Optional — change background/theme colors
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "AdminApp"},  # example
+    ],
+
+    # Side menu
+    "show_sidebar": True,
+    "navigation_expanded": True, 
+
+    # UI tweaks
+    "theme": "pulse",  # You can try: flatly, pulse, cyborg, solar, etc.
+    "custom_css": None,
+    "custom_js": None,
+}
+
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark bg-primary",
+    "accent": "accent-primary",
+    "theme": "pulse",
+}

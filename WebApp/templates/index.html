@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
-      <a href="#about" class="btn-get-started">Get Started</a>
+      <a href="{% url 'register_user' %}" class="btn-get-started">Get Started</a>
     </div>
 
  
@@ -1474,7 +1474,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         to succeed in the global forex market. Sign up in just 5 minutes, 
         access a <strong>free demo course</strong>, and start trading with confidence!
       </p>
-      <button class="cta-btn">Join Now</button>
+      <a href="{% url 'register_user' %}" class="cta-btn">Join Now</a>
       <div class="sub-text">No credit card required • Free lifetime demo</div>
     </div>
   </section>

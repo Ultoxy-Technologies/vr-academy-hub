@@ -6,6 +6,7 @@ from AdminApp.models import Enquiry
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
+
 def about_us(request):
     return render(request, 'about_us.html')
 
@@ -87,14 +88,37 @@ def trusted_broker(request):
 def contact(request):
     return render(request, 'contact.html')
 
-from .forms import CustomUserForm
+from .forms import CustomUserForm, CustomUserLoginForm
+from django.contrib.auth import login
 
 def register_user(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Registration successful. You can now log in.")   
             return redirect('/')  # redirect to login page after successful registration
     else:
         form = CustomUserForm()
     return render(request, 'register.html', {'form': form})
+
+def login_user(request):
+    if request.method == "POST":
+        form = CustomUserLoginForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data['user']
+            login(request, user)
+            messages.success(request, "Login successful.")
+            return redirect('/student/dashboard')  # or any page
+        else:
+            messages.error(request, "Invalid mobile number or password.")
+    else:
+        form = CustomUserLoginForm()
+    
+    return render(request, 'login.html',{'form': form})
+
+from django.contrib.auth import logout as DeleteSession
+
+def logout(request):
+    DeleteSession(request)
+    return redirect('/login')

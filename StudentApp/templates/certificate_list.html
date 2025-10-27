@@ -1,0 +1,106 @@
+{% extends 'student_base.html' %}
+{% block title %}
+Free Course Video
+{% endblock title %}
+{% load static %}
+{% block content %}
+ 
+</style>
+<main id="main" class="main">
+
+
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="pagetitle">
+                <h1>Certificates </h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">My Certificates </a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container" style="max-width:97%;">
+                <div class="text-lg-end text-start">
+
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+
+
+
+<div class="container">
+  <h2 class="text-center fw-bold mb-4">🎓 My Certificates</h2>
+
+  {% if progress_list %}
+    <div class="row g-4">
+      {% for progress in progress_list %}
+        <div class="col-md-4 col-sm-6">
+          <div class="certificate-card h-100">
+            {% if progress.course.thumbnail %}
+              <img src="{{ progress.course.thumbnail.url }}" alt="{{ progress.course.title }}" class="certificate-thumb">
+            {% else %}
+              <img src="{% static 'default-thumbnail.jpg' %}" alt="No Thumbnail" class="certificate-thumb">
+            {% endif %}
+
+            <div class="certificate-info text-center">
+              <h5 class="text-primary fw-semibold">{{ progress.course.title }}</h5>
+              <p class="small text-muted mb-2">Completed on {{ progress.completed_at|date:"M d, Y" }}</p>
+
+              {% if progress.certificate_ready %}
+                <a href="{% url 'download_certificate' progress.course.id %}" class="btn btn-success btn-download">
+                  Download Certificate
+                </a>
+              {% else %}
+                <button class="btn btn-secondary btn-download" disabled>Not Available</button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-light mt-5">You haven’t completed any courses yet.</p>
+  {% endif %}
+</div>
+<style> 
+    .certificate-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(230, 230, 230, 0.8);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .certificate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+    }
+    .certificate-thumb {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .certificate-info {
+      padding: 15px;
+    }
+    .btn-download {
+      border-radius: 25px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .btn-download:hover {
+      transform: scale(1.05);
+    }
+  </style>
+
+</main><!-- End #main -->
+
+ 
+ 
+ 
+{% endblock content %}

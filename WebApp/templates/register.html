@@ -1,23 +1,448 @@
 {% extends "website_base.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 {% block content %}
- 
- <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header text-center bg-primary text-white">
-            <h3>Create Staff Account</h3>
+  
+ {% load crispy_forms_tags %}
+<!-- Staff create template
+     - Labels placed above inputs for maximum readability
+     - High-contrast text inside inputs
+     - Responsive layout using Bootstrap grid classes
+     - Decorative transparent PNG placed as an absolutely-positioned <img> behind the card (lazy-loaded)
+     - No client-side validation or extra JS except a lightweight Show/Hide password toggle
+     - No body styles are touched
+-->
+<style>
+/* Decorative transparent PNG behind the card */
+.container.position-relative .decorative-deco-1 {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    opacity: 0.12;
+    z-index: 0;               /* behind the card */
+    pointer-events: none;
+    user-select: none;
+}
+
+
+.container.position-relative .decorative-deco-2 {
+    position: absolute;
+    top: 150px;
+    left: -18px;
+
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    opacity: 0.12;
+    z-index: 0;               /* behind the card */
+    pointer-events: none;
+    user-select: none;
+}
+
+
+/* Hide decorative image on very small screens */
+@media (max-width: 575.98px) {
+    .container.position-relative .decorative-deco-1 {
+        display: none;
+    }
+    .container.position-relative .decorative-deco-2 {
+        display: none;
+    }
+}
+
+/* Card */
+.form-card {
+    background: rgba(255,255,255,0.98); /* near-opaque for best contrast */
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+    z-index: 1; /* above the decorative image */
+    margin: 1.25rem auto;
+    overflow: hidden;
+}
+
+/* Card header */
+.card-header {
+    background: linear-gradient(90deg, rgba(63,81,181,0.95), rgba(0, 162, 211, 0.95));
+    color: #fff;
+    padding: 0.9rem 1rem;
+    text-align: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+/* Card body spacing */
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Form labels above inputs (consistent and readable) */
+.form-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #222;
+    margin-bottom: 0.35rem;
+}
+
+/* Generic input/select/textarea styles inside the card
+   These styles will apply even if server-rendered inputs don't include 'form-control' class.
+*/
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(34,34,34,0.12);
+    background: #fff;
+    color: #111;
+    font-size: 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-card input::placeholder,
+.form-card textarea::placeholder {
+    color: rgba(34,34,34,0.35);
+}
+
+/* Focus state */
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    outline: none;
+    border-color: #3f51b5;
+    box-shadow: 0 6px 18px rgba(63,81,181,0.08);
+}
+
+/* Error text */
+.errorlist,
+.text-danger {
+    color: #b00020;
+    font-size: 0.875rem;
+    margin-top: 0.35rem;
+}
+
+/* Submit button */
+.btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(90deg,#3f51b5,rgba(0, 162, 211, 0.95));
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(63,81,181,0.12);
+    cursor: pointer;
+}
+
+/* Make button full width on small screens */
+@media (max-width: 576px) {
+    .btn-modern { width: 100%; justify-content: center; }
+    .form-card {   }
+}
+
+/* Password wrapper for toggle */
+.password-wrapper {
+    position: relative;
+}
+
+/* Toggle button */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #3f51b5;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+/* Small tweaks for responsiveness on narrow forms */
+@media (max-width: 420px) {
+    .form-label { font-size: 0.88rem; }
+    .form-card input, .form-card select, .form-card textarea { padding: 0.55rem 0.75rem; font-size: 0.92rem; }
+}
+</style>
+
+<div class="container position-relative py-4">
+    <!-- Decorative PNG (behind the card) -->
+    <img class="decorative-deco-1" src="https://img.freepik.com/premium-vector/business-plan-icon-3d-illustration-from-business-plan-collection-creative-business-plan-3d-icon-web-design-templates-infographics-more_676904-320.jpg?w=360" alt="" aria-hidden="true" loading="lazy">
+    <img class="decorative-deco-2" src="https://img.freepik.com/premium-vector/online-test-icon-3d-illustration-from-elearning-collection-creative-online-test-3d-icon-web-design-templates-infographics-more_676904-727.jpg" alt="" aria-hidden="true" loading="lazy">
+
+    <div class="form-card card border-0">
+        <div class="card-header">
+            <h3 style="color: #fff;"><i class="bi bi-person-circle me-2" aria-hidden="true" ></i>Create Student Account</h3>
         </div>
-        <div class="card-body p-4">
+
+        <div class="card-body">
             <form method="POST" novalidate>
                 {% csrf_token %}
-                {{ form|crispy }}
-                <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary w-50">Register</button>
+                <div class="row g-3">
+                    <!-- Full Name -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_name">Full Name</label>
+                        {{ form.name }}
+                        {% for error in form.name.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_dob">Date of Birth</label>
+                        {{ form.dob }}
+                        {% for error in form.dob.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- District -->
+                    <div class="col-md-4">
+                        <label class="form-label" for="id_dist">District</label>
+                        {{ form.dist }}
+                        {% for error in form.dist.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Taluka -->
+                    <div class="col-md-4">
+                        <label class="form-label" for="id_taluka">Taluka</label>
+                        {{ form.taluka }}
+                        {% for error in form.taluka.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Village -->
+                    <div class="col-md-4">
+                        <label class="form-label" for="id_village">Village</label>
+                        {{ form.village }}
+                        {% for error in form.village.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Mobile Number -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_mobile_number">Mobile Number</label>
+                        {{ form.mobile_number }}
+                        {% for error in form.mobile_number.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_email">Email Address</label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_password">Password</label>
+                        <div class="password-wrapper">
+                            {{ form.password }}
+                            <button type="button" class="password-toggle" aria-label="Show password" title="Show password">Show</button>
+                        </div>
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_password_confirm">Confirm Password</label>
+                        <div class="password-wrapper">
+                            {{ form.password_confirm }}
+                            <button type="button" class="password-toggle" aria-label="Show password" title="Show password">Show</button>
+                        </div>
+                        {% for error in form.password_confirm.errors %}
+                            <div class="text-danger small" role="alert">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn-modern" aria-label="Register Account">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        Register Account
+                    </button>
                 </div>
             </form>
         </div>
+            <!-- ======= Already Have Account Section ======= -->
+<div class="text-center mt-3">
+    <hr style="border-top: 1px solid rgb(19, 19, 19); width: 60%; margin: 10px auto;">
+    <p style="color: #2b2b2b; font-size: 0.95rem;">
+        Already have an account? 
+        <a href="{% url 'login' %}" style="color: #ff9800; font-weight: 600; text-decoration: none;">
+            Login now
+        </a>
+    </p>
+</div>
     </div>
+
+
 </div>
 
+<script>
+document.querySelector("form").addEventListener("submit", function(event) {
+    let valid = true;
+
+    // Helper functions for showing / clearing errors
+    function showError(field, message) {
+        let errorDiv = field.parentElement.querySelector(".invalid-feedback-js");
+        if (!errorDiv) {
+            errorDiv = document.createElement("div");
+            errorDiv.className = "invalid-feedback-js text-danger small mt-1";
+            field.parentElement.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+        field.classList.add("is-invalid");
+    }
+
+    function clearError(field) {
+        field.classList.remove("is-invalid");
+        const errorDiv = field.parentElement.querySelector(".invalid-feedback-js");
+        if (errorDiv) errorDiv.remove();
+    }
+
+    // ===== Full Name =====
+    const nameField = document.getElementById("id_name");
+    const nameValue = nameField.value.trim();
+    if (!/^[A-Za-z]+(\s+[A-Za-z]+)+$/.test(nameValue)) {
+        showError(nameField, "Please enter your full name (first and last name).");
+        valid = false;
+    } else {
+        clearError(nameField);
+    }
+
+    // ===== Date of Birth =====
+    const dobField = document.getElementById("id_dob");
+    const dobValue = dobField.value;
+    if (dobValue) {
+        const enteredDate = new Date(dobValue);
+        const minDate = new Date("2015-01-01");
+        if (enteredDate >= minDate) {
+            showError(dobField, "Date of birth must be before 2015.");
+            valid = false;
+        } else {
+            clearError(dobField);
+        }
+    } else {
+        showError(dobField, "Please select your date of birth.");
+        valid = false;
+    }
+
+    // ===== District, Taluka, Village (Address fields) =====
+    const addressFields = [
+        { field: document.getElementById("id_dist"), label: "District" },
+        { field: document.getElementById("id_taluka"), label: "Taluka" },
+        { field: document.getElementById("id_village"), label: "Village" }
+    ];
+
+    addressFields.forEach(({ field, label }) => {
+        if (field) {
+            const value = field.value.trim();
+            if (value.length < 3) {
+                showError(field, `Please Enter ${label}`);
+                valid = false;
+            } else {
+                clearError(field);
+            }
+        }
+    });
+
+    // ===== Mobile Number =====
+    const mobileField = document.getElementById("id_mobile_number");
+    const mobileValue = mobileField.value.trim();
+    if (!/^\d{10}$/.test(mobileValue)) {
+        showError(mobileField, "Please enter a valid 10-digit mobile number.");
+        valid = false;
+    } else {
+        clearError(mobileField);
+    }
+
+    // ===== Email =====
+    const emailField = document.getElementById("id_email");
+    const emailValue = emailField.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+        showError(emailField, "Please enter a valid email address.");
+        valid = false;
+    } else {
+        clearError(emailField);
+    }
+
+    // ===== Stop form submission if invalid =====
+    if (!valid) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+});
+</script>
+
+
+<style>
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+.invalid-feedback-js {
+  display: block;
+}
+</style>
+
+
+<!-- Minimal JS: only handles show/hide password (no validation, no other DOM patches) -->
+<script>
+(function () {
+    // Attach toggle handlers to each password-wrapper toggle button
+    var toggles = document.querySelectorAll('.password-wrapper .password-toggle');
+    toggles.forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            // find the associated input inside the same wrapper
+            var wrapper = btn.closest('.password-wrapper');
+            if (!wrapper) return;
+            var input = wrapper.querySelector('input[type="password"], input[type="text"]');
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+                btn.setAttribute('aria-label', 'Hide password');
+                btn.setAttribute('title', 'Hide password');
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+                btn.setAttribute('aria-label', 'Show password');
+                btn.setAttribute('title', 'Show password');
+            }
+        });
+    });
+})();
+</script>
 {% endblock content %}
