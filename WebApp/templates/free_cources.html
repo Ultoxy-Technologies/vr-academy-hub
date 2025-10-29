@@ -6,137 +6,22 @@
   document.addEventListener("DOMContentLoaded", function() {
     // Add 'active' class to the About Us link
     document.getElementById("cource-level").classList.add("active");
-    document.getElementById("basic-to-advance-link").classList.add("active");
+    document.getElementById("Free-Cources-link").classList.add("active");
   });
 </script>
 
    <!-- Page Title -->
     <div class="page-title accent-background">
       <div class="container">
-        <h1>Basic To Advance</h1>
+        <h1>Free Cources</h1>
         <nav class="breadcrumbs">
           <ol> 
             <li><a href="{% url 'index' %}">Home</a></li>
-            <li class="current">Basic To Advance</li>
+            <li class="current">Free Cources</li>
           </ol>
         </nav>
       </div>
     </div><!-- End Page Title -->
-
-<section class="forex-course py-5">
-  <div class="container">
-    <h3 class="text-center fw-bold mb-5">💼 15 Days Forex Trading Course</h3>
-
-    <div class="course-wrapper p-4 shadow-sm rounded-4">
-      <div class="row g-3">
-
-        <!-- Overview Box -->
-        <div class="col-lg-4 col-md-6">
-          <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-primary">📘 Overview</h6>
-            <p class="small mb-1"><strong>Duration:</strong> 15 Days</p>
-            <p class="small mb-1"><strong>Fee:</strong> ₹10,000 → 
-              <span class="text-success fw-semibold">₹6,000 (Offer)</span>
-            </p>
-            <p class="small mb-0"><strong>Support:</strong> 1-Month Personal Mentorship</p>
-          </div>
-        </div>
-
-        <!-- Basic Section -->
-        <div class="col-lg-4 col-md-6">
-          <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-success">🟢 Basic Section</h6>
-            <ul class="small mb-0">
-              <li>What is Forex?</li>
-              <li>Pip & Pipette</li>
-              <li>Spread and Leverage</li>
-              <li>Understanding Timeframes</li>
-              <li>Order Types (Buy/Sell Limits, Stop Orders)</li>
-              <li>Trading Sessions</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Advanced Section -->
-        <div class="col-lg-4 col-md-6">
-          <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-info">🔵 Advanced Section</h6>
-            <ul class="small mb-0">
-              <li>Candles & Candlestick Patterns</li>
-              <li>Support & Resistance</li>
-              <li>Supply & Demand Zones</li>
-              <li>Trendline Analysis</li>
-              <li>Chart Patterns</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Practical Section -->
-        <div class="col-lg-4 col-md-6">
-          <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-warning">🟣 Entry Zone & Practical</h6>
-            <ul class="small mb-0">
-              <li>Identify Correct Entries</li>
-              <li>Live Market Analysis</li>
-              <li>Strategy Application</li>
-              <li>Risk Management</li>
-              <li>Q&A & Review Sessions</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Highlights Section -->
-        <div class="col-lg-4 col-md-6">
-          <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-danger">🎯 Course Highlights</h6>
-            <ul class="small mb-0">
-              <li>✅ 15 Days Intensive Training</li>
-              <li>✅ 1-Month Personal Support</li>
-              <li>✅ Practical & Strategy-Based Learning</li>
-              <li>✅ Ideal for Beginners & Intermediate Traders</li>
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<style>
-.forex-course {
-  background: #f9fafb;
-}
-
-.course-wrapper {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-}
-
-.info-box {
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  transition: all 0.3s ease;
-}
-
-.info-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  background: #ffffff;
-}
-
-.info-box h6 {
-  font-size: 1rem;
-}
-
-@media (max-width: 767px) {
-  .info-box {
-    text-align: left;
-  }
-}
-</style>
-
 
 
     <style>
@@ -244,7 +129,7 @@ body {
         <div class="col-12 col-md-6 col-lg-4">
           <article class="event-card h-100 bg-white rounded-3">
             <div class="card-media">
-              <img src="{% static 'website/img/cource-thumbnail.png' %}"
+              <img src="{% static 'website/img/cource-thumbnail-2.png' %}"
                    alt="Masterclass banner"
                    class="img-fluid w-100" loading="lazy">
             </div>
@@ -293,7 +178,7 @@ body {
         <div class="col-12 col-md-6 col-lg-4">
           <article class="event-card h-100 bg-white rounded-3">
             <div class="card-media">
-              <img src="{% static 'website/img/cource-thumbnail.png' %}"
+              <img src="{% static 'website/img/cource-thumbnail-2.png' %}"
                    alt="Masterclass banner"
                    class="img-fluid w-100" loading="lazy">
             </div>
@@ -342,7 +227,7 @@ body {
         <div class="col-12 col-md-6 col-lg-4">
           <article class="event-card h-100 bg-white rounded-3">
             <div class="card-media">
-              <img src="{% static 'website/img/cource-thumbnail.png' %}"
+              <img src="{% static 'website/img/cource-thumbnail-2.png' %}"
                    alt="Masterclass banner"
                    class="img-fluid w-100" loading="lazy">
             </div>

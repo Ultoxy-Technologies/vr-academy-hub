@@ -12,6 +12,10 @@ def about_us(request):
 
 
 # Course Level pages
+def free_cources(request):
+    return render(request, 'free_cources.html')
+
+
 def basic_to_advance(request):
     return render(request, 'basic_to_advance.html')
 

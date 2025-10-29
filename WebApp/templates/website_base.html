@@ -43,8 +43,9 @@
             <li class="dropdown">
             <a id="cource-level" href="#"><span>Cource Level</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
-              <li><a id="basic-to-advance-link" href="{% url 'basic_to_advance' %}">Basic To Advance</a></li>
-              <li><a id="advance-to-pro-link" href="{% url 'advance_to_pro' %}">Advance To Pro</a></li>
+              <li><a id="Free-Cources-link" href="{% url 'free_cources' %}">Free Cources</a></li>
+              <li><a id="basic-to-advance-link" href="{% url 'basic_to_advance' %}">Basic To Advance Paid</a></li>
+              <li><a id="advance-to-pro-link" href="{% url 'advance_to_pro' %}">Advance To Pro Paid</a></li>
             </ul>
           </li>
 
@@ -62,7 +63,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
           <!-- DROPDOWN BUTTON -->
-      {% if request.user %}
+      {% if request.user.is_authenticated %}
         <a class="btn-getstarted " href="{% url 'student_dashboard' %}">My Dashboard </a>
         
       {% else %}
@@ -149,10 +150,10 @@
           Join our community and unlock your potential with practical and proven training methods.
         </p>
         <div class="social-links d-flex mt-4">
-          <a href="#"><i class="bi bi-twitter-x"></i></a>
-          <a href="#"><i class="bi bi-facebook"></i></a>
-          <a href="#"><i class="bi bi-instagram"></i></a>
-          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <!-- <a href="#"><i class="bi bi-twitter-x"></i></a> -->
+          <a href="https://www.facebook.com/share/1F8LjAozsa/"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.instagram.com/vrtraders1123?igsh=a3VwMmU0dHZqZWhi&utm_source=qr"><i class="bi bi-instagram"></i></a>
+          <a href="https://youtube.com/@vrtrainingacademy?si=14WjVB_dk7i1wW4y"><i class="bi bi-youtube"></i></a>
         </div>
       </div>
 
@@ -164,7 +165,7 @@
           <li><a href="{% url 'about_us' %}">About Us</a></li>
           <li><a href="{% url 'trusted_broker' %}">Our Trusted Broker</a></li>
           <li><a href="{% url 'awards' %}">Awards & Recognition</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="{% url 'contact_us' %}">Contact us</a></li>
         </ul>
       </div>
 
@@ -187,8 +188,8 @@
       <!-- Contact Info -->
       <div class="col-sm-2 footer-contact text-center">
         <h4>Contact Us</h4>
-        <p>A108 Adam Street, New York, NY 535022, United States</p>
-        <p><strong>Phone:</strong> +1 5589 55488 55 | <strong>Email:</strong> info@example.com</p>
+        <p>Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</p>
+        <p><strong>Phone:</strong> +91 92702 01760 | <strong>Email:</strong> vrtrainingacademy1123@gmail.com </p>
       </div>
 
     </div>
@@ -202,6 +203,37 @@
 
   <!-- Preloader -->
   <div id="preloader"></div>
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/9270201760" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Chat" loading="lazy">
+</a>
+
+<style>
+.whatsapp-float {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  bottom: 70px;
+  right: 14px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.whatsapp-float img {
+  width: 30px;
+  margin-top: 6px;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.4);
+}
+</style>
 
   <!-- Vendor JS Files -->
  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>  

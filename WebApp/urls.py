@@ -5,6 +5,7 @@ urlpatterns = [
     path('gallary-images', web_photos_gallary, name='photo_gallery'),
     path('gallary-videos', web_videos_gallary, name='video_gallery'),
     path('about-us', about_us, name='about_us'),
+    path('free_cources', free_cources, name='free_cources'),
     path('basic-to-advance', basic_to_advance, name='basic_to_advance'),
     path('advance-to-pro', advance_to_pro, name='advance_to_pro'),
     path('awards-recognition', awards, name='awards'),
