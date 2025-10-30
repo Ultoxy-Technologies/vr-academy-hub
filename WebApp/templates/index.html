@@ -1,5 +1,6 @@
 {% extends "website_base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 
 
@@ -21,15 +22,24 @@
   </div>
   <img src="{% static 'website/img/hero-bg-abstract.jpg' %}" alt="VR Trading Academy Background" data-aos="fade-in" class=""  loading="lazy">
   <div class="container">
-    <div class="row justify-content-center" data-aos="zoom-out">
-      <div class="col-xl-7 col-lg-9 text-center">
-        <h1 class="hero-gradient-text p-3">Master Share Market &amp; Forex Trading</h1>
-        <p>Join <span class="hero-highlight">VR Academy Hub</span> for expert live webinars, tutorials, and practical training to become a successful trader.</p>
-      </div>
-    </div>
-    <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
-      <a href="{% url 'register_user' %}" class="btn-get-started">Get Started</a>
-    </div>
+
+<div class="row justify-content-center" data-aos="zoom-out">
+  <div class="col-xl-7 col-lg-9 text-center">
+    <h1 class="hero-gradient-text p-3">
+      {% trans "Master Share Market & Forex Trading" %}
+    </h1>
+    <p>
+      {% trans "Join" %} <span class="hero-highlight">VR Academy Hub</span>
+      {% trans "for expert live webinars, tutorials, and practical training to become a successful trader." %}
+    </p>
+  </div>
+</div>
+
+<div class="text-center" data-aos="zoom-out" data-aos-delay="100">
+  <a href="{% url 'register_user' %}" class="btn-get-started">
+    {% trans "Get Started" %}
+  </a>
+</div>
 
  
   <!-- Down Arrow -->
@@ -38,7 +48,7 @@
     <i class="bi bi-chevron-double-down" style="font-size: 2rem; color: var(--accent-color);"></i>
   </a>
 </div>
-  </div>
+</div>
 
 
 <style>
@@ -167,6 +177,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 
 <!-- ======= About =======-->
+
 <section class="about__v4 section mb-5 p-4" id="about">
   <div class="container" style="background:#fff; border-radius:28px; box-shadow:0 10px 40px rgba(36,135,206,0.09); overflow:hidden; position:relative;">
     <!-- Decorative Animated Circles -->
@@ -175,37 +186,71 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       <span class="circle circle-2"></span>
       <span class="circle circle-3"></span>
     </div>
+
     <div class="row p-2 align-items-center">
       <div class="col-md-6 order-md-2 mb-4 mt-4">
         <div class="row justify-content-end">
           <div class="col-md-11 mb-4 mb-md-0">
-            <span class="subtitle text-uppercase mb-3" data-aos="fade-up" data-aos-delay="0">About Us</span>
-            <h2 class="mb-4 gradient-text" data-aos="fade-up" data-aos-delay="100">Learn Trading Skills to Secure Your Financial Future</h2>
+            <span class="subtitle text-uppercase mb-3" data-aos="fade-up" data-aos-delay="0">
+              {% trans "About Us" %}
+            </span>
+
+            <h2 class="mb-4 gradient-text" data-aos="fade-up" data-aos-delay="100">
+              {% trans "Learn Trading Skills to Secure Your Financial Future" %}
+            </h2>
+
             <div data-aos="fade-up" data-aos-delay="200">
-              <p>At <span class="highlight">VR Academy Hub</span>, we are committed to transforming aspiring traders into seasoned market professionals through comprehensive education and practical training.</p>
-              <p>Our platform offers expert-led <span class="highlight">live webinars</span>, interactive tutorials, and a strong <span class="highlight">community support</span> system designed to build confidence and skills in forex and share market trading.</p>
+              <p>
+                {% blocktrans %}At <span class="highlight">VR Academy Hub</span>, we are committed to transforming aspiring traders into seasoned market professionals through comprehensive education and practical training.{% endblocktrans %}
+              </p>
+
+              <p>
+                {% blocktrans %}Our platform offers expert-led <span class="highlight">live webinars</span>, interactive tutorials, and a strong <span class="highlight">community support</span> system designed to build confidence and skills in forex and share market trading.{% endblocktrans %}
+              </p>
             </div>
-            <h4 class="small fw-bold mt-4 mb-3" data-aos="fade-up" data-aos-delay="300">Our Core Values</h4>
+
+            <h4 class="small fw-bold mt-4 mb-3" data-aos="fade-up" data-aos-delay="300">
+              {% trans "Our Core Values" %}
+            </h4>
+
             <ul class="d-flex flex-row flex-wrap list-unstyled gap-3 features" data-aos="fade-up" data-aos-delay="400">
-              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Practical Learning</span></li>
-              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Transparency & Integrity</span></li>
-              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Community Support</span></li>
-              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Continuous Innovation</span></li>
-              <li class="d-flex align-items-center gap-2"><span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span><span class="text">Empowerment through Education</span></li>
+              <li class="d-flex align-items-center gap-2">
+                <span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span>
+                <span class="text">{% trans "Practical Learning" %}</span>
+              </li>
+              <li class="d-flex align-items-center gap-2">
+                <span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span>
+                <span class="text">{% trans "Transparency & Integrity" %}</span>
+              </li>
+              <li class="d-flex align-items-center gap-2">
+                <span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span>
+                <span class="text">{% trans "Community Support" %}</span>
+              </li>
+              <li class="d-flex align-items-center gap-2">
+                <span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span>
+                <span class="text">{% trans "Continuous Innovation" %}</span>
+              </li>
+              <li class="d-flex align-items-center gap-2">
+                <span class="icon rounded-circle text-center"><i class="bi bi-check"></i></span>
+                <span class="text">{% trans "Empowerment through Education" %}</span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
+
       <div class="col-md-6 mb-4" style="padding-bottom: 30px;">
         <div class="img-wrap position-relative" style="z-index:2;">
-          <img class="img-fluid rounded-4 box-shadow-lg" src="{% static 'website/img/index-about-us.png' %}"  loading="lazy" alt="Trading Education Image" data-aos="fade-up" data-aos-delay="0">
+          <img class="img-fluid rounded-4 box-shadow-lg" src="{% static 'website/img/index-about-us.png' %}" loading="lazy" alt="{% trans 'Trading Education Image' %}" data-aos="fade-up" data-aos-delay="0">
           <div class="mission-statement p-4 rounded-4 d-flex gap-4 align-items-center animate-mission">
             <div class="mission-icon d-none d-md-flex align-items-center justify-content-center me-3">
               <i class="bi bi-stars"></i>
             </div>
             <div>
-              <h3 class="text-uppercase fw-bold">Our Mission</h3>
-              <p class="fs-5 mb-0">To empower individuals with the knowledge, skills, and confidence to successfully navigate financial markets and achieve financial independence.</p>
+              <h3 class="text-uppercase fw-bold">{% trans "Our Mission" %}</h3>
+              <p class="fs-5 mb-0">
+                {% trans "To empower individuals with the knowledge, skills, and confidence to successfully navigate financial markets and achieve financial independence." %}
+              </p>
             </div>
           </div>
         </div>
@@ -213,6 +258,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     </div>
   </div>
 </section>
+
 <!-- End About-->
 
 <style>
@@ -409,6 +455,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 
 <!-- Forex Explanation Section (Enhanced Design) -->
+
 <section id="forex-info" class="py-5 position-relative" style="background: linear-gradient(120deg, #eef3fa 0%, #e0ecff 100%); overflow: hidden;">
   <!-- Decorative Animated Circles -->
   <div class="animated-bg-circles">
@@ -416,12 +463,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     <span class="circle circle-2"></span>
     <span class="circle circle-3"></span>
   </div>
+
   <div class="container position-relative" style="z-index:2;">
     <div class="row justify-content-center text-center mb-4">
       <div class="col-lg-8">
-        <h2 class="fw-bold gradient-text mb-3">How Does Forex Work?</h2>
+        <h2 class="fw-bold gradient-text mb-3">{% trans "How Does Forex Work?" %}</h2>
         <p class="lead" style="color: var(--default-color); font-size: 1.16rem;">
-          <span class="highlight">Forex</span>, or foreign exchange, is the global marketplace where currencies are exchanged. It’s the largest and most liquid financial market in the world.
+          {% blocktrans %}
+          <span class="highlight">Forex</span>, or foreign exchange, is the global marketplace where currencies are exchanged.
+          It’s the largest and most liquid financial market in the world.
+          {% endblocktrans %}
         </p>
       </div>
     </div>
@@ -434,9 +485,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-currency-exchange"></i>
             </div>
-            <h5 class="card-title fw-bold">Currency Pairs</h5>
+            <h5 class="card-title fw-bold">{% trans "Currency Pairs" %}</h5>
             <p class="card-text">
-              Currencies are traded in pairs, and traders seek to profit by predicting how one currency will perform against another.
+              {% trans "Currencies are traded in pairs, and traders seek to profit by predicting how one currency will perform against another." %}
             </p>
           </div>
         </div>
@@ -449,9 +500,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-clock-history"></i>
             </div>
-            <h5 class="card-title fw-bold">24/5 Market</h5>
+            <h5 class="card-title fw-bold">{% trans "24/5 Market" %}</h5>
             <p class="card-text">
-              Forex trading runs 24 hours a day, 5 days a week, allowing traders around the world to participate anytime.
+              {% trans "Forex trading runs 24 hours a day, 5 days a week, allowing traders around the world to participate anytime." %}
             </p>
           </div>
         </div>
@@ -464,9 +515,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-bar-chart-line"></i>
             </div>
-            <h5 class="card-title fw-bold">Influencing Factors</h5>
+            <h5 class="card-title fw-bold">{% trans "Influencing Factors" %}</h5>
             <p class="card-text">
-              Prices are influenced by economics, politics, and news, which makes understanding market trends crucial.
+              {% trans "Prices are influenced by economics, politics, and news, which makes understanding market trends crucial." %}
             </p>
           </div>
         </div>
@@ -639,13 +690,20 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     <span class="circle circle-2"></span>
     <span class="circle circle-3"></span>
   </div>
+
   <div class="container position-relative" style="z-index: 2;">
     <!-- Section Header -->
     <div class="row justify-content-center text-center mb-5">
       <div class="col-lg-8">
-        <h2 class="fw-bold gradient-text mb-3">What You Need to Start</h2>
+        <h2 class="fw-bold gradient-text mb-3">{% trans "What You Need to Start" %}</h2>
         <p class="lead" style="color: var(--default-color); font-size: 1.175rem;">
-          To start trading forex, you need internet access, a trading device, a broker like <span class="highlight">VR Trading</span>, and a trading platform such as <span class="highlight">MetaTrader</span>. It's also important to understand basic terms like <span class="highlight">spread</span>, <span class="highlight">leverage</span>, <span class="highlight">lot size</span>, and <span class="highlight">margin</span>. Most importantly, adopt a learning mindset — <span class="fw-semibold text-primary">patience</span> and <span class="fw-semibold text-primary">discipline</span> are key.
+          {% blocktrans %}
+          To start trading forex, you need internet access, a trading device, a broker like <span class="highlight">VR Trading</span>,
+          and a trading platform such as <span class="highlight">MetaTrader</span>. It's also important to understand basic terms like
+          <span class="highlight">spread</span>, <span class="highlight">leverage</span>, <span class="highlight">lot size</span>,
+          and <span class="highlight">margin</span>. Most importantly, adopt a learning mindset —
+          <span class="fw-semibold text-primary">patience</span> and <span class="fw-semibold text-primary">discipline</span> are key.
+          {% endblocktrans %}
         </p>
       </div>
     </div>
@@ -659,13 +717,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-globe"></i>
             </div>
-            <h5 class="card-title fw-bold">Internet Access</h5>
+            <h5 class="card-title fw-bold">{% trans "Internet Access" %}</h5>
             <p class="card-text">
-              A stable internet connection to trade efficiently and monitor the market in real time.
+              {% trans "A stable internet connection to trade efficiently and monitor the market in real time." %}
             </p>
           </div>
         </div>
       </div>
+
       <!-- Card 2 -->
       <div class="col-md-6 col-lg-3">
         <div class="card animated-card shadow border-0 h-100 text-center">
@@ -673,13 +732,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-laptop"></i>
             </div>
-            <h5 class="card-title fw-bold">Trading Device</h5>
+            <h5 class="card-title fw-bold">{% trans "Trading Device" %}</h5>
             <p class="card-text">
-              A computer, tablet, or smartphone to access trading platforms and monitor your trades.
+              {% trans "A computer, tablet, or smartphone to access trading platforms and monitor your trades." %}
             </p>
           </div>
         </div>
       </div>
+
       <!-- Card 3 -->
       <div class="col-md-6 col-lg-3">
         <div class="card animated-card shadow border-0 h-100 text-center">
@@ -687,13 +747,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-building"></i>
             </div>
-            <h5 class="card-title fw-bold">Broker</h5>
+            <h5 class="card-title fw-bold">{% trans "Broker" %}</h5>
             <p class="card-text">
-              A reliable broker like VR Trading that provides access to the Forex market.
+              {% trans "A reliable broker like VR Trading that provides access to the Forex market." %}
             </p>
           </div>
         </div>
       </div>
+
       <!-- Card 4 -->
       <div class="col-md-6 col-lg-3">
         <div class="card animated-card shadow border-0 h-100 text-center">
@@ -701,9 +762,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             <div class="icon-wrap mb-3">
               <i class="bi bi-bar-chart-line"></i>
             </div>
-            <h5 class="card-title fw-bold">Trading Platform</h5>
+            <h5 class="card-title fw-bold">{% trans "Trading Platform" %}</h5>
             <p class="card-text">
-              A platform like MetaTrader to place trades, analyze charts, and manage positions.
+              {% trans "A platform like MetaTrader to place trades, analyze charts, and manage positions." %}
             </p>
           </div>
         </div>
@@ -878,7 +939,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 
 
-
 <!-- Getting Started: Modern Step-by-Step Timeline Section -->
 <section id="getting-started" class="py-5 position-relative" style="background: linear-gradient(120deg, #f6fafd 0%, #dde8fa 100%); overflow: hidden;">
   <!-- Decorative Animated Circles -->
@@ -891,9 +951,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     <!-- Section Header -->
     <div class="row justify-content-center text-center mb-5">
       <div class="col-lg-8">
-        <h2 class="fw-bold gradient-text mb-3">Getting Started: Step-by-Step</h2>
+        <h2 class="fw-bold gradient-text mb-3">{% trans "Getting Started: Step-by-Step" %}</h2>
         <p class="lead" style="color: var(--default-color); font-size: 1.15rem;">
-          Follow these steps to start your Forex trading journey with confidence.
+          {% trans "Follow these steps to start your Forex trading journey with confidence." %}
         </p>
       </div>
     </div>
@@ -908,8 +968,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-building"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Choose Broker</h5>
-              <p class="mb-0">Choose the right broker (we recommend VR Academy) to start trading safely.</p>
+              <h5 class="fw-bold mb-1">{% trans "Choose Broker" %}</h5>
+              <p class="mb-0">{% trans "Choose the right broker (we recommend VR Academy) to start trading safely." %}</p>
             </div>
             <span class="timeline-number">1</span>
           </div>
@@ -919,8 +979,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-gear"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Understand Conditions</h5>
-              <p class="mb-0">Understand trading conditions like spread, leverage, and margin.</p>
+              <h5 class="fw-bold mb-1">{% trans "Understand Conditions" %}</h5>
+              <p class="mb-0">{% trans "Understand trading conditions like spread, leverage, and margin." %}</p>
             </div>
             <span class="timeline-number">2</span>
           </div>
@@ -930,8 +990,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-wallet2"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Open Demo Account</h5>
-              <p class="mb-0">Open a demo account with virtual funds to practice trading risk-free.</p>
+              <h5 class="fw-bold mb-1">{% trans "Open Demo Account" %}</h5>
+              <p class="mb-0">{% trans "Open a demo account with virtual funds to practice trading risk-free." %}</p>
             </div>
             <span class="timeline-number">3</span>
           </div>
@@ -941,8 +1001,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-laptop"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Choose Platform</h5>
-              <p class="mb-0">Choose a trading platform like MetaTrader 5 for smooth trading experience.</p>
+              <h5 class="fw-bold mb-1">{% trans "Choose Platform" %}</h5>
+              <p class="mb-0">{% trans "Choose a trading platform like MetaTrader 5 for smooth trading experience." %}</p>
             </div>
             <span class="timeline-number">4</span>
           </div>
@@ -952,8 +1012,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-currency-exchange"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Select Currency Pair</h5>
-              <p class="mb-0">Select a currency pair to trade and start monitoring market movements.</p>
+              <h5 class="fw-bold mb-1">{% trans "Select Currency Pair" %}</h5>
+              <p class="mb-0">{% trans "Select a currency pair to trade and start monitoring market movements." %}</p>
             </div>
             <span class="timeline-number">5</span>
           </div>
@@ -963,8 +1023,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
               <i class="bi bi-graph-up-arrow"></i>
             </div>
             <div class="timeline-content">
-              <h5 class="fw-bold mb-1">Try Strategies</h5>
-              <p class="mb-0">Try some basic trading strategies to gain practical experience and confidence.</p>
+              <h5 class="fw-bold mb-1">{% trans "Try Strategies" %}</h5>
+              <p class="mb-0">{% trans "Try some basic trading strategies to gain practical experience and confidence." %}</p>
             </div>
             <span class="timeline-number">6</span>
           </div>
@@ -1120,198 +1180,207 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 
 
-
 <!-- ================= FAQ Section with Professional Visuals and Responsive Icons ================= -->
 <section id="faq" class="section py-5" style="background: linear-gradient(120deg, #f9fbfd 80%, #eaf6fd 100%); position: relative; overflow: hidden;">
   <div class="faq-decor-bg"></div>
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
-      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <h2 class="faq-title">{% trans "Frequently Asked Questions" %}</h2>
       <p class="faq-subtitle">
-        Everything you need to know about VR Academy Hub and forex trading courses.
+        {% trans "Everything you need to know about VR Academy Hub and forex trading courses." %}
       </p>
     </div>
+
     <div class="accordion faq-accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
-      <!-- FAQ Item 1 -->
-       <div class="row">
+      <div class="row">
         <div class="col-sm-6">
-<div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading1">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
-            <span class="faq-q-icon"><i class="bi bi-question-circle"></i></span>
-            <span class="faq-q-text">What is forex trading and how does it work?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            <strong>Forex trading</strong>, or foreign exchange trading, involves buying one currency and selling another in pairs. It is the world's largest financial market, operating 24/5, where traders speculate on currency price movements to make profits by predicting whether one currency will strengthen or weaken against another.
+          
+          <!-- FAQ Item 1 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading1">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
+                <span class="faq-q-icon"><i class="bi bi-question-circle"></i></span>
+                <span class="faq-q-text">{% trans "What is forex trading and how does it work?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Forex trading, or foreign exchange trading, involves buying one currency and selling another in pairs. It is the world's largest financial market, operating 24/5, where traders speculate on currency price movements to make profits by predicting whether one currency will strengthen or weaken against another." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 2 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading2">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
-            <span class="faq-q-icon"><i class="bi bi-person-plus"></i></span>
-            <span class="faq-q-text">Do I need prior experience to join the trading courses?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            <strong>No prior experience is needed.</strong> VR Academy Hub caters to beginners by providing step-by-step tutorials and foundational lessons, while also offering advanced topics for experienced traders to sharpen their skills.
+
+          <!-- FAQ Item 2 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading2">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                <span class="faq-q-icon"><i class="bi bi-person-plus"></i></span>
+                <span class="faq-q-text">{% trans "Do I need prior experience to join the trading courses?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "No prior experience is needed. VR Academy Hub caters to beginners by providing step-by-step tutorials and foundational lessons, while also offering advanced topics for experienced traders to sharpen their skills." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 3 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading3">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
-            <span class="faq-q-icon"><i class="bi bi-journal-text"></i></span>
-            <span class="faq-q-text">What topics does VR Academy Hub cover?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            The training includes <strong>forex trading strategies, options trading, technical and fundamental analysis, risk management, chart reading,</strong> and practical trading skills to build confidence in live markets.
+
+          <!-- FAQ Item 3 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading3">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                <span class="faq-q-icon"><i class="bi bi-journal-text"></i></span>
+                <span class="faq-q-text">{% trans "What topics does VR Academy Hub cover?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "The training includes forex trading strategies, options trading, technical and fundamental analysis, risk management, chart reading, and practical trading skills to build confidence in live markets." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 4 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading4">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
-            <span class="faq-q-icon"><i class="bi bi-laptop"></i></span>
-            <span class="faq-q-text">Are courses online or in-person?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Courses are primarily <strong>online</strong>, providing live webinars, video tutorials, and interactive sessions accessible from anywhere. This approach offers flexibility for learners to join from their preferred locations.
+
+          <!-- FAQ Item 4 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading4">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                <span class="faq-q-icon"><i class="bi bi-laptop"></i></span>
+                <span class="faq-q-text">{% trans "Are courses online or in-person?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Courses are primarily online, providing live webinars, video tutorials, and interactive sessions accessible from anywhere. This approach offers flexibility for learners to join from their preferred locations." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 5 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading5">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
-            <span class="faq-q-icon"><i class="bi bi-camera-video"></i></span>
-            <span class="faq-q-text">How do I access live webinars and tutorials?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Once you register on the platform, you receive access credentials to join live sessions and on-demand tutorials. Notifications and updates are sent for upcoming classes.
+
+          <!-- FAQ Item 5 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading5">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                <span class="faq-q-icon"><i class="bi bi-camera-video"></i></span>
+                <span class="faq-q-text">{% trans "How do I access live webinars and tutorials?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Once you register on the platform, you receive access credentials to join live sessions and on-demand tutorials. Notifications and updates are sent for upcoming classes." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 6 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading6">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
-            <span class="faq-q-icon"><i class="bi bi-cash-stack"></i></span>
-            <span class="faq-q-text">What are the course fees? Are there any free classes?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            VR Academy Hub offers a mix of <strong>paid advanced courses and free introductory sessions/webinars</strong> to help learners start with minimal investment.
+
+          <!-- FAQ Item 6 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading6">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
+                <span class="faq-q-icon"><i class="bi bi-cash-stack"></i></span>
+                <span class="faq-q-text">{% trans "What are the course fees? Are there any free classes?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "VR Academy Hub offers a mix of paid advanced courses and free introductory sessions/webinars to help learners start with minimal investment." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
         </div>
 
-      <div class="col-sm-6">
+        <div class="col-sm-6">
 
-      <!-- FAQ Item 7 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading7">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
-            <span class="faq-q-icon"><i class="bi bi-chat-left-dots"></i></span>
-            <span class="faq-q-text">Do you provide personalized trading advice?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Yes, learners can get guidance during interactive sessions, Q&amp;A forums, and sometimes <strong>one-on-one mentorship</strong> tailored to their trading goals.
+          <!-- FAQ Item 7 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading7">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
+                <span class="faq-q-icon"><i class="bi bi-chat-left-dots"></i></span>
+                <span class="faq-q-text">{% trans "Do you provide personalized trading advice?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Yes, learners can get guidance during interactive sessions, Q&A forums, and sometimes one-on-one mentorship tailored to their trading goals." %}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- FAQ Item 8 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading8">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse8" aria-expanded="false" aria-controls="faqCollapse8">
-            <span class="faq-q-icon"><i class="bi bi-hourglass-split"></i></span>
-            <span class="faq-q-text">How long does it take to become proficient in trading?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse8" class="accordion-collapse collapse" aria-labelledby="faqHeading8" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Duration depends on individual learning pace, but the programs focus on practical understanding and confidence-building, which typically take <strong>weeks to months</strong> with consistent effort.
-          </div>
-        </div>
-      </div>
-      <!-- FAQ Item 9 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading9">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse9" aria-expanded="false" aria-controls="faqCollapse9">
-            <span class="faq-q-icon"><i class="bi bi-award"></i></span>
-            <span class="faq-q-text">Is certification provided?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse9" class="accordion-collapse collapse" aria-labelledby="faqHeading9" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Many courses offer <strong>certifications upon completion</strong>, validating the skills learned and boosting credibility for aspiring traders.
-          </div>
-        </div>
-      </div> 
-      <!-- FAQ Item 11 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading11">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse11" aria-expanded="false" aria-controls="faqCollapse11">
-            <span class="faq-q-icon"><i class="bi bi-currency-exchange"></i></span>
-            <span class="faq-q-text">Can beginners trade with small capital?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse11" class="accordion-collapse collapse" aria-labelledby="faqHeading11" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Yes, training includes <strong>risk management strategies</strong> suitable for beginners aiming to start with small investments or virtual trading before real capital deployment.
-          </div>
-        </div>
-      </div>
-      <!-- FAQ Item 12 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading12">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse12" aria-expanded="false" aria-controls="faqCollapse12">
-            <span class="faq-q-icon"><i class="bi bi-pc-display"></i></span>
-            <span class="faq-q-text">What setup do I need to join?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse12" class="accordion-collapse collapse" aria-labelledby="faqHeading12" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            A <strong>reliable internet connection</strong>, a computer or smartphone, and access to the platform are needed. Some courses recommend using demo accounts for practice.
-          </div>
-        </div>
-      </div>
-      <!-- FAQ Item 13 -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="faqHeading13">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse13" aria-expanded="false" aria-controls="faqCollapse13">
-            <span class="faq-q-icon"><i class="bi bi-controller"></i></span>
-            <span class="faq-q-text">Are there resources for practicing without real money?</span>
-          </button>
-        </h2>
-        <div id="faqCollapse13" class="accordion-collapse collapse" aria-labelledby="faqHeading13" data-bs-parent="#faqAccordion">
-          <div class="accordion-body">
-            Yes, <strong>demo accounts and trading simulators</strong> are encouraged for learners to practice strategies risk-free before trading with real funds.
-          </div>
-        </div>
-      </div>
-      </div>
 
+          <!-- FAQ Item 8 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading8">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse8" aria-expanded="false" aria-controls="faqCollapse8">
+                <span class="faq-q-icon"><i class="bi bi-hourglass-split"></i></span>
+                <span class="faq-q-text">{% trans "How long does it take to become proficient in trading?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse8" class="accordion-collapse collapse" aria-labelledby="faqHeading8" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Duration depends on individual learning pace, but the programs focus on practical understanding and confidence-building, which typically take weeks to months with consistent effort." %}
+              </div>
+            </div>
+          </div>
 
-       </div>
-      
+          <!-- FAQ Item 9 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading9">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse9" aria-expanded="false" aria-controls="faqCollapse9">
+                <span class="faq-q-icon"><i class="bi bi-award"></i></span>
+                <span class="faq-q-text">{% trans "Is certification provided?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse9" class="accordion-collapse collapse" aria-labelledby="faqHeading9" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Many courses offer certifications upon completion, validating the skills learned and boosting credibility for aspiring traders." %}
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 11 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading11">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse11" aria-expanded="false" aria-controls="faqCollapse11">
+                <span class="faq-q-icon"><i class="bi bi-currency-exchange"></i></span>
+                <span class="faq-q-text">{% trans "Can beginners trade with small capital?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse11" class="accordion-collapse collapse" aria-labelledby="faqHeading11" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Yes, training includes risk management strategies suitable for beginners aiming to start with small investments or virtual trading before real capital deployment." %}
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 12 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading12">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse12" aria-expanded="false" aria-controls="faqCollapse12">
+                <span class="faq-q-icon"><i class="bi bi-pc-display"></i></span>
+                <span class="faq-q-text">{% trans "What setup do I need to join?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse12" class="accordion-collapse collapse" aria-labelledby="faqHeading12" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "A reliable internet connection, a computer or smartphone, and access to the platform are needed. Some courses recommend using demo accounts for practice." %}
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 13 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faqHeading13">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse13" aria-expanded="false" aria-controls="faqCollapse13">
+                <span class="faq-q-icon"><i class="bi bi-controller"></i></span>
+                <span class="faq-q-text">{% trans "Are there resources for practicing without real money?" %}</span>
+              </button>
+            </h2>
+            <div id="faqCollapse13" class="accordion-collapse collapse" aria-labelledby="faqHeading13" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {% trans "Yes, demo accounts and trading simulators are encouraged for learners to practice strategies risk-free before trading with real funds." %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1342,6 +1411,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   font-weight: 700;
   letter-spacing: 0.5px;
   margin-bottom: 0.7rem;
+  font-family: "Poppins",  sans-serif;
 }
 .faq-subtitle {
   color: #386086;
@@ -1453,31 +1523,33 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 
 
-
-
+ 
 
 <section class="hero-start-today">
-    <!-- Glowing gradient shapes -->
-    <div class="shape shape1"></div>
-    <div class="shape shape2"></div>
-    <div class="shape shape3"></div>
+  <!-- Glowing gradient shapes -->
+  <div class="shape shape1"></div>
+  <div class="shape shape2"></div>
+  <div class="shape shape3"></div>
 
-    <!-- Floating icons -->
-    <div class="icon-shape icon1"><i class="bi bi-graph-up-arrow"></i></div>
-    <div class="icon-shape icon2"><i class="bi bi-currency-exchange"></i></div>
-    <div class="icon-shape icon3"><i class="bi bi-lightning-charge-fill"></i></div>
+  <!-- Floating icons -->
+  <div class="icon-shape icon1"><i class="bi bi-graph-up-arrow"></i></div>
+  <div class="icon-shape icon2"><i class="bi bi-currency-exchange"></i></div>
+  <div class="icon-shape icon3"><i class="bi bi-lightning-charge-fill"></i></div>
 
-    <div class="hero-start-today-content">
-      <h1>Start Today!</h1>
-      <p>
+  <div class="hero-start-today-content">
+    <h1>{% trans "Start Today!" %}</h1>
+    <p>
+      {% blocktrans %}
         From <strong>Mumbai to Pune</strong>, <strong>VR Training Academy</strong> is guiding Indian traders 
         to succeed in the global forex market. Sign up in just 5 minutes, 
         access a <strong>free demo course</strong>, and start trading with confidence!
-      </p>
-      <a href="{% url 'register_user' %}" class="cta-btn">Join Now</a>
-      <div class="sub-text">No credit card required • Free lifetime demo</div>
-    </div>
-  </section>
+      {% endblocktrans %}
+    </p>
+    <a href="{% url 'register_user' %}" class="cta-btn">{% trans "Join Now" %}</a>
+    <div class="sub-text">{% trans "No credit card required • Free lifetime demo" %}</div>
+  </div>
+</section>
+
 <style> 
     .hero-start-today {
       position: relative;

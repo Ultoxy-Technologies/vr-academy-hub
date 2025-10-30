@@ -99,8 +99,9 @@
       margin-right: 8px;
     }
   </style>
+{% load i18n %}
 
-  <div class="container-lg mt-4 mb-5">
+<div class="container-lg mt-4 mb-5">
   <div class="row g-4 align-items-stretch">
     <!-- LEFT SIDE -->
     <div class="col-lg-7 d-flex flex-column">
@@ -109,43 +110,43 @@
           <div class="d-flex align-items-center mb-4">
             <div class="brand-logo">VR</div>
             <div class="ms-3">
-              <h4 class="mb-0 fw-bold">VR Training Academy</h4>
-              <small class="text-muted">Professional VR Training & Workshops — Shirdi</small>
+              <h4 class="mb-0 fw-bold">{% trans "VR Training Academy" %}</h4>
+              <small class="text-muted">{% trans "Professional VR Training & Workshops — Shirdi" %}</small>
             </div>
           </div>
 
-          <p class="text-muted mb-4">Fill out the form below and we’ll respond within one business day.</p>
+          <p class="text-muted mb-4">{% trans "Fill out the form below and we’ll respond within one business day." %}</p>
 
           <form id="enquiryForm" method="post" novalidate>
             {% csrf_token %}
             <div class="row g-3">
               <div class="col-md-6">
-                <label for="name" class="form-label">Full Name *</label>
+                <label for="name" class="form-label">{% trans "Full Name *" %}</label>
                 <input type="text" id="name" name="name" class="form-control" required>
-                <div class="invalid-feedback">Please enter your full name.</div>
+                <div class="invalid-feedback">{% trans "Please enter your full name." %}</div>
               </div>
               <div class="col-md-6">
-                <label for="phone" class="form-label">Mobile *</label>
+                <label for="phone" class="form-label">{% trans "Mobile *" %}</label>
                 <input type="tel" id="phone" name="phone" class="form-control" pattern="^[0-9]{10}$" required>
-                <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
+                <div class="invalid-feedback">{% trans "Enter a valid 10-digit mobile number." %}</div>
               </div>
             </div>
 
             <div class="mt-3">
-              <label for="email" class="form-label">Email *</label>
+              <label for="email" class="form-label">{% trans "Email *" %}</label>
               <input type="email" id="email" name="email" class="form-control" required>
-              <div class="invalid-feedback">Enter a valid email address.</div>
+              <div class="invalid-feedback">{% trans "Enter a valid email address." %}</div>
             </div>
 
             <div class="mt-3">
-              <label for="message" class="form-label">Message *</label>
+              <label for="message" class="form-label">{% trans "Message *" %}</label>
               <textarea id="message" name="message" class="form-control" rows="4" required></textarea>
-              <div class="invalid-feedback">Please enter a short message.</div>
+              <div class="invalid-feedback">{% trans "Please enter a short message." %}</div>
             </div>
 
             <div class="d-flex gap-2 mt-4">
-              <button type="submit" class="btn btn-primary px-4 shadow-sm">Send Enquiry</button>
-              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+              <button type="submit" class="btn btn-primary px-4 shadow-sm">{% trans "Send Enquiry" %}</button>
+              <button type="reset" class="btn btn-outline-secondary">{% trans "Reset" %}</button>
             </div>
           </form>
         </div>
@@ -156,15 +157,17 @@
     <div class="col-lg-5 d-flex flex-column">
       <div class="card flex-fill border-0 shadow-sm">
         <div class="card-body">
-          <h5 class="section-title"><i class="bi bi-person-lines-fill"></i> Contact Information</h5>
+          <h5 class="section-title">
+            <i class="bi bi-person-lines-fill"></i> {% trans "Contact Information" %}
+          </h5>
 
           <div class="info-card p-3 mb-3 d-flex align-items-start">
             <div class="me-3 text-primary fs-4">
               <i class="bi bi-geo-alt-fill"></i>
             </div>
             <div>
-              <strong>Airport Rd, near Kimaya Garden</strong><br>
-              <small class="text-muted">Shirdi, Maharashtra 423109</small>
+              <strong>{% trans "Airport Rd, near Kimaya Garden" %}</strong><br>
+              <small class="text-muted">{% trans "Shirdi, Maharashtra 423109" %}</small>
             </div>
           </div>
 
@@ -173,10 +176,12 @@
               <i class="bi bi-envelope-fill"></i>
             </div>
             <div>
-              <strong><a href="mailto:vrtrainingacademy1123@gmail.com m" class="text-decoration-none text-dark">
-                vrtrainingacademy1123@gmail.com 
-              </a></strong>
-              <small class="text-muted d-block">General Enquiries</small>
+              <strong>
+                <a href="mailto:vrtrainingacademy1123@gmail.com" class="text-decoration-none text-dark">
+                  vrtrainingacademy1123@gmail.com
+                </a>
+              </strong>
+              <small class="text-muted d-block">{% trans "General Enquiries" %}</small>
             </div>
           </div>
 
@@ -186,7 +191,7 @@
             </div>
             <div>
               <strong><a href="tel:+919970360424" class="text-decoration-none text-dark">+91 99703 60424</a></strong>
-              <small class="text-muted d-block">Primary Contact</small>
+              <small class="text-muted d-block">{% trans "Primary Contact" %}</small>
             </div>
           </div>
 
@@ -196,7 +201,7 @@
             </div>
             <div>
               <strong><a href="tel:+919270201760" class="text-decoration-none text-dark">+91 92702 01760</a></strong>
-              <small class="text-muted d-block">Alternate / WhatsApp</small>
+              <small class="text-muted d-block">{% trans "Alternate / WhatsApp" %}</small>
             </div>
           </div>
         </div>
@@ -206,21 +211,23 @@
 
   <!-- BRANCH DETAILS SECTION -->
   <div class="mt-5">
-    <h5 class="section-title mb-1"><i class="bi bi-building"></i> Our Branches</h5>
+    <h5 class="section-title mb-1">
+      <i class="bi bi-building"></i> {% trans "Our Branches" %}
+    </h5>
 
     <div class="row g-4">
       <!-- Branch 1 -->
       <div class="col-md-6">
         <div class="info-card p-3 h-100">
-          <h6>VR TRAINING ACADEMY — Branch No. 1</h6>
-          <p class="mb-2 small text-muted">Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</p>
+          <h6>{% trans "VR TRAINING ACADEMY — Branch No. 1" %}</h6>
+          <p class="mb-2 small text-muted">{% trans "Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109" %}</p>
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-telephone-fill text-primary me-2"></i>
             <a href="tel:+919970360424" class="text-decoration-none text-dark small">+91 99703 60424</a>
           </div>
           <div class="ratio ratio-16x9">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3755.895861161986!2d74.40943911115728!3d19.717057331457738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdc59cd1b88b7bb%3A0x8b2684e76050ae0d!2sVR%20Training%20Academy!5e0!3m2!1sen!2sin!4v1761439330375!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!..."
               style="border:0;" allowfullscreen loading="lazy"></iframe>
           </div>
         </div>
@@ -229,16 +236,15 @@
       <!-- Branch 2 -->
       <div class="col-md-6">
         <div class="info-card p-3 h-100">
-          <h6>VR TRAINING ACADEMY — Branch No. 2</h6>
-          <p class="mb-2 small text-muted">The Grand Center, UG-18, Pune Nashik Highway, Chakan</p>
+          <h6>{% trans "VR TRAINING ACADEMY — Branch No. 2" %}</h6>
+          <p class="mb-2 small text-muted">{% trans "The Grand Center, UG-18, Pune Nashik Highway, Chakan" %}</p>
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-telephone-fill text-primary me-2"></i>
             <a href="tel:+918888888888" class="text-decoration-none text-dark small">+91 88888 88888</a>
           </div>
           <div class="ratio ratio-16x9">
-            <!-- Replace src below with your actual Google Map embed link -->
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.263205894717!2d73.84973!3d18.75864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
+              src="https://www.google.com/maps/embed?pb=!1m18!..."
               style="border:0;" allowfullscreen loading="lazy"></iframe>
           </div>
         </div>

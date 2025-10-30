@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load i18n %}
+
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -27,7 +29,15 @@
 
 
 </head>
+<style>
+  * {
+  font-family: 'Poppins', sans-serif !important;
+}
+h2,h1{
+  padding: 10px;
+}
 
+</style>
 <body>
 
   <header id="header" class="header d-flex align-items-center sticky-top">
@@ -77,6 +87,18 @@
         </ul>
       </div>
       {% endif %}
+      <form action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <select name="language"  class="btn-getstarted dropdown-toggle" onchange="this.form.submit()">
+          {% get_current_language as LANGUAGE_CODE %}
+          {% get_available_languages as LANGUAGES %}
+          {% for lang_code, lang_name in LANGUAGES %}
+            <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
+              {{ lang_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
 
     </div>
   </header>

@@ -9,23 +9,25 @@
     document.getElementById("basic-to-advance-link").classList.add("active");
   });
 </script>
+{% load static i18n %}
 
-   <!-- Page Title -->
-    <div class="page-title accent-background">
-      <div class="container">
-        <h1>Basic To Advance</h1>
-        <nav class="breadcrumbs">
-          <ol> 
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li class="current">Basic To Advance</li>
-          </ol>
-        </nav>
-      </div>
-    </div><!-- End Page Title -->
+<!-- Page Title -->
+<div class="page-title accent-background">
+  <div class="container">
+    <h1>{% trans "Basic To Advance" %}</h1>
+    <nav class="breadcrumbs">
+      <ol> 
+        <li><a href="{% url 'index' %}">{% trans "Home" %}</a></li>
+        <li class="current">{% trans "Basic To Advance" %}</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<!-- End Page Title -->
 
 <section class="forex-course py-5">
   <div class="container">
-    <h3 class="text-center fw-bold mb-5">💼 15 Days Forex Trading Course</h3>
+    <h3 class="text-center fw-bold mb-5">💼 {% trans "15 Days Forex Trading Course" %}</h3>
 
     <div class="course-wrapper p-4 shadow-sm rounded-4">
       <div class="row g-3">
@@ -33,26 +35,29 @@
         <!-- Overview Box -->
         <div class="col-lg-4 col-md-6">
           <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-primary">📘 Overview</h6>
-            <p class="small mb-1"><strong>Duration:</strong> 15 Days</p>
-            <p class="small mb-1"><strong>Fee:</strong> ₹10,000 → 
-              <span class="text-success fw-semibold">₹6,000 (Offer)</span>
+            <h6 class="fw-bold mb-3 text-primary">📘 {% trans "Overview" %}</h6>
+            <p class="small mb-1"><strong>{% trans "Duration:" %}</strong> {% trans "15 Days" %}</p>
+            <p class="small mb-1">
+              <strong>{% trans "Fee:" %}</strong> ₹10,000 →
+              <span class="text-success fw-semibold">₹6,000 ({% trans "Offer" %})</span>
             </p>
-            <p class="small mb-0"><strong>Support:</strong> 1-Month Personal Mentorship</p>
+            <p class="small mb-0">
+              <strong>{% trans "Support:" %}</strong> {% trans "1-Month Personal Mentorship" %}
+            </p>
           </div>
         </div>
 
         <!-- Basic Section -->
         <div class="col-lg-4 col-md-6">
           <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-success">🟢 Basic Section</h6>
+            <h6 class="fw-bold mb-3 text-success">🟢 {% trans "Basic Section" %}</h6>
             <ul class="small mb-0">
-              <li>What is Forex?</li>
-              <li>Pip & Pipette</li>
-              <li>Spread and Leverage</li>
-              <li>Understanding Timeframes</li>
-              <li>Order Types (Buy/Sell Limits, Stop Orders)</li>
-              <li>Trading Sessions</li>
+              <li>{% trans "What is Forex?" %}</li>
+              <li>{% trans "Pip & Pipette" %}</li>
+              <li>{% trans "Spread and Leverage" %}</li>
+              <li>{% trans "Understanding Timeframes" %}</li>
+              <li>{% trans "Order Types (Buy/Sell Limits, Stop Orders)" %}</li>
+              <li>{% trans "Trading Sessions" %}</li>
             </ul>
           </div>
         </div>
@@ -60,13 +65,13 @@
         <!-- Advanced Section -->
         <div class="col-lg-4 col-md-6">
           <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-info">🔵 Advanced Section</h6>
+            <h6 class="fw-bold mb-3 text-info">🔵 {% trans "Advanced Section" %}</h6>
             <ul class="small mb-0">
-              <li>Candles & Candlestick Patterns</li>
-              <li>Support & Resistance</li>
-              <li>Supply & Demand Zones</li>
-              <li>Trendline Analysis</li>
-              <li>Chart Patterns</li>
+              <li>{% trans "Candles & Candlestick Patterns" %}</li>
+              <li>{% trans "Support & Resistance" %}</li>
+              <li>{% trans "Supply & Demand Zones" %}</li>
+              <li>{% trans "Trendline Analysis" %}</li>
+              <li>{% trans "Chart Patterns" %}</li>
             </ul>
           </div>
         </div>
@@ -74,13 +79,13 @@
         <!-- Practical Section -->
         <div class="col-lg-4 col-md-6">
           <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-warning">🟣 Entry Zone & Practical</h6>
+            <h6 class="fw-bold mb-3 text-warning">🟣 {% trans "Entry Zone & Practical" %}</h6>
             <ul class="small mb-0">
-              <li>Identify Correct Entries</li>
-              <li>Live Market Analysis</li>
-              <li>Strategy Application</li>
-              <li>Risk Management</li>
-              <li>Q&A & Review Sessions</li>
+              <li>{% trans "Identify Correct Entries" %}</li>
+              <li>{% trans "Live Market Analysis" %}</li>
+              <li>{% trans "Strategy Application" %}</li>
+              <li>{% trans "Risk Management" %}</li>
+              <li>{% trans "Q&A & Review Sessions" %}</li>
             </ul>
           </div>
         </div>
@@ -88,12 +93,12 @@
         <!-- Highlights Section -->
         <div class="col-lg-4 col-md-6">
           <div class="info-box p-3 h-100 rounded-4">
-            <h6 class="fw-bold mb-3 text-danger">🎯 Course Highlights</h6>
+            <h6 class="fw-bold mb-3 text-danger">🎯 {% trans "Course Highlights" %}</h6>
             <ul class="small mb-0">
-              <li>✅ 15 Days Intensive Training</li>
-              <li>✅ 1-Month Personal Support</li>
-              <li>✅ Practical & Strategy-Based Learning</li>
-              <li>✅ Ideal for Beginners & Intermediate Traders</li>
+              <li>✅ {% trans "15 Days Intensive Training" %}</li>
+              <li>✅ {% trans "1-Month Personal Support" %}</li>
+              <li>✅ {% trans "Practical & Strategy-Based Learning" %}</li>
+              <li>✅ {% trans "Ideal for Beginners & Intermediate Traders" %}</li>
             </ul>
           </div>
         </div>

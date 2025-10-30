@@ -11,11 +11,11 @@
 </script>
 
 
-
- <!-- About Page Hero (Enhanced, responsive, uses your theme colors only) -->
+{% load i18n %}
+<!-- About Page Hero (Enhanced, responsive, uses your theme colors only) -->
 <section id="about-hero" class="about-hero" aria-labelledby="about-hero-title" data-parallax="true">
   <!-- Background image layer (kept separate so we can apply subtle parallax) -->
-  <div class="about-hero-bg" role="img" aria-label="Trading abstract background"
+  <div class="about-hero-bg" role="img" aria-label="{% trans 'Trading abstract background' %}"
        style="background-image: url('{% static "website/img/about-hero-bg.png" %}');"></div>
 
   <!-- Animated soft circles using your theme colors -->
@@ -32,37 +32,37 @@
     <div class="row justify-content-center text-center">
       <div class="col-lg-10 col-md-11">
         <!-- Accent label -->
-        <span class="hero-kicker" aria-hidden="true">About Us</span>
+        <span class="hero-kicker" aria-hidden="true">{% trans "About Us" %}</span>
 
         <!-- Headline -->
         <h1 id="about-hero-title" class="hero-title">
-          About VR Training Academy
+          {% trans "About VR Training Academy" %}
         </h1>
 
         <!-- Short description -->
         <p class="hero-lead">
-          Empowering traders since 2015 with practical, market-tested forex education. Learn hands-on with live webinars, demo labs and mentor-led coaching to build real trading skills.
+          {% trans "Empowering traders since 2015 with practical, market-tested forex education. Learn hands-on with live webinars, demo labs and mentor-led coaching to build real trading skills." %}
         </p>
 
         <!-- CTAs -->
-        <div class="hero-ctas" role="group" aria-label="About actions">
-          <a class="btn btn-primary-hero" href="#why-choose">Learn More</a>
-          <a class="btn btn-outline-hero" href="#owners-section">Meet the Team</a>
+        <div class="hero-ctas" role="group" aria-label="{% trans 'About actions' %}">
+          <a class="btn btn-primary-hero" href="#why-choose">{% trans "Learn More" %}</a>
+          <a class="btn btn-outline-hero" href="#owners-section">{% trans "Meet the Team" %}</a>
         </div>
 
         <!-- Metrics (trust signals) -->
         <div class="hero-metrics" aria-hidden="true">
           <div class="metric">
             <div class="metric-value">9k+</div>
-            <div class="metric-label">Students Trained</div>
+            <div class="metric-label">{% trans "Students Trained" %}</div>
           </div>
           <div class="metric">
             <div class="metric-value">250+</div>
-            <div class="metric-label">Live Webinars</div>
+            <div class="metric-label">{% trans "Live Webinars" %}</div>
           </div>
           <div class="metric">
             <div class="metric-value">95%</div>
-            <div class="metric-label">Satisfaction</div>
+            <div class="metric-label">{% trans "Satisfaction" %}</div>
           </div>
         </div>
 
@@ -70,7 +70,7 @@
         <div class="hero-separator" aria-hidden="true"></div>
 
         <!-- Optional down arrow -->
-        <button class="hero-down" id="aboutHeroDown" aria-label="Scroll to details">
+        <button class="hero-down" id="aboutHeroDown" aria-label="{% trans 'Scroll to details' %}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -79,6 +79,7 @@
     </div>
   </div>
 </section>
+
 
 <style>
   :root{
@@ -286,16 +287,15 @@
 
 
 
-
 <!-- Why Choose VR Training Academy? — Enhanced Section (All-in-one) -->
 <section id="why-choose" class="why-choose section py-5" aria-labelledby="why-choose-title">
   <div class="container">
     <div class="text-center mb-5">
       <h2 id="why-choose-title" class="why-title">
-        Why Choose <span class="accent">VR Training Academy?</span>
+        {% trans "Why Choose" %} <span class="accent">{% trans "VR Training Academy?" %}</span>
       </h2>
       <p class="why-subtitle">
-        Discover what makes VR Training Academy a trusted name in forex education — practical, proven, and community-driven.
+        {% trans "Discover what makes VR Training Academy a trusted name in forex education — practical, proven, and community-driven." %}
       </p>
     </div>
 
@@ -306,11 +306,11 @@
           <div class="why-icon" aria-hidden="true">
             <i class="bi bi-person-check"></i>
           </div>
-          <h3 id="why-1-title" class="why-card-title">Expert Guidance</h3>
+          <h3 id="why-1-title" class="why-card-title">{% trans "Expert Guidance" %}</h3>
           <p id="why-1-desc" class="why-card-desc">
-            Courses designed and led by seasoned forex traders, delivering real-world strategies and mentoring.
+            {% trans "Courses designed and led by seasoned forex traders, delivering real-world strategies and mentoring." %}
           </p>
-          <div class="why-tag">Instructor-led</div>
+          <div class="why-tag">{% trans "Instructor-led" %}</div>
         </article>
       </div>
 
@@ -320,11 +320,11 @@
           <div class="why-icon" aria-hidden="true">
             <i class="bi bi-journal-text"></i>
           </div>
-          <h3 id="why-2-title" class="why-card-title">Comprehensive Learning</h3>
+          <h3 id="why-2-title" class="why-card-title">{% trans "Comprehensive Learning" %}</h3>
           <p id="why-2-desc" class="why-card-desc">
-            Master technical and fundamental analysis, trading psychology, risk control, and automation.
+            {% trans "Master technical and fundamental analysis, trading psychology, risk control, and automation." %}
           </p>
-          <div class="why-tag">End-to-end curriculum</div>
+          <div class="why-tag">{% trans "End-to-end curriculum" %}</div>
         </article>
       </div>
 
@@ -334,11 +334,11 @@
           <div class="why-icon" aria-hidden="true">
             <i class="bi bi-laptop"></i>
           </div>
-          <h3 id="why-3-title" class="why-card-title">Flexible Learning</h3>
+          <h3 id="why-3-title" class="why-card-title">{% trans "Flexible Learning" %}</h3>
           <p id="why-3-desc" class="why-card-desc">
-            Self-paced lessons, live labs, and demo accounts let you practice risk-free on your schedule.
+            {% trans "Self-paced lessons, live labs, and demo accounts let you practice risk-free on your schedule." %}
           </p>
-          <div class="why-tag">Practical & flexible</div>
+          <div class="why-tag">{% trans "Practical & flexible" %}</div>
         </article>
       </div>
 
@@ -348,11 +348,11 @@
           <div class="why-icon" aria-hidden="true">
             <i class="bi bi-globe"></i>
           </div>
-          <h3 id="why-4-title" class="why-card-title">Global Community</h3>
+          <h3 id="why-4-title" class="why-card-title">{% trans "Global Community" %}</h3>
           <p id="why-4-desc" class="why-card-desc">
-            Join traders from 50+ countries — access exclusive webinars, group coaching, and community-driven help.
+            {% trans "Join traders from 50+ countries — access exclusive webinars, group coaching, and community-driven help." %}
           </p>
-          <div class="why-tag">Worldwide network</div>
+          <div class="why-tag">{% trans "Worldwide network" %}</div>
         </article>
       </div>
     </div>
@@ -540,7 +540,7 @@
 
 
 
-
+{% load i18n %}
 <!-- ================= VRAA — What We Offer (Enhanced, unique class names) ================= -->
 <section id="vraa-what-we-offer" class="vraa-section vraa-ww-offer" aria-labelledby="vraa-ww-title">
   <div class="vraa-decor-top" aria-hidden="true">
@@ -559,10 +559,10 @@
   <div class="container vraa-container" data-aos="fade-up">
     <header class="vraa-header text-center">
       <h2 id="vraa-ww-title" class="vraa-title">
-        What <span class="vraa-accent">We Offer</span>
+        {% trans "What" %} <span class="vraa-accent">{% trans "We Offer" %}</span>
       </h2>
       <p class="vraa-subtitle">
-        Explore our structured learning paths designed for traders at every level — from beginners to professionals.
+        {% trans "Explore our structured learning paths designed for traders at every level — from beginners to professionals." %}
       </p>
     </header>
 
@@ -576,11 +576,11 @@
             </div>
             <div class="vraa-icon-bg"></div>
           </div>
-          <h3 id="vraa-1-title" class="vraa-card-title">For Beginners</h3>
+          <h3 id="vraa-1-title" class="vraa-card-title">{% trans "For Beginners" %}</h3>
           <p id="vraa-1-desc" class="vraa-card-text">
-            Learn currency pairs, pips and leverage — a clear step-by-step foundation to start trading with confidence.
+            {% trans "Learn currency pairs, pips and leverage — a clear step-by-step foundation to start trading with confidence." %}
           </p>
-          <button class="vraa-card-cta" type="button" aria-label="Explore beginner courses">Start Learning</button>
+          <button class="vraa-card-cta" type="button" aria-label="{% trans 'Explore beginner courses' %}">{% trans "Start Learning" %}</button>
         </article>
       </div>
 
@@ -593,11 +593,11 @@
             </div>
             <div class="vraa-icon-bg"></div>
           </div>
-          <h3 id="vraa-2-title" class="vraa-card-title">For Advanced Traders</h3>
+          <h3 id="vraa-2-title" class="vraa-card-title">{% trans "For Advanced Traders" %}</h3>
           <p id="vraa-2-desc" class="vraa-card-text">
-            Advanced strategies including scalping, harmonic patterns and Fibonacci for precision entries and exits.
+            {% trans "Advanced strategies including scalping, harmonic patterns and Fibonacci for precision entries and exits." %}
           </p>
-          <button class="vraa-card-cta" type="button" aria-label="Explore advanced courses">Explore Strategies</button>
+          <button class="vraa-card-cta" type="button" aria-label="{% trans 'Explore advanced courses' %}">{% trans "Explore Strategies" %}</button>
         </article>
       </div>
 
@@ -610,11 +610,11 @@
             </div>
             <div class="vraa-icon-bg"></div>
           </div>
-          <h3 id="vraa-3-title" class="vraa-card-title">Practical Experience</h3>
+          <h3 id="vraa-3-title" class="vraa-card-title">{% trans "Practical Experience" %}</h3>
           <p id="vraa-3-desc" class="vraa-card-text">
-            Hands-on demo accounts and MT5 labs help you practice trade management and build real market skills.
+            {% trans "Hands-on demo accounts and MT5 labs help you practice trade management and build real market skills." %}
           </p>
-          <button class="vraa-card-cta" type="button" aria-label="Open demo account">Open Demo</button>
+          <button class="vraa-card-cta" type="button" aria-label="{% trans 'Open demo account' %}">{% trans "Open Demo" %}</button>
         </article>
       </div>
 
@@ -627,11 +627,11 @@
             </div>
             <div class="vraa-icon-bg"></div>
           </div>
-          <h3 id="vraa-4-title" class="vraa-card-title">Market Insights</h3>
+          <h3 id="vraa-4-title" class="vraa-card-title">{% trans "Market Insights" %}</h3>
           <p id="vraa-4-desc" class="vraa-card-text">
-            Daily analysis, live trade breakdowns and market commentary so your decisions stay data-driven.
+            {% trans "Daily analysis, live trade breakdowns and market commentary so your decisions stay data-driven." %}
           </p>
-          <button class="vraa-card-cta" type="button" aria-label="See market insights">See Insights</button>
+          <button class="vraa-card-cta" type="button" aria-label="{% trans 'See market insights' %}">{% trans "See Insights" %}</button>
         </article>
       </div>
     </div>
@@ -803,8 +803,9 @@
 
 
 
+{% load i18n %}
 
-<!-- ================= VRAA — Our Philosophy (All-in-one) ================= -->
+<!-- ================= VRAA — Our Philosophy (All-in-one, Translatable) ================= -->
 <section id="vraa-philosophy" class="vraa-philosophy section py-5" aria-labelledby="vraa-philosophy-title">
   <div class="container vraa-philosophy-container" data-aos="fade-up">
     <div class="vraa-philo-grid row align-items-center gy-4">
@@ -812,34 +813,37 @@
       <!-- Left: Text + Pillars -->
       <div class="col-lg-7">
         <div class="vraa-philo-intro">
-          <span class="vraa-kicker">Our Philosophy</span>
-          <h2 id="vraa-philosophy-title" class="vraa-philo-title">Three pillars for successful trading</h2>
+          <span class="vraa-kicker">{% trans "Our Philosophy" %}</span>
+          <h2 id="vraa-philosophy-title" class="vraa-philo-title">{% trans "Three pillars for successful trading" %}</h2>
           <p class="vraa-philo-blurb">
+            {% blocktrans trimmed %}
             Successful trading depends on three pillars: <strong>knowledge</strong>, <strong>discipline</strong>, and <strong>practice</strong>.
             Forex trading isn’t a get-rich-quick scheme—it’s a skill that demands dedication and a solid foundation.
-            At VR Training Academy, we emphasize critical thinking, risk management, and trading psychology to help you avoid common pitfalls and achieve long-term gains.
+            At VR Training Academy, we emphasize critical thinking, risk management, and trading psychology
+            to help you avoid common pitfalls and achieve long-term gains.
+            {% endblocktrans %}
           </p>
 
           <div class="vraa-philo-pillars row g-3 mt-4">
             <div class="col-md-4">
-              <div class="vraa-pill vraa-pill-knowledge" tabindex="0" role="group" aria-label="Knowledge">
+              <div class="vraa-pill vraa-pill-knowledge" tabindex="0" role="group" aria-label="{% trans 'Knowledge' %}">
                 <div class="vraa-pill-icon" aria-hidden="true"><i class="bi bi-book-fill"></i></div>
-                <h4 class="vraa-pill-title">Knowledge</h4>
-                <p class="vraa-pill-desc">Structured lessons and live demonstrations so you understand 'why' behind every decision.</p>
+                <h4 class="vraa-pill-title">{% trans "Knowledge" %}</h4>
+                <p class="vraa-pill-desc">{% trans "Structured lessons and live demonstrations so you understand 'why' behind every decision." %}</p>
               </div>
             </div>
             <div class="col-md-4">
-              <div class="vraa-pill vraa-pill-discipline" tabindex="0" role="group" aria-label="Discipline">
+              <div class="vraa-pill vraa-pill-discipline" tabindex="0" role="group" aria-label="{% trans 'Discipline' %}">
                 <div class="vraa-pill-icon" aria-hidden="true"><i class="bi bi-shield-lock-fill"></i></div>
-                <h4 class="vraa-pill-title">Discipline</h4>
-                <p class="vraa-pill-desc">Trade plans, risk rules and emotional control to protect capital and mind.</p>
+                <h4 class="vraa-pill-title">{% trans "Discipline" %}</h4>
+                <p class="vraa-pill-desc">{% trans "Trade plans, risk rules and emotional control to protect capital and mind." %}</p>
               </div>
             </div>
             <div class="col-md-4">
-              <div class="vraa-pill vraa-pill-practice" tabindex="0" role="group" aria-label="Practice">
+              <div class="vraa-pill vraa-pill-practice" tabindex="0" role="group" aria-label="{% trans 'Practice' %}">
                 <div class="vraa-pill-icon" aria-hidden="true"><i class="bi bi-lightning-fill"></i></div>
-                <h4 class="vraa-pill-title">Practice</h4>
-                <p class="vraa-pill-desc">Simulated trading, journal reviews and iterative improvement until trades become repeatable.</p>
+                <h4 class="vraa-pill-title">{% trans "Practice" %}</h4>
+                <p class="vraa-pill-desc">{% trans "Simulated trading, journal reviews and iterative improvement until trades become repeatable." %}</p>
               </div>
             </div>
           </div>
@@ -855,21 +859,23 @@
                 <path d="M7 7h4v6H7zM13 7h4v6h-4z" fill="currentColor"/>
               </svg>
             </div>
-            <h3 id="vraa-philo-card-title" class="vraa-philo-card-title">Practice > Hype</h3>
+            <h3 id="vraa-philo-card-title" class="vraa-philo-card-title">{% trans "Practice > Hype" %}</h3>
             <p class="vraa-philo-card-text">
+              {% blocktrans trimmed %}
               We teach repeatable processes, not shortcuts. Long-term trading success is built by compounding skill and disciplined risk management —
               that’s the VRAA promise.
+              {% endblocktrans %}
             </p>
 
             <ul class="vraa-philo-highlights">
-              <li><strong>Real-world labs</strong> — trade in realistic demo environments.</li>
-              <li><strong>Mentor feedback</strong> — focused reviews to correct mistakes early.</li>
-              <li><strong>Psychology training</strong> — regulate emotions and follow the plan.</li>
+              <li><strong>{% trans "Real-world labs" %}</strong> — {% trans "trade in realistic demo environments." %}</li>
+              <li><strong>{% trans "Mentor feedback" %}</strong> — {% trans "focused reviews to correct mistakes early." %}</li>
+              <li><strong>{% trans "Psychology training" %}</strong> — {% trans "regulate emotions and follow the plan." %}</li>
             </ul>
 
             <div class="vraa-philo-ctas mt-3">
-              <a class="vraa-btn-primary" href="#courses">View Courses</a>
-              <a class="vraa-btn-ghost" href="#contact">Ask an Advisor</a>
+              <a class="vraa-btn-primary" href="#courses">{% trans "View Courses" %}</a>
+              <a class="vraa-btn-ghost" href="#contact">{% trans "Ask an Advisor" %}</a>
             </div>
           </div>
         </aside>
@@ -1068,7 +1074,6 @@
 
 
 
-
 <!-- VRAA — Our Story (unique classes, uses theme colors + orange; contains only user-provided text) -->
 <section id="vraa-our-story" class="vraa-our-story-section" aria-labelledby="vraa-our-story-title">
   <div class="vraa-our-story-inner">
@@ -1100,22 +1105,22 @@
 
         <!-- moving nodes along paths -->
         <g class="vraa-nodes">
-          <circle r="6" fill="var(--vraa-accent)" >
+          <circle r="6" fill="var(--vraa-accent)">
             <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
               <mpath xlink:href="#p1"/>
             </animateMotion>
           </circle>
-          <circle r="5" fill="var(--vraa-accent-2)" >
+          <circle r="5" fill="var(--vraa-accent-2)">
             <animateMotion dur="7.6s" repeatCount="indefinite" begin="0.6s" rotate="auto">
               <mpath xlink:href="#p2"/>
             </animateMotion>
           </circle>
-          <circle r="4.5" fill="var(--vraa-accent-3)" >
+          <circle r="4.5" fill="var(--vraa-accent-3)">
             <animateMotion dur="11s" repeatCount="indefinite" begin="1.2s" rotate="auto">
               <mpath xlink:href="#p1"/>
             </animateMotion>
           </circle>
-          <circle r="4" fill="rgba(255,255,255,0.88)" >
+          <circle r="4" fill="rgba(255,255,255,0.88)">
             <animateMotion dur="8.2s" repeatCount="indefinite" begin="0.35s" rotate="auto">
               <mpath xlink:href="#p3"/>
             </animateMotion>
@@ -1128,9 +1133,9 @@
     </div>
 
     <div class="vraa-our-story-content">
-      <h2 id="vraa-our-story-title" class="vraa-our-story-heading">Our Story</h2>
+      <h2 id="vraa-our-story-title" class="vraa-our-story-heading">{% trans "Our Story" %}</h2>
       <p class="vraa-our-story-text">
-        VR Training Academy was founded by a group of passionate traders who wanted to shield newcomers from scams and offer honest education. With a commitment to integrity and results, we’ve become the trusted partner of over 1500 students who have transformed their trading journey through our courses.
+        {% trans "VR Training Academy was founded by a group of passionate traders who wanted to shield newcomers from scams and offer honest education. With a commitment to integrity and results, we’ve become the trusted partner of over 1500 students who have transformed their trading journey through our courses." %}
       </p>
     </div>
   </div>
@@ -1267,159 +1272,155 @@
 
 
 
+{% load i18n %}
 
+<!-- Meet Our Owners Section -->
+<section class="owners-section" id="owners-section">
+  <!-- Floating Background Icons -->
+  <i class="bi bi-graph-up floating-icon icon1"></i>
+  <i class="bi bi-lightning-charge-fill floating-icon icon2"></i>
+  <i class="bi bi-currency-exchange floating-icon icon3"></i>
+  <i class="bi bi-bar-chart-line floating-icon icon4"></i>
 
-  <!-- Meet Our Owners Section -->
-  <section class="owners-section" id="owners-section">
-    <!-- Floating Background Icons -->
-    <i class="bi bi-graph-up floating-icon icon1"></i>
-    <i class="bi bi-lightning-charge-fill floating-icon icon2"></i>
-    <i class="bi bi-currency-exchange floating-icon icon3"></i>
-    <i class="bi bi-bar-chart-line floating-icon icon4"></i>
+  <div class="container position-relative" style="z-index: 2;">
+    <h2 class="section-title" style="padding: 0px 0px 20px;">{% trans "Meet Our Owners" %}</h2>
+    <p class="section-subtitle">
+      {% blocktrans %}The brilliant minds behind <strong>VR Training Academy</strong>, inspiring a generation of successful traders.{% endblocktrans %}
+    </p>
 
-    <div class="container position-relative" style="z-index: 2;">
-      <h2 class="section-title" style="padding: 0px 0px 20px;">Meet Our Owners</h2>
-      <p class="section-subtitle">
-        The brilliant minds behind <strong>VR Training Academy</strong>, inspiring a generation of successful traders.
-      </p>
+    <div class="row justify-content-center">
+      <!-- Owner 1 -->
+      <div class="col-md-4 col-sm-10 mb-4">
+        <div class="owner-card">
+          <div class="owner-img">
+            <img src="{% static 'website/img/rahul-sir.png' %}" alt="{% trans 'Owner 1' %}">
+          </div>
+          <h4 class="owner-name">{% trans "Prof. Rahul Borude" %}</h4>
+          <p class="owner-role">{% trans "Founder & CEO" %}</p>
+          <p class="owner-role">{% trans "Visionary leader with 10+ years in trading." %}</p>
 
-      <div class="row justify-content-center">
-        <!-- Owner 1 -->
-        <div class="col-md-4 col-sm-10 mb-4">
-          <div class="owner-card">
-            <div class="owner-img">
-              <img src="{% static 'website/img/rahul-sir.png' %}" alt="Owner 1">
-            </div>
-            <h4 class="owner-name">Prof.Rahul Borude</h4>
-            <p class="owner-role"> Founder & CEO</p>
-            <p class="owner-role">Visionary leader with 10+ years in trading.</p>
- 
-            <div class="social-icons">
-              <a href="https://www.facebook.com/share/1F8LjAozsa/"><i class="bi bi-facebook"></i></a>
-              <a href="https://youtube.com/@vrtrainingacademy?si=14WjVB_dk7i1wW4y"><i class="bi bi-youtube"></i></a>
-              <a href="https://www.instagram.com/vrtraders1123?igsh=a3VwMmU0dHZqZWhi&utm_source=qr"><i class="bi bi-instagram"></i></a>
-            </div>
-            <hr>
-            <div class="col-sm-12 text-center">
-              <!-- Your Read More Button -->
+          <div class="social-icons">
+            <a href="https://www.facebook.com/share/1F8LjAozsa/"><i class="bi bi-facebook"></i></a>
+            <a href="https://youtube.com/@vrtrainingacademy?si=14WjVB_dk7i1wW4y"><i class="bi bi-youtube"></i></a>
+            <a href="https://www.instagram.com/vrtraders1123?igsh=a3VwMmU0dHZqZWhi&utm_source=qr"><i class="bi bi-instagram"></i></a>
+          </div>
+          <hr>
+          <div class="col-sm-12 text-center">
             <a href="#" class="owners-section-read-more-btn" data-bs-toggle="modal" data-bs-target="#rahulsirModal">
-              Read More
+              {% trans "Read More" %}
             </a>
-            </div>
           </div>
         </div>
- 
-         <!-- Owner 1 -->
-        <div class="col-md-4 col-sm-10 mb-4">
-          <div class="owner-card">
-            <div class="owner-img">
-              <img src="{% static 'website/img/varsha-mam.png' %}" alt="Owner 1">
-            </div>
-            <h4 class="owner-name">Prof.Varsha Bharud</h4>
-            <p class="owner-role">Co-Founder</p>
-            <p class="owner-role">Expert in financial education and mentoring.</p>
- 
-            <div class="social-icons">
-              <a href="https://www.facebook.com/share/1F8LjAozsa/"><i class="bi bi-facebook"></i></a>
-              <a href="https://youtube.com/@vrtrainingacademy?si=14WjVB_dk7i1wW4y"><i class="bi bi-youtube"></i></a>
-              <a href="https://www.instagram.com/vrtraders1123?igsh=a3VwMmU0dHZqZWhi&utm_source=qr"><i class="bi bi-instagram"></i></a>
-            </div>
-            <hr>
-              <!-- Your Read More Button -->
-            <a href="#" class="owners-section-read-more-btn" data-bs-toggle="modal" data-bs-target="#varshaModal">
-              Read More
-            </a>
-            </div>
-
-          </div>
-        </div>
-
       </div>
-    </div>
-  </section>
 
-<!-- Modal -->
+      <!-- Owner 2 -->
+      <div class="col-md-4 col-sm-10 mb-4">
+        <div class="owner-card">
+          <div class="owner-img">
+            <img src="{% static 'website/img/varsha-mam.png' %}" alt="{% trans 'Owner 2' %}">
+          </div>
+          <h4 class="owner-name">{% trans "Prof. Varsha Bharud" %}</h4>
+          <p class="owner-role">{% trans "Co-Founder" %}</p>
+          <p class="owner-role">{% trans "Expert in financial education and mentoring." %}</p>
+
+          <div class="social-icons">
+            <a href="https://www.facebook.com/share/1F8LjAozsa/"><i class="bi bi-facebook"></i></a>
+            <a href="https://youtube.com/@vrtrainingacademy?si=14WjVB_dk7i1wW4y"><i class="bi bi-youtube"></i></a>
+            <a href="https://www.instagram.com/vrtraders1123?igsh=a3VwMmU0dHZqZWhi&utm_source=qr"><i class="bi bi-instagram"></i></a>
+          </div>
+          <hr>
+          <a href="#" class="owners-section-read-more-btn" data-bs-toggle="modal" data-bs-target="#varshaModal">
+            {% trans "Read More" %}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Modal: Rahul Sir -->
 <div class="modal fade" id="rahulsirModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content" style="border-radius: 20px;">
       
       <div class="modal-header">
-        <h5 class="modal-title" id="readMoreModalLabel">More About Prof. Rahul Borde</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="readMoreModalLabel">{% trans "More About Prof. Rahul Borde" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
       </div>
 
       <div class="modal-body">
-        <h4 class="mb-3">🌟 Prof. Rahul Borde</h4>
-        <h6 class="text-muted mb-4">Founder & Chief Executive Officer</h6>
+        <h4 class="mb-3">🌟 {% trans "Prof. Rahul Borde" %}</h4>
+        <h6 class="text-muted mb-4">{% trans "Founder & Chief Executive Officer" %}</h6>
 
         <p>
-          Prof. Rahul Borde is a visionary, experienced, and dynamic leader in the field of trading. 
+          {% blocktrans %}Prof. Rahul Borde is a visionary, experienced, and dynamic leader in the field of trading. 
           With over a decade of experience in the financial markets, he has guided countless investors 
           on their journey toward financial freedom. His deep analytical skills, strategic thinking, 
-          and constant focus on innovation have made him an inspiring figure in the modern trading world.
+          and constant focus on innovation have made him an inspiring figure in the modern trading world.{% endblocktrans %}
         </p>
 
         <p>
-          By blending knowledge with practical skills, he has encouraged many to approach trading with 
+          {% blocktrans %}By blending knowledge with practical skills, he has encouraged many to approach trading with 
           confidence and discipline. He firmly believes that <strong>“Education, discipline, and consistency 
-          are the true formulas for success.”</strong>
+          are the true formulas for success.”</strong>{% endblocktrans %}
         </p>
 
         <p>
-          Under his leadership, the organization is built not merely on profit, but on a culture of 
+          {% blocktrans %}Under his leadership, the organization is built not merely on profit, but on a culture of 
           responsibility, integrity, and long-term value creation. Prof. Borde’s mission is to empower 
           every individual in India through financial education and to establish trading as a respected 
-          professional field.
+          professional field.{% endblocktrans %}
         </p>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          {% trans "Close" %}
         </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal: Varsha Mam -->
 <div class="modal fade" id="varshaModal" tabindex="-1" aria-labelledby="varshaModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content" style="border-radius: 20px;">
       
       <div class="modal-header">
-        <h5 class="modal-title" id="varshaModalLabel">More About Prof. Varsha Bharud</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="varshaModalLabel">{% trans "More About Prof. Varsha Bharud" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
       </div>
 
       <div class="modal-body">
-        <h4 class="mb-3">🌸 Prof. Varsha Bharud</h4>
-        <h6 class="text-muted mb-4">Co-Founder</h6>
+        <h4 class="mb-3">🌸 {% trans "Prof. Varsha Bharud" %}</h4>
+        <h6 class="text-muted mb-4">{% trans "Co-Founder" %}</h6>
 
         <p>
-          Prof. Varsha Bharud is an inspiring personality in the field of financial education and guidance. 
+          {% blocktrans %}Prof. Varsha Bharud is an inspiring personality in the field of financial education and guidance. 
           She has made remarkable contributions toward promoting financial literacy and developing the right 
           perspective on investments. Her core mission is to empower every individual by helping them understand 
-          the fundamentals of money management, investment planning, and financial discipline.
+          the fundamentals of money management, investment planning, and financial discipline.{% endblocktrans %}
         </p>
 
         <p>
-          With over 10 years of experience, she has educated thousands of students, professionals, and homemakers 
+          {% blocktrans %}With over 10 years of experience, she has educated thousands of students, professionals, and homemakers 
           in the principles of financial planning. Through her simple yet impactful teaching methods, she has 
           helped many overcome their fear of trading, investing, and saving — instilling in them confidence 
-          and clarity.
+          and clarity.{% endblocktrans %}
         </p>
 
         <p>
-          Prof. Bharud firmly believes that <strong>“Financial education is not just knowledge — it’s a way of life.”</strong> 
+          {% blocktrans %}Prof. Bharud firmly believes that <strong>“Financial education is not just knowledge — it’s a way of life.”</strong> 
           Under her leadership, the organization continues to work tirelessly toward women’s financial empowerment, 
-          responsible investing, and long-term financial stability.
+          responsible investing, and long-term financial stability.{% endblocktrans %}
         </p>
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
+          {% trans "Close" %}
         </button>
       </div>
 

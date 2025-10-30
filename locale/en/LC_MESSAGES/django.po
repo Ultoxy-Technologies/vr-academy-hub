@@ -1,0 +1,1336 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-30 07:44+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\VRACADEMYHUB\settings.py:126
+msgid "English"
+msgstr ""
+
+#: .\VRACADEMYHUB\settings.py:127
+msgid "Hindi"
+msgstr ""
+
+#: .\VRACADEMYHUB\settings.py:128
+msgid "Marathi"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:18
+msgid "Trading abstract background"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:35 .\WebApp\templates\index.html:195
+msgid "About Us"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:39
+msgid "About VR Training Academy"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:44
+msgid ""
+"Empowering traders since 2015 with practical, market-tested forex education. "
+"Learn hands-on with live webinars, demo labs and mentor-led coaching to "
+"build real trading skills."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:48
+msgid "About actions"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:49
+msgid "Learn More"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:50
+msgid "Meet the Team"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:57
+msgid "Students Trained"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:61
+msgid "Live Webinars"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:65
+msgid "Satisfaction"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:73
+msgid "Scroll to details"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:295
+msgid "Why Choose"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:295
+msgid "VR Training Academy?"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:298
+msgid ""
+"Discover what makes VR Training Academy a trusted name in forex education — "
+"practical, proven, and community-driven."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:309
+msgid "Expert Guidance"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:311
+msgid ""
+"Courses designed and led by seasoned forex traders, delivering real-world "
+"strategies and mentoring."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:313
+msgid "Instructor-led"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:323
+msgid "Comprehensive Learning"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:325
+msgid ""
+"Master technical and fundamental analysis, trading psychology, risk control, "
+"and automation."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:327
+msgid "End-to-end curriculum"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:337
+msgid "Flexible Learning"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:339
+msgid ""
+"Self-paced lessons, live labs, and demo accounts let you practice risk-free "
+"on your schedule."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:341
+msgid "Practical & flexible"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:351
+msgid "Global Community"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:353
+msgid ""
+"Join traders from 50+ countries — access exclusive webinars, group coaching, "
+"and community-driven help."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:355
+msgid "Worldwide network"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:562
+msgid "What"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:562
+msgid "We Offer"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:565
+msgid ""
+"Explore our structured learning paths designed for traders at every level — "
+"from beginners to professionals."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:579
+msgid "For Beginners"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:581
+msgid ""
+"Learn currency pairs, pips and leverage — a clear step-by-step foundation to "
+"start trading with confidence."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:583
+msgid "Explore beginner courses"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:583
+msgid "Start Learning"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:596
+msgid "For Advanced Traders"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:598
+msgid ""
+"Advanced strategies including scalping, harmonic patterns and Fibonacci for "
+"precision entries and exits."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:600
+msgid "Explore advanced courses"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:600
+msgid "Explore Strategies"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:613
+msgid "Practical Experience"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:615
+msgid ""
+"Hands-on demo accounts and MT5 labs help you practice trade management and "
+"build real market skills."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:617
+msgid "Open demo account"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:617
+msgid "Open Demo"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:630
+msgid "Market Insights"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:632
+msgid ""
+"Daily analysis, live trade breakdowns and market commentary so your "
+"decisions stay data-driven."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:634
+msgid "See market insights"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:634
+msgid "See Insights"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:816
+msgid "Our Philosophy"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:817
+msgid "Three pillars for successful trading"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:819
+msgid ""
+"Successful trading depends on three pillars: <strong>knowledge</strong>, "
+"<strong>discipline</strong>, and <strong>practice</strong>. Forex trading "
+"isn’t a get-rich-quick scheme—it’s a skill that demands dedication and a "
+"solid foundation. At VR Training Academy, we emphasize critical thinking, "
+"risk management, and trading psychology to help you avoid common pitfalls "
+"and achieve long-term gains."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:829 .\WebApp\templates\about_us.html:831
+msgid "Knowledge"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:832
+msgid ""
+"Structured lessons and live demonstrations so you understand 'why' behind "
+"every decision."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:836 .\WebApp\templates\about_us.html:838
+msgid "Discipline"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:839
+msgid ""
+"Trade plans, risk rules and emotional control to protect capital and mind."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:843 .\WebApp\templates\about_us.html:845
+msgid "Practice"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:846
+msgid ""
+"Simulated trading, journal reviews and iterative improvement until trades "
+"become repeatable."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:862
+msgid "Practice > Hype"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:864
+msgid ""
+"We teach repeatable processes, not shortcuts. Long-term trading success is "
+"built by compounding skill and disciplined risk management — that’s the VRAA "
+"promise."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:871
+msgid "Real-world labs"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:871
+msgid "trade in realistic demo environments."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:872
+msgid "Mentor feedback"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:872
+msgid "focused reviews to correct mistakes early."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:873
+msgid "Psychology training"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:873
+msgid "regulate emotions and follow the plan."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:877
+msgid "View Courses"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:878
+msgid "Ask an Advisor"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1136
+msgid "Our Story"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1138
+msgid ""
+"VR Training Academy was founded by a group of passionate traders who wanted "
+"to shield newcomers from scams and offer honest education. With a commitment "
+"to integrity and results, we’ve become the trusted partner of over 1500 "
+"students who have transformed their trading journey through our courses."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1286
+msgid "Meet Our Owners"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1288
+msgid ""
+"The brilliant minds behind <strong>VR Training Academy</strong>, inspiring a "
+"generation of successful traders."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1296
+msgid "Owner 1"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1298
+msgid "Prof. Rahul Borude"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1299
+msgid "Founder & CEO"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1300
+msgid "Visionary leader with 10+ years in trading."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1310 .\WebApp\templates\about_us.html:1333
+msgid "Read More"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1320
+msgid "Owner 2"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1322 .\WebApp\templates\about_us.html:1397
+msgid "Prof. Varsha Bharud"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1323 .\WebApp\templates\about_us.html:1398
+msgid "Co-Founder"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1324
+msgid "Expert in financial education and mentoring."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1348
+msgid "More About Prof. Rahul Borde"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1349 .\WebApp\templates\about_us.html:1379
+#: .\WebApp\templates\about_us.html:1393 .\WebApp\templates\about_us.html:1423
+msgid "Close"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1353
+msgid "Prof. Rahul Borde"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1354
+msgid "Founder & Chief Executive Officer"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1357
+msgid ""
+"Prof. Rahul Borde is a visionary, experienced, and dynamic leader in the "
+"field of trading. \n"
+"          With over a decade of experience in the financial markets, he has "
+"guided countless investors \n"
+"          on their journey toward financial freedom. His deep analytical "
+"skills, strategic thinking, \n"
+"          and constant focus on innovation have made him an inspiring figure "
+"in the modern trading world."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1364
+msgid ""
+"By blending knowledge with practical skills, he has encouraged many to "
+"approach trading with \n"
+"          confidence and discipline. He firmly believes that "
+"<strong>“Education, discipline, and consistency \n"
+"          are the true formulas for success.”</strong>"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1370
+msgid ""
+"Under his leadership, the organization is built not merely on profit, but on "
+"a culture of \n"
+"          responsibility, integrity, and long-term value creation. Prof. "
+"Borde’s mission is to empower \n"
+"          every individual in India through financial education and to "
+"establish trading as a respected \n"
+"          professional field."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1392
+msgid "More About Prof. Varsha Bharud"
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1401
+msgid ""
+"Prof. Varsha Bharud is an inspiring personality in the field of financial "
+"education and guidance. \n"
+"          She has made remarkable contributions toward promoting financial "
+"literacy and developing the right \n"
+"          perspective on investments. Her core mission is to empower every "
+"individual by helping them understand \n"
+"          the fundamentals of money management, investment planning, and "
+"financial discipline."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1408
+msgid ""
+"With over 10 years of experience, she has educated thousands of students, "
+"professionals, and homemakers \n"
+"          in the principles of financial planning. Through her simple yet "
+"impactful teaching methods, she has \n"
+"          helped many overcome their fear of trading, investing, and saving "
+"— instilling in them confidence \n"
+"          and clarity."
+msgstr ""
+
+#: .\WebApp\templates\about_us.html:1415
+msgid ""
+"Prof. Bharud firmly believes that <strong>“Financial education is not just "
+"knowledge — it’s a way of life.”</strong> \n"
+"          Under her leadership, the organization continues to work "
+"tirelessly toward women’s financial empowerment, \n"
+"          responsible investing, and long-term financial stability."
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:18
+#: .\WebApp\templates\advance_to_pro.html:22
+msgid "Advance To Pro"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:21
+#: .\WebApp\templates\basic_to_advance.html:20
+msgid "Home"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:30
+msgid "Forex Trading Courses"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:36
+msgid "1-Month Forex Trading Course"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:42
+#: .\WebApp\templates\advance_to_pro.html:132
+#: .\WebApp\templates\basic_to_advance.html:38
+msgid "Overview"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:43
+#: .\WebApp\templates\advance_to_pro.html:133
+#: .\WebApp\templates\basic_to_advance.html:39
+msgid "Duration:"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:43
+msgid "1 Month"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:44
+#: .\WebApp\templates\advance_to_pro.html:134
+#: .\WebApp\templates\basic_to_advance.html:41
+msgid "Fee:"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:45
+#: .\WebApp\templates\advance_to_pro.html:135
+#: .\WebApp\templates\basic_to_advance.html:42
+msgid "Offer"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:47
+#: .\WebApp\templates\advance_to_pro.html:137
+msgid "Mentorship:"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:47
+msgid "1-Month Support"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:48
+#: .\WebApp\templates\advance_to_pro.html:138
+msgid "Extended Support:"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:48
+msgid "Up to 6 Months"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:55
+#: .\WebApp\templates\advance_to_pro.html:145
+msgid "Basic Module"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:57
+#: .\WebApp\templates\advance_to_pro.html:147
+#: .\WebApp\templates\basic_to_advance.html:55
+msgid "What is Forex?"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:58
+#: .\WebApp\templates\advance_to_pro.html:148
+#: .\WebApp\templates\basic_to_advance.html:56
+msgid "Pip & Pipette"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:59
+#: .\WebApp\templates\advance_to_pro.html:149
+msgid "Spread & Leverage"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:60
+#: .\WebApp\templates\basic_to_advance.html:58
+msgid "Understanding Timeframes"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:61
+msgid "Order Types (Buy/Sell Limit, Stop Orders)"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:62
+#: .\WebApp\templates\advance_to_pro.html:151
+#: .\WebApp\templates\basic_to_advance.html:60
+msgid "Trading Sessions"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:70
+#: .\WebApp\templates\advance_to_pro.html:159
+msgid "Advanced Module"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:72
+#: .\WebApp\templates\advance_to_pro.html:161
+msgid "Candlestick Patterns"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:73
+#: .\WebApp\templates\advance_to_pro.html:162
+#: .\WebApp\templates\basic_to_advance.html:71
+msgid "Support & Resistance"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:74
+#: .\WebApp\templates\advance_to_pro.html:163
+#: .\WebApp\templates\basic_to_advance.html:72
+msgid "Supply & Demand Zones"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:75
+#: .\WebApp\templates\advance_to_pro.html:164
+msgid "Trend Line Analysis"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:76
+#: .\WebApp\templates\advance_to_pro.html:165
+#: .\WebApp\templates\basic_to_advance.html:74
+msgid "Chart Patterns"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:84
+#: .\WebApp\templates\advance_to_pro.html:173
+#: .\WebApp\templates\basic_to_advance.html:82
+msgid "Entry Zone & Practical"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:86
+msgid "Identify Entry Zones"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:87
+#: .\WebApp\templates\advance_to_pro.html:176
+#: .\WebApp\templates\basic_to_advance.html:85
+msgid "Live Market Analysis"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:88
+#: .\WebApp\templates\advance_to_pro.html:177
+#: .\WebApp\templates\basic_to_advance.html:86
+msgid "Strategy Application"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:89
+#: .\WebApp\templates\advance_to_pro.html:178
+#: .\WebApp\templates\basic_to_advance.html:87
+msgid "Risk Management"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:90
+#: .\WebApp\templates\advance_to_pro.html:179
+msgid "Q&A Sessions"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:98
+#: .\WebApp\templates\advance_to_pro.html:187
+msgid "Strategy & Practice"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:100
+#: .\WebApp\templates\advance_to_pro.html:189
+msgid "Live Trading Practice"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:101
+msgid "Professional Strategy Implementation"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:102
+msgid "6-Month Continuous Support"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:110
+#: .\WebApp\templates\advance_to_pro.html:200
+msgid "Highlights"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:112
+msgid "1-Month Intensive Training"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:113
+msgid "Personal Mentorship"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:114
+msgid "6-Month Extended Support"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:115
+#: .\WebApp\templates\basic_to_advance.html:100
+msgid "Practical & Strategy-Based Learning"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:126
+msgid "2-Month Advanced Pro Trading Course"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:133
+msgid "2 Months"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:137
+msgid "1-Year Support"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:138
+msgid "Up to 1 Year"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:150
+msgid "Order Types"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:175
+msgid "Identify Perfect Entries"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:190
+msgid "Real Account Guidance"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:191
+msgid "3 Back-Tested Strategies"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:192
+msgid "Perfect Entry Strategy"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:202
+msgid "2-Month Professional Training"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:203
+msgid "1-Year Mentorship & Guidance"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:204
+msgid "Real Account Support"
+msgstr ""
+
+#: .\WebApp\templates\advance_to_pro.html:205
+msgid "Perfect for Beginners & Advanced Traders"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:17
+#: .\WebApp\templates\basic_to_advance.html:21
+msgid "Basic To Advance"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:30
+msgid "15 Days Forex Trading Course"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:39
+msgid "15 Days"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:45
+msgid "Support:"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:45
+msgid "1-Month Personal Mentorship"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:53
+msgid "Basic Section"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:57
+msgid "Spread and Leverage"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:59
+msgid "Order Types (Buy/Sell Limits, Stop Orders)"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:68
+msgid "Advanced Section"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:70
+msgid "Candles & Candlestick Patterns"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:73
+msgid "Trendline Analysis"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:84
+msgid "Identify Correct Entries"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:88
+msgid "Q&A & Review Sessions"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:96
+msgid "Course Highlights"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:98
+msgid "15 Days Intensive Training"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:99
+msgid "1-Month Personal Support"
+msgstr ""
+
+#: .\WebApp\templates\basic_to_advance.html:101
+msgid "Ideal for Beginners & Intermediate Traders"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:113
+msgid "VR Training Academy"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:114
+msgid "Professional VR Training & Workshops — Shirdi"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:118
+msgid "Fill out the form below and we’ll respond within one business day."
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:124
+msgid "Full Name *"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:126
+msgid "Please enter your full name."
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:129
+msgid "Mobile *"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:131
+msgid "Enter a valid 10-digit mobile number."
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:136
+msgid "Email *"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:138
+msgid "Enter a valid email address."
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:142
+msgid "Message *"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:144
+msgid "Please enter a short message."
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:148
+msgid "Send Enquiry"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:149
+msgid "Reset"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:161
+msgid "Contact Information"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:169
+msgid "Airport Rd, near Kimaya Garden"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:170
+msgid "Shirdi, Maharashtra 423109"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:184
+msgid "General Enquiries"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:194
+msgid "Primary Contact"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:204
+msgid "Alternate / WhatsApp"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:215
+msgid "Our Branches"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:222
+msgid "VR TRAINING ACADEMY — Branch No. 1"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:223
+msgid "Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:239
+msgid "VR TRAINING ACADEMY — Branch No. 2"
+msgstr ""
+
+#: .\WebApp\templates\contct_us.html:240
+msgid "The Grand Center, UG-18, Pune Nashik Highway, Chakan"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:134
+#: .\WebApp\templates\free_cources.html:185
+#: .\WebApp\templates\free_cources.html:236
+msgid "Masterclass banner"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:141
+#: .\WebApp\templates\free_cources.html:192
+#: .\WebApp\templates\free_cources.html:243
+msgid "25 October (Saturday)"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:144
+#: .\WebApp\templates\free_cources.html:195
+#: .\WebApp\templates\free_cources.html:246
+msgid "06:00 PM"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:162
+#: .\WebApp\templates\free_cources.html:172
+msgid "Masterclass on AI Based Investing with Dipak and Saikat"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:167
+#: .\WebApp\templates\free_cources.html:218
+#: .\WebApp\templates\free_cources.html:269
+msgid "Free"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:173
+#: .\WebApp\templates\free_cources.html:224
+#: .\WebApp\templates\free_cources.html:275
+msgid "Register Now"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:213
+#: .\WebApp\templates\free_cources.html:223
+msgid "Blitz Masterclass on Swing Trading by Kamalpreet Singh"
+msgstr ""
+
+#: .\WebApp\templates\free_cources.html:264
+#: .\WebApp\templates\free_cources.html:274
+msgid "Masterclass on Swing Trading with Mr. Kamal Preet Singh"
+msgstr ""
+
+#: .\WebApp\templates\index.html:29
+msgid "Master Share Market & Forex Trading"
+msgstr ""
+
+#: .\WebApp\templates\index.html:32
+msgid "Join"
+msgstr ""
+
+#: .\WebApp\templates\index.html:33
+msgid ""
+"for expert live webinars, tutorials, and practical training to become a "
+"successful trader."
+msgstr ""
+
+#: .\WebApp\templates\index.html:40
+msgid "Get Started"
+msgstr ""
+
+#: .\WebApp\templates\index.html:199
+msgid "Learn Trading Skills to Secure Your Financial Future"
+msgstr ""
+
+#: .\WebApp\templates\index.html:204
+msgid ""
+"At <span class=\"highlight\">VR Academy Hub</span>, we are committed to "
+"transforming aspiring traders into seasoned market professionals through "
+"comprehensive education and practical training."
+msgstr ""
+
+#: .\WebApp\templates\index.html:208
+msgid ""
+"Our platform offers expert-led <span class=\"highlight\">live webinars</"
+"span>, interactive tutorials, and a strong <span "
+"class=\"highlight\">community support</span> system designed to build "
+"confidence and skills in forex and share market trading."
+msgstr ""
+
+#: .\WebApp\templates\index.html:213
+msgid "Our Core Values"
+msgstr ""
+
+#: .\WebApp\templates\index.html:219
+msgid "Practical Learning"
+msgstr ""
+
+#: .\WebApp\templates\index.html:223
+msgid "Transparency & Integrity"
+msgstr ""
+
+#: .\WebApp\templates\index.html:227
+msgid "Community Support"
+msgstr ""
+
+#: .\WebApp\templates\index.html:231
+msgid "Continuous Innovation"
+msgstr ""
+
+#: .\WebApp\templates\index.html:235
+msgid "Empowerment through Education"
+msgstr ""
+
+#: .\WebApp\templates\index.html:244
+msgid "Trading Education Image"
+msgstr ""
+
+#: .\WebApp\templates\index.html:250
+msgid "Our Mission"
+msgstr ""
+
+#: .\WebApp\templates\index.html:252
+msgid ""
+"To empower individuals with the knowledge, skills, and confidence to "
+"successfully navigate financial markets and achieve financial independence."
+msgstr ""
+
+#: .\WebApp\templates\index.html:470
+msgid "How Does Forex Work?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:472
+msgid ""
+"\n"
+"          <span class=\"highlight\">Forex</span>, or foreign exchange, is "
+"the global marketplace where currencies are exchanged.\n"
+"          It’s the largest and most liquid financial market in the world.\n"
+"          "
+msgstr ""
+
+#: .\WebApp\templates\index.html:488
+msgid "Currency Pairs"
+msgstr ""
+
+#: .\WebApp\templates\index.html:490
+msgid ""
+"Currencies are traded in pairs, and traders seek to profit by predicting how "
+"one currency will perform against another."
+msgstr ""
+
+#: .\WebApp\templates\index.html:503
+msgid "24/5 Market"
+msgstr ""
+
+#: .\WebApp\templates\index.html:505
+msgid ""
+"Forex trading runs 24 hours a day, 5 days a week, allowing traders around "
+"the world to participate anytime."
+msgstr ""
+
+#: .\WebApp\templates\index.html:518
+msgid "Influencing Factors"
+msgstr ""
+
+#: .\WebApp\templates\index.html:520
+msgid ""
+"Prices are influenced by economics, politics, and news, which makes "
+"understanding market trends crucial."
+msgstr ""
+
+#: .\WebApp\templates\index.html:698
+msgid "What You Need to Start"
+msgstr ""
+
+#: .\WebApp\templates\index.html:700
+msgid ""
+"\n"
+"          To start trading forex, you need internet access, a trading "
+"device, a broker like <span class=\"highlight\">VR Trading</span>,\n"
+"          and a trading platform such as <span "
+"class=\"highlight\">MetaTrader</span>. It's also important to understand "
+"basic terms like\n"
+"          <span class=\"highlight\">spread</span>, <span "
+"class=\"highlight\">leverage</span>, <span class=\"highlight\">lot size</"
+"span>,\n"
+"          and <span class=\"highlight\">margin</span>. Most importantly, "
+"adopt a learning mindset —\n"
+"          <span class=\"fw-semibold text-primary\">patience</span> and <span "
+"class=\"fw-semibold text-primary\">discipline</span> are key.\n"
+"          "
+msgstr ""
+
+#: .\WebApp\templates\index.html:720
+msgid "Internet Access"
+msgstr ""
+
+#: .\WebApp\templates\index.html:722
+msgid ""
+"A stable internet connection to trade efficiently and monitor the market in "
+"real time."
+msgstr ""
+
+#: .\WebApp\templates\index.html:735
+msgid "Trading Device"
+msgstr ""
+
+#: .\WebApp\templates\index.html:737
+msgid ""
+"A computer, tablet, or smartphone to access trading platforms and monitor "
+"your trades."
+msgstr ""
+
+#: .\WebApp\templates\index.html:750
+msgid "Broker"
+msgstr ""
+
+#: .\WebApp\templates\index.html:752
+msgid ""
+"A reliable broker like VR Trading that provides access to the Forex market."
+msgstr ""
+
+#: .\WebApp\templates\index.html:765
+msgid "Trading Platform"
+msgstr ""
+
+#: .\WebApp\templates\index.html:767
+msgid ""
+"A platform like MetaTrader to place trades, analyze charts, and manage "
+"positions."
+msgstr ""
+
+#: .\WebApp\templates\index.html:954
+msgid "Getting Started: Step-by-Step"
+msgstr ""
+
+#: .\WebApp\templates\index.html:956
+msgid "Follow these steps to start your Forex trading journey with confidence."
+msgstr ""
+
+#: .\WebApp\templates\index.html:971
+msgid "Choose Broker"
+msgstr ""
+
+#: .\WebApp\templates\index.html:972
+msgid ""
+"Choose the right broker (we recommend VR Academy) to start trading safely."
+msgstr ""
+
+#: .\WebApp\templates\index.html:982
+msgid "Understand Conditions"
+msgstr ""
+
+#: .\WebApp\templates\index.html:983
+msgid "Understand trading conditions like spread, leverage, and margin."
+msgstr ""
+
+#: .\WebApp\templates\index.html:993
+msgid "Open Demo Account"
+msgstr ""
+
+#: .\WebApp\templates\index.html:994
+msgid "Open a demo account with virtual funds to practice trading risk-free."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1004
+msgid "Choose Platform"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1005
+msgid ""
+"Choose a trading platform like MetaTrader 5 for smooth trading experience."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1015
+msgid "Select Currency Pair"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1016
+msgid "Select a currency pair to trade and start monitoring market movements."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1026
+msgid "Try Strategies"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1027
+msgid ""
+"Try some basic trading strategies to gain practical experience and "
+"confidence."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1188
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1190
+msgid ""
+"Everything you need to know about VR Academy Hub and forex trading courses."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1203
+msgid "What is forex trading and how does it work?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1208
+msgid ""
+"Forex trading, or foreign exchange trading, involves buying one currency and "
+"selling another in pairs. It is the world's largest financial market, "
+"operating 24/5, where traders speculate on currency price movements to make "
+"profits by predicting whether one currency will strengthen or weaken against "
+"another."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1218
+msgid "Do I need prior experience to join the trading courses?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1223
+msgid ""
+"No prior experience is needed. VR Academy Hub caters to beginners by "
+"providing step-by-step tutorials and foundational lessons, while also "
+"offering advanced topics for experienced traders to sharpen their skills."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1233
+msgid "What topics does VR Academy Hub cover?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1238
+msgid ""
+"The training includes forex trading strategies, options trading, technical "
+"and fundamental analysis, risk management, chart reading, and practical "
+"trading skills to build confidence in live markets."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1248
+msgid "Are courses online or in-person?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1253
+msgid ""
+"Courses are primarily online, providing live webinars, video tutorials, and "
+"interactive sessions accessible from anywhere. This approach offers "
+"flexibility for learners to join from their preferred locations."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1263
+msgid "How do I access live webinars and tutorials?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1268
+msgid ""
+"Once you register on the platform, you receive access credentials to join "
+"live sessions and on-demand tutorials. Notifications and updates are sent "
+"for upcoming classes."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1278
+msgid "What are the course fees? Are there any free classes?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1283
+msgid ""
+"VR Academy Hub offers a mix of paid advanced courses and free introductory "
+"sessions/webinars to help learners start with minimal investment."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1297
+msgid "Do you provide personalized trading advice?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1302
+msgid ""
+"Yes, learners can get guidance during interactive sessions, Q&A forums, and "
+"sometimes one-on-one mentorship tailored to their trading goals."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1312
+msgid "How long does it take to become proficient in trading?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1317
+msgid ""
+"Duration depends on individual learning pace, but the programs focus on "
+"practical understanding and confidence-building, which typically take weeks "
+"to months with consistent effort."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1327
+msgid "Is certification provided?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1332
+msgid ""
+"Many courses offer certifications upon completion, validating the skills "
+"learned and boosting credibility for aspiring traders."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1342
+msgid "Can beginners trade with small capital?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1347
+msgid ""
+"Yes, training includes risk management strategies suitable for beginners "
+"aiming to start with small investments or virtual trading before real "
+"capital deployment."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1357
+msgid "What setup do I need to join?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1362
+msgid ""
+"A reliable internet connection, a computer or smartphone, and access to the "
+"platform are needed. Some courses recommend using demo accounts for practice."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1372
+msgid "Are there resources for practicing without real money?"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1377
+msgid ""
+"Yes, demo accounts and trading simulators are encouraged for learners to "
+"practice strategies risk-free before trading with real funds."
+msgstr ""
+
+#: .\WebApp\templates\index.html:1540
+msgid "Start Today!"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1542
+msgid ""
+"\n"
+"        From <strong>Mumbai to Pune</strong>, <strong>VR Training Academy</"
+"strong> is guiding Indian traders \n"
+"        to succeed in the global forex market. Sign up in just 5 minutes, \n"
+"        access a <strong>free demo course</strong>, and start trading with "
+"confidence!\n"
+"      "
+msgstr ""
+
+#: .\WebApp\templates\index.html:1548
+msgid "Join Now"
+msgstr ""
+
+#: .\WebApp\templates\index.html:1549
+msgid "No credit card required • Free lifetime demo"
+msgstr ""

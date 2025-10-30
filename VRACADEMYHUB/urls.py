@@ -16,20 +16,31 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from WebApp import urls
+from WebApp import urls as web_urls
 from StudentApp import urls as student_urls
 
 from django.conf import settings
-from django.conf.urls.static import static 
-
+from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
+from django.views.i18n import set_language
 
 urlpatterns = [
+    # 🌐 Language switching endpoint
+    path('i18n/', include('django.conf.urls.i18n')),
+]
+
+# 🌍 Add language-based URL patterns (this allows URLs like /en/, /hi/, /mr/)
+urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
-    path('', include(urls)),
+    path('', include(web_urls)),
     path('student/', include(student_urls)),
-    path('register/', urls.register_user, name='register_user'),
-    path('login/', urls.login_user, name='login'),
-    path('logout/', urls.logout, name='logout'),
 
+    # Your custom auth routes preserved
+    path('register/', web_urls.register_user, name='register_user'),
+    path('login/', web_urls.login_user, name='login'),
+    path('logout/', web_urls.logout, name='logout'),
+)
 
-]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+# 📁 Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
