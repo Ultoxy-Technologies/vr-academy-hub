@@ -58,34 +58,34 @@ def contct_us(request):
     return render(request, 'contct_us.html')
 
 
-# def contact_us_mail(request):
-#     try:
-#         # Prepare the subject
-#         email_subject = "Finance Department Daily Reminder Report"
-#         current_datetime = datetime.now()
+def contact_us_mail(request):
+    try:
+        # Prepare the subject
+        email_subject = "New Enquiry Recerived from Website"
+        current_datetime = datetime.now()
  
-#         # Render email content
-#         email_body = render_to_string('finance_daily_reminder_email.html', )
+        # Render email content
+        email_body = render_to_string('Enquiry_Mail.html', )
 
-#         # Configure the email
-#         email_message = EmailMessage(
-#             subject=email_subject,
-#             body=email_body,
-#             from_email=settings.DEFAULT_FROM_EMAIL,
-#             to=['prameshwar4378@gmail.com'],  # Replace with the appropriate email address
-#         )
-#         email_message.content_subtype = 'html'
+        # Configure the email
+        email_message = EmailMessage(
+            subject=email_subject,
+            body=email_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=['prameshwar4378@gmail.com'],  # Replace with the appropriate email address
+        )
+        email_message.content_subtype = 'html'
 
-#         # Send the email in a background thread
-#         email_thread = threading.Thread(target=send_email_in_background, args=(email_message,))
-#         email_thread.start()
+        # Send the email in a background thread
+        email_thread = threading.Thread(target=send_email_in_background, args=(email_message,))
+        email_thread.start()
 
-#         messages.success(request,"Daily reminder email sent successfully.")
-#         return redirect('/finance/dashboard/')
+        messages.success(request,"Enquiry Alert email sent successfully.")
+        return redirect('/contact_us')
      
-#     except Exception as e:
-#         messages.error(request,f"Error in daily_reminder_mail: {e}")
-#         return redirect('/finance/dashboard/')
+    except Exception as e:
+        messages.error(request,f"Error in Enquiry Alert email: {e}")
+        return redirect('/contact_us')
     
  
 
