@@ -121,6 +121,92 @@ class VideoGallery(models.Model):
     video_link = models.CharField(blank=True, null=True, help_text="Enter YouTube video link", max_length=255)
   
 
+ 
+ 
+
+class Certificate(models.Model):
+ 
+    title = models.CharField(
+        max_length=255,
+        help_text="Name of the certificate or recognition title"
+    )
+    issued_by = models.CharField(
+        max_length=255,
+        help_text="Organization or institution that issued the certificate"
+    )
+    issued_to = models.CharField(
+        max_length=255,
+        help_text="Name of the recipient"
+    )
+    issue_date = models.DateField(
+        help_text="Date when the certificate was issued"
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Short description about the certificate or award (optional)"
+    )
+    image = models.ImageField(
+        upload_to="certificates/",
+        blank=True,
+        null=True,
+        help_text="Upload the certificate image"
+    )
+    tag = models.CharField(
+        max_length=50,
+        default="Verified",
+        help_text="Short label such as Verified, Awarded, Achieved, etc."
+    )
+    rating = models.PositiveSmallIntegerField(
+        default=5,
+        help_text="Star rating (1–5) for the recognition"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Uncheck to hide this certificate from the website"
+    )
+
+    class Meta:
+        ordering = ['-issue_date']
+        verbose_name = "Certificate / Award"
+        verbose_name_plural = "Certificates & Awards"
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+
+
+class Basic_to_Advance_Cource(models.Model):
+    title = models.CharField(max_length=255)
+    event_date = models.CharField(max_length=100, help_text="e.g. 25 October (Saturday)")
+    time = models.CharField(max_length=50, help_text="e.g. 06:00 PM")
+    duration = models.CharField(max_length=50, help_text="e.g. 2 Months")
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=5.0)
+    total_reviews = models.CharField(max_length=50, help_text="e.g. 16k+")
+    offer_price = models.CharField(max_length=20, default="Free")
+    original_price = models.CharField(max_length=20, blank=True, null=True)
+    thumbnail = models.ImageField(upload_to="course_thumbnails/", blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return f"{self.title} ({self.event_date})"
+
+class Advance_to_Pro_Cource(models.Model):
+    title = models.CharField(max_length=255)
+    event_date = models.CharField(max_length=100, help_text="e.g. 25 October (Saturday)")
+    time = models.CharField(max_length=50, help_text="e.g. 06:00 PM")
+    duration = models.CharField(max_length=50, help_text="e.g. 2 Months")
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=5.0)
+    total_reviews = models.CharField(max_length=50, help_text="e.g. 16k+")
+    offer_price = models.CharField(max_length=20, default="Free")
+    original_price = models.CharField(max_length=20, blank=True, null=True)
+    thumbnail = models.ImageField(upload_to="course_thumbnails/", blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.event_date})"
+    
+    
+
 
 from django.db import models
 from django.conf import settings

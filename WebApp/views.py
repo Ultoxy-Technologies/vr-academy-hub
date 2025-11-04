@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from AdminApp.models import PhotoGalleryCategories, PhotoGallery, VideoGallery
+from AdminApp.models import PhotoGalleryCategories, PhotoGallery, VideoGallery,FreeCourse,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 from django.contrib import messages
 from AdminApp.models import Enquiry
+import threading
+from django.core.mail import EmailMessage
 
 # Create your views here.
 def index(request):
@@ -11,16 +13,26 @@ def about_us(request):
     return render(request, 'about_us.html')
 
 
+def send_email_in_background(email_message):
+    try:
+        email_message.send()
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+
 # Course Level pages
 def free_cources(request):
-    return render(request, 'free_cources.html')
+    courses = FreeCourse.objects.filter(is_active=True)
+    return render(request, 'free_cources.html', {'courses': courses})
 
 
 def basic_to_advance(request):
-    return render(request, 'basic_to_advance.html')
+    courses = Basic_to_Advance_Cource.objects.filter(is_active=True)
+    return render(request, 'basic_to_advance.html', {'courses': courses})
 
 def advance_to_pro(request):
-    return render(request, 'advance_to_pro.html')
+    courses = Advance_to_Pro_Cource.objects.filter(is_active=True)
+    return render(request, 'advance_to_pro.html', {'courses': courses})
 
 def contct_us(request):
     if request.method == "POST":
@@ -44,7 +56,70 @@ def contct_us(request):
             return redirect("/contact-us")  # redirect to the same page
 
     return render(request, 'contct_us.html')
+
+
+# def contact_us_mail(request):
+#     try:
+#         # Prepare the subject
+#         email_subject = "Finance Department Daily Reminder Report"
+#         current_datetime = datetime.now()
  
+#         # Render email content
+#         email_body = render_to_string('finance_daily_reminder_email.html', )
+
+#         # Configure the email
+#         email_message = EmailMessage(
+#             subject=email_subject,
+#             body=email_body,
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             to=['prameshwar4378@gmail.com'],  # Replace with the appropriate email address
+#         )
+#         email_message.content_subtype = 'html'
+
+#         # Send the email in a background thread
+#         email_thread = threading.Thread(target=send_email_in_background, args=(email_message,))
+#         email_thread.start()
+
+#         messages.success(request,"Daily reminder email sent successfully.")
+#         return redirect('/finance/dashboard/')
+     
+#     except Exception as e:
+#         messages.error(request,f"Error in daily_reminder_mail: {e}")
+#         return redirect('/finance/dashboard/')
+    
+ 
+
+def contact_us_mail(request):
+    try:
+        # Prepare the subject
+        email_subject = "New Contact Us Enquiry Received"
+        current_datetime = datetime.now()
+ 
+        # Render email content
+        email_body = render_to_string('enquiry_mail-templates.html', )
+
+        # Configure the email
+        email_message = EmailMessage(
+            subject=email_subject,
+            body=email_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=['prameshwar4378@gmail.com'],  # Replace with the appropriate email address
+        )
+        email_message.content_subtype = 'html'
+
+        # Send the email in a background thread
+        email_thread = threading.Thread(target=send_email_in_background, args=(email_message,))
+        email_thread.start()
+
+        messages.success(request,"Contact US email sent successfully.")
+        return redirect('/contact_us')
+     
+    except Exception as e:
+        messages.error(request,f"Error in Enquiry: {e}")
+        return redirect('/contact_us')
+
+
+
 
 def web_photos_gallary(request): 
     categories = PhotoGalleryCategories.objects.prefetch_related('photos').all()
@@ -81,8 +156,10 @@ def web_videos_gallary(request):
 
 
 # Awards & Recognition
-def awards(request):
-    return render(request, 'awards.html')
+def certificates(request):
+    certificates = Certificate.objects.filter(is_active=True).order_by('-issue_date')
+    return render(request, 'certificates.html', {'certificates': certificates})
+
 
 # Our Trusted Broker
 def trusted_broker(request):
@@ -96,6 +173,9 @@ from .forms import CustomUserForm, CustomUserLoginForm
 from django.contrib.auth import login
 
 def register_user(request):
+    if request.method == 'GET' and request.user.is_authenticated:
+        return redirect('/student/dashboard')  
+    
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
         if form.is_valid():
@@ -105,6 +185,7 @@ def register_user(request):
     else:
         form = CustomUserForm()
     return render(request, 'register.html', {'form': form})
+
 
 def login_user(request):
     if request.method == "POST":

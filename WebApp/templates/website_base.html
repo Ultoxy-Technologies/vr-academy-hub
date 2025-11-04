@@ -66,7 +66,7 @@ h2,h1{
               <li><a id="videos-link" href="{% url 'video_gallery' %}">Videos</a></li>
             </ul>
           </li>
-          <li><a id="awards-link" href="{% url 'awards' %}">Awards & recognition</a></li>
+          <li><a id="awards-link" href="{% url 'certificates' %}">Awards & recognition</a></li>
           <li><a id="trusted-broker-link" href="{% url 'trusted_broker' %}">Our trusted broker</a></li>
           <li><a id="contact-link" href="{% url 'contact_us' %}">Contact Us</a></li>
         </ul>
@@ -74,7 +74,7 @@ h2,h1{
       </nav>
           <!-- DROPDOWN BUTTON -->
       {% if request.user.is_authenticated %}
-        <a class="btn-getstarted " href="{% url 'student_dashboard' %}">My Dashboard </a>
+        <a class="btn-getstarted " href="{% url 'student_dashboard' %}">Dashboard </a>
         
       {% else %}
       <div class="dropdown ms-3">
@@ -186,7 +186,7 @@ h2,h1{
           <li><a href="{% url 'index' %}">Home</a></li>
           <li><a href="{% url 'about_us' %}">About Us</a></li>
           <li><a href="{% url 'trusted_broker' %}">Our Trusted Broker</a></li>
-          <li><a href="{% url 'awards' %}">Awards & Recognition</a></li>
+          <li><a href="{% url 'certificates' %}">Awards & Recognition</a></li>
           <li><a href="{% url 'contact_us' %}">Contact us</a></li>
         </ul>
       </div>

@@ -220,3 +220,24 @@ JAZZMIN_UI_TWEAKS = {
     "accent": "accent-primary",
     "theme": "pulse",
 }
+
+
+
+
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'prameshwar4378@gmail.com'  # Replace with your Gmail email address
+EMAIL_HOST_PASSWORD = 'uaen nuhf qwey dkfr'  # Replace with your Gmail password or App Password
+
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://sailanddevelopers.com',
+#     'https://www.sailanddevelopers.com',  # If using both www and non-www versions
+#     'http://sailanddevelopers.com',  # Add HTTP for local or non-SSL traffic, if necessary
+#     'http://www.sailanddevelopers.com',  # Add HTTP for local or non-SSL traffic, if necessary
+# ]
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True

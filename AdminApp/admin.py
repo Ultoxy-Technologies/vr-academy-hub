@@ -492,3 +492,129 @@ class FreeCourseProgressAdmin(admin.ModelAdmin):
                 updated += 1
         self.message_user(request, f"{updated} progress records marked as completed.")
     mark_completed_action.short_description = "Mark selected as Completed"
+
+
+
+
+
+from django.contrib import admin
+from django.utils.html import format_html
+from .models import Basic_to_Advance_Cource, Advance_to_Pro_Cource
+
+
+# ----------------------------
+# Shared Admin Base Class
+# ----------------------------
+class CourseBaseAdmin(admin.ModelAdmin):
+    list_display = (
+        'thumbnail_preview',
+        'title',
+        'event_date',
+        'time',
+        'duration',
+        'rating',
+        'total_reviews',
+        'offer_price',
+        'original_price',
+        'is_active',
+    )
+    list_filter = ('is_active', 'duration', 'rating')
+    search_fields = ('title', 'event_date', 'duration', 'offer_price')
+    list_editable = ('is_active',)
+    readonly_fields = ('thumbnail_preview',)
+    ordering = ('-event_date',)
+    list_per_page = 25
+
+    fieldsets = (
+        ('Course Details', {
+            'fields': ('title', 'event_date', 'time', 'duration', 'rating', 'total_reviews')
+        }),
+        ('Pricing Information', {
+            'fields': ('offer_price', 'original_price')
+        }),
+        ('Media', {
+            'fields': ('thumbnail', 'thumbnail_preview')
+        }),
+        ('Status', {
+            'fields': ('is_active',)
+        }),
+    )
+
+    def thumbnail_preview(self, obj):
+        """Display image preview in admin."""
+        if obj.thumbnail:
+            return format_html(
+                '<img src="{}" style="height:70px; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,0.3);"/>',
+                obj.thumbnail.url
+            )
+        return format_html('<span style="color:gray;">No Image</span>')
+    thumbnail_preview.short_description = "Thumbnail"
+
+    def get_queryset(self, request):
+        """Enhance query performance."""
+        return super().get_queryset(request).only(
+            'title', 'event_date', 'time', 'duration', 'rating',
+            'total_reviews', 'offer_price', 'original_price', 'thumbnail', 'is_active'
+        )
+
+
+# ----------------------------
+# Register Basic_to_Advance_Cource
+# ----------------------------
+@admin.register(Basic_to_Advance_Cource)
+class BasicToAdvanceCourseAdmin(CourseBaseAdmin):
+    list_display = CourseBaseAdmin.list_display + ()
+    list_filter = CourseBaseAdmin.list_filter + ('event_date',)
+    search_fields = CourseBaseAdmin.search_fields + ('event_date',)
+
+    class Media:
+        css = {
+            'all': ('admin/css/custom_admin.css',)  # Optional for Jazzmin styling
+        }
+
+
+# ----------------------------
+# Register Advance_to_Pro_Cource
+# ----------------------------
+@admin.register(Advance_to_Pro_Cource)
+class AdvanceToProCourseAdmin(CourseBaseAdmin):
+    list_display = CourseBaseAdmin.list_display + ()
+    list_filter = CourseBaseAdmin.list_filter + ('event_date',)
+    search_fields = CourseBaseAdmin.search_fields + ('event_date',)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------
+# Certificate ADMIN
+# ----------------------------
+from django.contrib import admin
+from .models import Certificate
+
+@admin.register(Certificate)
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ( 'title', 'issued_by', 'issued_to', 'issue_date', 'rating', 'is_active')
+    list_filter = ('issued_by', 'is_active', 'issue_date')
+    search_fields = ( 'title', 'issued_by', 'issued_to')
+    list_editable = ('is_active',) 
+    fieldsets = (
+        ('Certificate Info', {
+            'fields': ( 'title', 'issued_by', 'issued_to', 'issue_date', 'description')
+        }),
+        ('Media & Tags', {
+            'fields': ('image', 'tag', 'rating')
+        }),
+        ('Visibility', {
+            'fields': ('is_active',)
+        }),
+    )
