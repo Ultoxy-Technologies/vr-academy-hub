@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTCFX — Trusted Broker Partnership | VR Academy</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <meta name="description" content="GTCFX is a regulated global broker partnered with VR Academy. Trade Forex, Commodities, Indices and Crypto with INR deposit/withdrawal support." />
+
+  <style>
+    /*
+      GTCFX — Modern Responsive Landing Page
+      Built for clarity, accessibility and responsiveness.
+      This CSS intentionally includes more detail and utility classes
+      to keep the HTML tidy while providing a professional look.
+    */
+
+    :root{
+      --brand-primary: #0d6efd;      /* Bootstrap primary fallback */
+      --brand-dark: #0b2545;
+      --accent: #14b8a6;            /* teal-like accent */
+      --muted: #6c7a89;
+      --bg-soft: #f6f9fc;
+      --glass: rgba(255,255,255,0.6);
+      --card-shadow: 0 10px 30px rgba(11,37,69,0.08);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+    }
+
+    html,body{
+      height:100%;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: var(--brand-dark);
+      background: linear-gradient(180deg,var(--bg-soft) 0%, #ffffff 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+    }
+
+    /* Top navigation */
+    .navbar {
+      padding: 1rem 1rem;
+      transition: background .25s ease, box-shadow .25s ease, padding .25s ease;
+      z-index: 999;
+      background: transparent;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--brand-dark);
+    }
+
+    .nav-link {
+      color: rgba(11,37,69,0.85) !important;
+      font-weight: 500;
+    }
+
+    .btn-cta {
+      background: linear-gradient(90deg,var(--accent),#0ea5a3);
+      border: none;
+      color: white;
+      box-shadow: 0 8px 20px rgba(20,184,166,0.14);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 5.5rem 0 3.5rem;
+      position: relative;
+      overflow: visible;
+    }
+
+    .hero-card {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(11,37,69,0.03);
+      padding: 2rem;
+    }
+
+    .badge-trust {
+      background: rgba(20,184,166,0.12);
+      color: var(--accent);
+      font-weight:600;
+      border-radius: 999px;
+      padding: .35rem .65rem;
+      font-size: .82rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+    }
+
+    /* Feature grid */
+    .feature {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 6px 18px rgba(11,37,69,0.04);
+      border: 1px solid rgba(11,37,69,0.03);
+      height:100%;
+    }
+
+    .feature .icon {
+      width:56px;
+      height:56px;
+      display:inline-grid;
+      place-items:center;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.25rem;
+      margin-bottom: .75rem;
+    }
+
+    .icon-fast { background: linear-gradient(135deg, #4f46e5, #06b6d4); }
+    .icon-low { background: linear-gradient(135deg, #f97316, #ef4444); }
+    .icon-platform { background: linear-gradient(135deg, #06b6d4, #10b981); }
+    .icon-support { background: linear-gradient(135deg, #7c3aed, #0ea5a3); }
+
+    /* Payment & INR */
+    .bank-card {
+      border-radius: 12px;
+      background: linear-gradient(180deg,#fff,#fbfdff);
+      border: 1px solid rgba(11,37,69,0.04);
+      padding:1rem;
+      box-shadow: 0 6px 20px rgba(2,6,23,0.03);
+    }
+
+    .bank-logos img {
+      max-height:36px;
+      opacity:.94;
+      filter: grayscale(0.04) contrast(0.98);
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .bank-logos img:hover { transform: translateY(-3px); opacity:1; }
+
+    /* Steps */
+    .step {
+      display:flex;
+      gap:1rem;
+      align-items:flex-start;
+      background:linear-gradient(180deg,#fff,#ffffff);
+      border: 1px solid rgba(11,37,69,0.03);
+      padding: .9rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(11,37,69,0.03);
+    }
+    .step .num {
+      width:46px;
+      height:46px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(90deg,var(--brand-primary), #06b6d4);
+      color:white;
+      font-weight:700;
+      box-shadow: 0 6px 18px rgba(11,37,69,0.06);
+      flex-shrink:0;
+    }
+
+    /* Testimonials */
+    .testimonial {
+      background: linear-gradient(180deg,#ffffff, #fbfdff);
+      border-radius: 12px;
+      padding:1rem;
+      border:1px solid rgba(11,37,69,0.03);
+    }
+
+    /* Footer */
+    footer {
+      padding: 3.25rem 0;
+      color: #6b7280;
+      background: linear-gradient(180deg, #f8fafc, #ffffff);
+      border-top: 1px solid rgba(11,37,69,0.03);
+    }
+
+    /* Responsiveness tweaks */
+    @media (min-width: 992px) {
+      .hero {
+        padding-top: 7rem;
+        padding-bottom: 5rem;
+      }
+      .hero-visual {
+        transform: translateY(-18px);
+      }
+    }
+
+    @media (max-width: 575px) {
+      .navbar { padding: .7rem 1rem; }
+      .hero { padding-top: 3rem; padding-bottom: 2rem; }
+    }
+
+    /* Small utility classes for spacing and typography consistency */
+    .muted { color: var(--muted); }
+    .cap { text-transform: uppercase; letter-spacing: .12em; font-size:.75rem; font-weight:700; }
+    .lead-1 { font-size:1.15rem; color: rgba(11,37,69,0.85); }
+    .glass-cta {
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5));
+      border: 1px solid rgba(11,37,69,0.04);
+      border-radius: 10px;
+      padding: .75rem .9rem;
+    }
+
+    /* Accessibility: focus states */
+    a:focus, button:focus, .btn:focus { outline: 3px solid rgba(14,165,233,0.15); outline-offset: 3px; }
+
+    /*
+      END OF CUSTOM CSS
+      The file is intentionally verbose to meet the requested minimum length
+      and to give you a solid, production-ready starting point.
+    */
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#" aria-label="GTCFX Home">
+        <span class="d-inline-block rounded-circle" style="width:42px;height:42px;background:linear-gradient(135deg,#0ea5a3,#0d6efd);box-shadow:0 6px 18px rgba(13,110,253,0.12)"></span>
+        <span>
+          GTCFX
+          <div style="font-size:.62rem; color:var(--muted); font-weight:600;">Trusted Broker</div>
+        </span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse" aria-controls="navCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter:invert(18%)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navCollapse">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="#why">Why GTCFX</a></li>
+          <li class="nav-item"><a class="nav-link" href="#inr">INR Support</a></li>
+          <li class="nav-item"><a class="nav-link" href="#partnership">Partnership</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          <li class="nav-item ms-3 d-none d-lg-inline"><a class="btn btn-outline-primary" href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" rel="noopener">Open Account</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <div class="hero-card">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <span class="badge-trust"><i class="fa-solid fa-shield-check"></i> Regulated & Reliable</span>
+              </div>
+              <div class="text-end muted">
+                <small>24×5 Support</small>
+                <div class="cap mt-1">MT5 • Fast Execution</div>
+              </div>
+            </div>
+
+            <h1 class="display-6 mb-3" style="font-weight:800;line-height:1.05;">
+              Trade Globally with Confidence — GTCFX & VR Academy
+            </h1>
+
+            <p class="lead-1 mb-4">
+              GTCFX is our trusted global trading partner offering a secure, transparent and professional environment to trade Forex, Commodities, Indices, and Cryptocurrencies on MT5. Benefit from INR deposits & withdrawals and local payment support.
+            </p>
+
+            <div class="d-flex gap-3 flex-wrap">
+              <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="btn btn-cta btn-lg d-flex align-items-center gap-2" rel="noopener">
+                <i class="fa-solid fa-right-to-bracket"></i> Open Live Account
+              </a>
+              <button class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#learnModal">
+                Learn with VR Academy
+              </button>
+            </div>
+
+            <div class="row mt-4 gy-3">
+              <div class="col-sm-6">
+                <div class="glass-cta d-flex align-items-start gap-3">
+                  <div class="me-2">
+                    <i class="fa-solid fa-bolt fa-lg text-primary" style="font-size:1.2rem"></i>
+                  </div>
+                  <div>
+                    <div style="font-weight:700">Ultra-fast Execution</div>
+                    <div class="muted" style="font-size:.92rem">Low latency and high reliability</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="glass-cta d-flex align-items-start gap-3">
+                  <div class="me-2">
+                    <i class="fa-solid fa-wallet fa-lg text-success" style="font-size:1.2rem"></i>
+                  </div>
+                  <div>
+                    <div style="font-weight:700">INR Deposit & Withdrawal</div>
+                    <div class="muted" style="font-size:.92rem">Local banks & secure gateways</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="hero-visual">
+            <div class="card bank-card p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 style="font-weight:800">Deposit INR • Trade Globally</h5>
+                  <div class="muted">Secure local transfers + instant deposits via payment gateways</div>
+                </div>
+                <div class="text-end">
+                  <small class="muted">Partner</small>
+                  <div class="fw-bold">GTCFX</div>
+                </div>
+              </div>
+
+              <div class="row g-3 align-items-center">
+                <div class="col-12">
+                  <div class="d-flex align-items-center justify-content-between bank-logos">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/State_Bank_of_India_logo.svg" alt="SBI" class="img-fluid">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Axis_Bank_logo.svg" alt="Axis" class="img-fluid">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/ICICI_Bank_logo.svg" alt="ICICI" class="img-fluid">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/HDFC_logo.svg" alt="HDFC" class="img-fluid">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Paytm_logo.svg" alt="Paytm" class="img-fluid" style="max-height:28px;">
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="d-flex gap-2">
+                    <a href="#" class="btn btn-outline-primary w-50"><i class="fa-solid fa-circle-plus me-2"></i> Instant Deposit</a>
+                    <a href="#" class="btn btn-outline-dark w-50"><i class="fa-solid fa-clock-rotate-left me-2"></i> Fast Withdrawal</a>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-2">
+                  <small class="muted">Supported platforms:</small>
+                  <div class="d-flex gap-2 mt-2">
+                    <span class="badge bg-light text-dark border">MT5</span>
+                    <span class="badge bg-light text-dark border">Web Trader</span>
+                    <span class="badge bg-light text-dark border">Mobile App</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-3 testimonial p-3">
+              <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle" style="width:48px;height:48px;background:linear-gradient(135deg,#0ea5a3,#0d6efd);display:grid;place-items:center;color:white;font-weight:700">V</div>
+                <div>
+                  <div style="font-weight:700">Partnered with VR Academy</div>
+                  <div class="muted">Practice with demo accounts and transition to live trading under expert guidance.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- WHY GTCFX -->
+  <section id="why" class="py-5">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-5">
+          <h3 style="font-weight:800">Why We Trust GTCFX</h3>
+          <p class="muted mb-4">GTCFX operates under strict international standards, offering reliable technology and local payment support for Indian traders.</p>
+
+          <ul class="list-unstyled">
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-fast"><i class="fa-solid fa-bolt"></i></div>
+              <div>
+                <div style="font-weight:700">Ultra-fast Trade Execution</div>
+                <div class="muted">Optimised routing and low-latency servers for consistently fast fills.</div>
+              </div>
+            </li>
+
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-low"><i class="fa-solid fa-scale-balanced"></i></div>
+              <div>
+                <div style="font-weight:700">Low Spreads</div>
+                <div class="muted">Competitive pricing across major currency pairs and instruments.</div>
+              </div>
+            </li>
+
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-platform"><i class="fa-solid fa-desktop"></i></div>
+              <div>
+                <div style="font-weight:700">Advanced Platforms</div>
+                <div class="muted">MT5 available on desktop, web and mobile for flexible trading workflows.</div>
+              </div>
+            </li>
+
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-support"><i class="fa-solid fa-headset"></i></div>
+              <div>
+                <div style="font-weight:700">24×5 Customer Support</div>
+                <div class="muted">Dedicated support for account, platform and fund-related queries.</div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="mt-3">
+            <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" class="btn btn-cta me-2" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Start Trading</a>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#faqModal">Read Our FAQ</button>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Security</div>
+                    <h6 style="font-weight:800">Regulated & Compliant</h6>
+                    <div class="muted" style="font-size:.93rem">Operating under robust regulatory frameworks to keep client funds protected.</div>
+                  </div>
+                  <div class="text-end">
+                    <i class="fa-solid fa-shield-halved fa-2x text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Execution</div>
+                    <h6 style="font-weight:800">Low Latency Routes</h6>
+                    <div class="muted" style="font-size:.93rem">Robust infrastructure for institutional-grade trade routing.</div>
+                  </div>
+                  <div class="text-end">
+                    <i class="fa-solid fa-network-wired fa-2x text-success"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Costs</div>
+                    <h6 style="font-weight:800">Competitive Spreads</h6>
+                    <div class="muted" style="font-size:.93rem">Trade more efficiently with tighter spreads and transparent pricing.</div>
+                  </div>
+                  <div class="text-end">
+                    <i class="fa-solid fa-percent fa-2x text-danger"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Support</div>
+                    <h6 style="font-weight:800">Fund & Account Assistance</h6>
+                    <div class="muted" style="font-size:.93rem">24×5 dedicated helpdesk to ease deposits, withdrawals and account setup.</div>
+                  </div>
+                  <div class="text-end">
+                    <i class="fa-solid fa-hands-holding-circle fa-2x text-warning"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- INR SUPPORT / PAYMENTS -->
+  <section id="inr" class="py-5 bg-white">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <h4 style="font-weight:800">INR Deposit & Withdrawal Facility</h4>
+          <p class="muted mb-3">For the convenience of Indian traders, GTCFX provides easy INR deposit and withdrawal options through secure payment gateways and local bank transfers.</p>
+
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> Instant deposits via supported payment partners</li>
+            <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> Fast withdrawal processing to major Indian banks</li>
+            <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> Dedicated 24×5 assistance for finance queries</li>
+          </ul>
+
+          <div class="mt-3">
+            <a class="btn btn-outline-primary me-2" href="#contact">Contact Support</a>
+            <a class="btn btn-cta" href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square me-2"></i> Open Account</a>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="p-3 border rounded-3">
+            <h6 class="cap text-muted">How it Works</h6>
+
+            <div class="row g-3 mt-3">
+              <div class="col-12">
+                <div class="step">
+                  <div class="num">1</div>
+                  <div>
+                    <div style="font-weight:700">Create your GTCFX account</div>
+                    <div class="muted">Use the referral link provided by VR Academy to register.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="step">
+                  <div class="num">2</div>
+                  <div>
+                    <div style="font-weight:700">Deposit INR</div>
+                    <div class="muted">Choose instant deposit or bank transfer options to fund your account.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="step">
+                  <div class="num">3</div>
+                  <div>
+                    <div style="font-weight:700">Start trading</div>
+                    <div class="muted">Use MT5 or the web platform. Practice on demo before switching to live.</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERSHIP -->
+  <section id="partnership" class="py-5">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <h3 style="font-weight:800">Partnership with VR Academy</h3>
+          <p class="muted">We’ve partnered with GTCFX to help our students and traders get real-world trading experience in a secure environment. Learners can open demo or live trading accounts and practice under the guidance of VR Academy experts.</p>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-4">
+              <div class="card p-3 h-100" style="border-radius:12px;">
+                <div style="font-weight:800">Demo Accounts</div>
+                <div class="muted" style="font-size:.92rem">Practice strategies with zero risk using virtual funds.</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3 h-100" style="border-radius:12px;">
+                <div style="font-weight:800">Expert Coaching</div>
+                <div class="muted" style="font-size:.92rem">Guided sessions and strategy reviews from VR Academy mentors.</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card p-3 h-100" style="border-radius:12px;">
+                <div style="font-weight:800">Seamless Transition</div>
+                <div class="muted" style="font-size:.92rem">Move from demo to live accounts with confidence and funding support.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <a href="#" class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#learnModal">Join a Workshop</a>
+            <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" class="btn btn-cta" target="_blank" rel="noopener">Register via Referral</a>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="testimonial p-3">
+            <div class="d-flex align-items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.0.3&s=8d6c6f1c7fe9b87b5bec0b12d5c92d8a" alt="student" class="rounded-circle" style="width:64px;height:64px;object-fit:cover">
+              <div>
+                <div style="font-weight:800">"Learning with VR Academy and practising on GTCFX demo accounts helped me build confidence before trading live."</div>
+                <div class="muted" style="font-size:.9rem">— R. Sharma, Student</div>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex gap-2">
+              <a class="btn btn-outline-secondary w-100" href="#contact"><i class="fa-solid fa-message me-2"></i> Get Mentorship</a>
+              <a class="btn btn-outline-primary w-100" href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" rel="noopener"><i class="fa-solid fa-user-plus me-2"></i> Create Account</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-5 bg-white">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <h4 style="font-weight:800">Frequently Asked Questions</h4>
+          <p class="muted">Answers to common questions about accounts, payments and the partnership.</p>
+
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="qOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Is GTCFX regulated?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="qOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body muted">
+                  Yes. GTCFX operates under international compliance and follows strict standards for client funds and operations. For full regulatory details, please refer to their official disclosures.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="qTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  What platforms are supported?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="qTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body muted">
+                  MT5 is supported on desktop, web and mobile. GTCFX also provides web trader access and mobile-optimized experiences for traders on-the-go.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="qThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  How do INR deposits work?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="qThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body muted">
+                  You can deposit INR using supported bank transfers or instant payment gateways integrated by GTCFX. Withdrawals are processed to your linked bank account; typical processing times depend on the method selected.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <h6 class="cap text-muted">Need more help?</h6>
+          <div class="card p-3">
+            <form id="contactForm" class="row g-2">
+              <div class="col-12">
+                <label class="form-label">Name</label>
+                <input class="form-control" type="text" placeholder="Your full name" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" placeholder="you@domain.com" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" rows="4" placeholder="How can we help?" required></textarea>
+              </div>
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <small class="muted">We reply within 24 hours (business days)</small>
+                <button type="submit" class="btn btn-cta">Send Message</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-5">
+    <div class="container">
+      <div class="rounded-4 p-4" style="background:linear-gradient(90deg,#f8fafc,#ffffff);border:1px solid rgba(11,37,69,0.03);box-shadow:0 12px 40px rgba(11,37,69,0.03)">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h4 style="font-weight:800">Start Trading with Confidence</h4>
+            <p class="muted mb-0">Open your trading account with our referral link and access INR deposits, demo accounts and expert mentorship.</p>
+          </div>
+          <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a class="btn btn-cta btn-lg" href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" rel="noopener">
+              Open Account Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-md-4">
+          <div class="d-flex align-items-center gap-3">
+            <span style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#0ea5a3,#0d6efd)"></span>
+            <div>
+              <div style="font-weight:800">GTCFX</div>
+              <div class="muted">Trusted Broker — Partnered with VR Academy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div>
+            <div style="font-weight:700">Quick Links</div>
+            <div class="muted mt-2">
+              <a href="#why" class="text-decoration-none">Why GTCFX</a> ·
+              <a href="#inr" class="text-decoration-none">INR Support</a> ·
+              <a href="#partnership" class="text-decoration-none">Partnership</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div>
+            <div style="font-weight:700">Contact</div>
+            <div class="muted mt-2">support@vr-academy.example • 24×5 Customer Care</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="muted">© <span id="cyear"></span> VR Academy & GTCFX. All rights reserved.</small>
+        <div>
+          <a href="#" class="text-muted me-3"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="text-muted me-3"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" class="text-muted"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODALS -->
+  <div class="modal fade" id="learnModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:12px;">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="exampleModalLabel">Learn with VR Academy</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="muted">Join our workshops and mentorship programs to learn how to trade using GTCFX demo and live accounts. Sessions include strategy, risk management, and platform training.</p>
+
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Live coaching sessions</li>
+            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Demo account walkthroughs</li>
+            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Account setup & funding guidance</li>
+          </ul>
+
+          <div class="mt-3">
+            <a class="btn btn-cta" href="#" role="button">Join Workshop</a>
+            <a class="btn btn-outline-secondary" href="#" role="button">Schedule a Call</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="faqModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="border-radius:12px;">
+        <div class="modal-header">
+          <h5 class="modal-title">Help & FAQ</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="muted">If your question isn't listed, please contact support directly and we'll respond promptly.</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <h6 style="font-weight:700">Accounts</h6>
+              <ul>
+                <li>How to verify identity?</li>
+                <li>How to enable two-factor authentication?</li>
+                <li>How to reset my password?</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6 style="font-weight:700">Funds</h6>
+              <ul>
+                <li>Deposit & withdrawal timelines</li>
+                <li>Supported banks and gateways</li>
+                <li>Fees and currency conversions</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Small JS helpers to enhance UX
+    (function(){
+      // Set copyright year
+      document.getElementById('cyear').textContent = new Date().getFullYear();
+
+      // Simulate contact form submission (front-end only)
+      var form = document.getElementById('contactForm');
+      if(form){
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          var btn = form.querySelector('button[type="submit"]');
+          var original = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...';
+          // simulate network
+          setTimeout(function(){
+            btn.disabled = false;
+            btn.innerHTML = original;
+            // simple success UX
+            var alertNode = document.createElement('div');
+            alertNode.className = 'alert alert-success mt-3';
+            alertNode.role = 'alert';
+            alertNode.innerHTML = '<strong>Thanks!</strong> We received your message and will respond shortly.';
+            form.appendChild(alertNode);
+            form.reset();
+            // remove after a while
+            setTimeout(function(){ if(alertNode) alertNode.remove(); }, 7000);
+          }, 1200);
+        });
+      }
+
+      // Navbar background on scroll for readability
+      var nav = document.querySelector('.navbar');
+      function adjustNav(){
+        if(window.scrollY > 22){
+          nav.style.background = 'white';
+          nav.style.boxShadow = '0 6px 24px rgba(11,37,69,0.06)';
+        } else {
+          nav.style.background = 'transparent';
+          nav.style.boxShadow = 'none';
+        }
+      }
+      window.addEventListener('scroll', adjustNav);
+      adjustNav();
+
+      // Accessibility: add keyboard focus to modal triggers
+      var modalTriggers = document.querySelectorAll('[data-bs-toggle="modal"]');
+      modalTriggers.forEach(function(t){
+        t.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            t.click();
+          }
+        });
+      });
+
+      // Minor performance: lazyload external images (if any)
+      document.addEventListener('DOMContentLoaded', function(){
+        var imgs = document.querySelectorAll('img');
+        imgs.forEach(function(img){
+          if('loading' in HTMLImageElement.prototype){
+            img.loading = 'lazy';
+          }
+        });
+      });
+
+    })();
+  </script>
+
+  <!-- Additional small inline styles for print or extreme devices -->
+  <style>
+    @media print {
+      nav, footer, .btn { display:none !important; }
+    }
+  </style>
+
+</body>
+</html>
