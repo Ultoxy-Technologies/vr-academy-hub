@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 import mimetypes, os
-from AdminApp.models import FreeCourse, FreeCourseProgress
+from AdminApp.models import FreeCourse, FreeCourseProgress, Basic_to_Advance_Cource, Advance_to_Pro_Cource
 from django.db.models import Sum
  
 
@@ -60,6 +60,32 @@ def course_list(request):
     return render(request, "free_course_list.html", {
         "courses": courses
     })
+
+
+
+@login_required
+def basic_to_advance_course_list(request):
+    """
+    Display list of free courses.
+    """
+    courses = Basic_to_Advance_Cource.objects.all().order_by('-event_date').filter(is_active=True)
+    return render(request, "basic_to_advance_course_list.html", {
+        "courses": courses
+    })
+
+
+
+@login_required
+def advance_to_pro_course_list(request):
+    """
+    Display list of free courses.
+    """
+    courses = Advance_to_Pro_Cource.objects.all().order_by('-event_date').filter(is_active=True)
+    return render(request, "advance_to_pro_course_list.html", {
+        "courses": courses
+    })
+
+
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required

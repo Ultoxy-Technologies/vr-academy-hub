@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New User Registration</title>
+  <style>
+    body {
+      background-color: #f4f7fb;
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(90deg, #00e1ff, #8b5cff);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .content {
+      padding: 25px 30px;
+    }
+    .info-block {
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .info-label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .info-value {
+      font-size: 16px;
+      color: #222;
+    }
+    .footer {
+      background: #fafafa;
+      border-top: 1px solid #eee;
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">👤 New User Registration</div>
+
+    <div class="content">
+      <div class="info-block">
+        <span class="info-label">Full Name</span>
+        <span class="info-value">{{ name }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Date of Birth</span>
+        <span class="info-value">{{ dob }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Mobile Number</span>
+        <span class="info-value">{{ mobile_number }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ email }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">District</span>
+        <span class="info-value">{{ dist }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Taluka</span>
+        <span class="info-value">{{ taluka }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Village</span>
+        <span class="info-value">{{ village }}</span>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Registered On</span>
+        <span class="info-value">{{ registered_on }}</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      This is an automated registration alert from Ultoxy Technologies.
+    </div>
+  </div>
+</body>
+</html>

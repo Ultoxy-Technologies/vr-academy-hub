@@ -76,7 +76,28 @@ class CustomUser(AbstractUser):
         return self.name or self.mobile_number or "User"
 
 
+from datetime import timedelta
+from django.conf import settings
+import random
 
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='password_otps'
+    )
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def generate_otp(length=6):
+        """Return a zero-padded numeric OTP as string."""
+        return str(random.randint(0, 10**length - 1)).zfill(length)
+
+    def is_valid(self, minutes_valid=10):
+        """Return True if OTP was created within `minutes_valid` minutes."""
+        return self.created_at + timedelta(minutes=minutes_valid) >= timezone.now()
+
+    def __str__(self):
+        return f"OTP({self.user}, {self.otp})"
  
 
 class Enquiry(models.Model):

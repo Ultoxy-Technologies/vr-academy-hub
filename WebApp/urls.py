@@ -10,7 +10,8 @@ urlpatterns = [
     path('advance-to-pro', advance_to_pro, name='advance_to_pro'),
     path('certificates', certificates, name='certificates'),
     path('trusted-broker', trusted_broker, name='trusted_broker'),
-    path('contact-us', contct_us, name='contact_us'), 
-    
+    path('contact-us', contact_us, name='contact_us'), 
+    path('forgot-password/', request_password_reset, name='forgot_password'),
+    path('reset-password/', reset_password_with_otp, name='reset_password'),
     
 ]
