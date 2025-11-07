@@ -23,4 +23,1368 @@
       </div>
     </div><!-- End Page Title -->
 
+
+<style>
+  /* ==========================================================================
+   GLOBAL THEME
+   ========================================================================== */
+:root {
+  --primary: #2474c6;
+  --secondary: #00bcd4;
+  --accent: #ff9800;
+  --text: #1e2a35;
+  --muted: #6c7a89;
+  --radius: 14px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  background: transparent;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+.page-root {
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.broker-card {
+  background: #fff;
+  border: 1px solid #e4e8ec;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.broker-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+
+.card-body {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.left-visual-inner {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(36,116,198,0.08), rgba(0,188,212,0.08));
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+}
+
+.broker-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.broker-desc {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.stat-pill {
+  background: #f8f9fb;
+  border: 1px solid #e0e5e9;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+/* ==========================================================================
+   INFO TILES
+   ========================================================================== */
+.info-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+.info-tile {
+  background: #fff;
+  border: 1px solid #e4e8ec;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.info-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.07);
+}
+
+.tile-icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(36,116,198,0.07);
+  color: var(--primary);
+  font-size: 22px;
+}
+
+.tile-body {
+  flex: 1;
+}
+
+.tile-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.tile-note {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   CTA SECTION
+   ========================================================================== */
+.cta-section {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.cta-btn {
+  background: var(--primary);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+}
+
+.footer-note {
+  margin-top: 2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .card-body {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
+  
+<main class="page-root">
+    <!-- Broker Card -->
+    <article class="broker-card">
+      <div class="card-body">
+        <div class="left-visual-inner">🏦</div>
+        <div class="content-wrap">
+          <h2 class="broker-title">Our Trusted Broker – GTCFX</h2>
+          <p class="broker-desc">
+            GTCFX is our trusted global trading partner that provides a safe, transparent, and professional trading environment for learners and traders worldwide.
+          </p>
+          <p class="broker-desc">
+            With GTCFX, you can trade in Forex, Commodities, Indices, and Cryptocurrencies using world-class technology and support.
+          </p>
+
+          <div class="stat-row">
+            <div class="stat-pill">💬 24/7 Support</div>
+            <div class="stat-pill">⚡ 99.9% Uptime</div>
+            <div class="stat-pill">🌍 100+ Markets</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Info Tiles -->
+    <section class="info-tiles">
+      <div class="info-tile">
+        <div class="tile-icon">🔒</div>
+        <div class="tile-body">
+          <div class="tile-title">Secure</div>
+          <div class="tile-note">Multi-layer protection</div>
+        </div>
+      </div>
+
+      <div class="info-tile">
+        <div class="tile-icon">📊</div>
+        <div class="tile-body">
+          <div class="tile-title">Transparent</div>
+          <div class="tile-note">Clear pricing</div>
+        </div>
+      </div>
+
+      <div class="info-tile">
+        <div class="tile-icon">💼</div>
+        <div class="tile-body">
+          <div class="tile-title">Professional</div>
+          <div class="tile-note">World-class technology</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="btn cta-btn">
+        Open Trading Account
+      </a>
+      <div class="footer-note mt-3">
+        👉 <a href="https://gtcfx.com" target="_blank">Visit GTCFX Official Website</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Subtle fade-in animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const elements = document.querySelectorAll('.broker-card, .info-tile, .cta-section');
+      elements.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, i * 150 + 200);
+      });
+    });
+  </script>
+  
+
+
+  <style>
+    :root {
+      --brand-primary: #0d6efd;
+      --brand-dark: #0b2545;
+      --accent: #06b6d4;
+      --muted: #6c7a89;
+      --bg-soft: #f7f9fb;
+      --radius: 14px;
+      --shadow: 0 8px 28px rgba(11,37,69,0.08);
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      color: var(--brand-dark);
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    h3 {
+      font-weight: 800;
+    }
+
+    /* Feature cards */
+    .feature {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(11,37,69,0.05);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(11,37,69,0.12);
+    }
+
+    .feature .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+
+    .icon-fast      { background: linear-gradient(135deg, #4f46e5, #06b6d4); }
+    .icon-low       { background: linear-gradient(135deg, #f97316, #ef4444); }
+    .icon-platform  { background: linear-gradient(135deg, #06b6d4, #10b981); }
+    .icon-support   { background: linear-gradient(135deg, #7c3aed, #0ea5a3); }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .cap {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* Buttons */
+    .btn-cta {
+      background: linear-gradient(90deg, var(--brand-primary), var(--accent));
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.7rem 1.2rem;
+      box-shadow: 0 4px 14px rgba(13,110,253,0.25);
+      transition: all 0.3s ease;
+    }
+
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(13,110,253,0.35);
+    }
+ 
+  </style>
+
+  <!-- WHY GTCFX -->
+  <section id="why" class="py-5">
+    <div class="container">
+      <div class="row align-items-center g-4">
+
+        <div class="col-lg-5">
+          <h3>Why We Trust GTCFX</h3>
+          <p class="muted mb-4">
+            GTCFX operates under strict international standards, offering reliable technology and local payment support for Indian traders.
+          </p>
+
+          <ul class="list-unstyled">
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-fast"><i class="fa-solid fa-bolt"></i></div>
+              <div>
+                <div class="fw-bold">Ultra-fast Trade Execution</div>
+                <div class="muted">Optimised routing and low-latency servers for consistently fast fills.</div>
+              </div>
+            </li>
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-low"><i class="fa-solid fa-scale-balanced"></i></div>
+              <div>
+                <div class="fw-bold">Low Spreads</div>
+                <div class="muted">Competitive pricing across major currency pairs and instruments.</div>
+              </div>
+            </li>
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-platform"><i class="fa-solid fa-desktop"></i></div>
+              <div>
+                <div class="fw-bold">Advanced Platforms</div>
+                <div class="muted">MT5 available on desktop, web and mobile for flexible trading workflows.</div>
+              </div>
+            </li>
+            <li class="d-flex gap-3 mb-3">
+              <div class="icon icon-support"><i class="fa-solid fa-headset"></i></div>
+              <div>
+                <div class="fw-bold">24×5 Customer Support</div>
+                <div class="muted">Dedicated support for account, platform and fund-related queries.</div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="mt-3">
+            <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" 
+               class="btn btn-cta me-2" target="_blank" rel="noopener">
+              <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Start Trading
+            </a>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#faqModal">
+              Read Our FAQ
+            </button>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Security</div>
+                    <h6 class="fw-bold mb-1">Regulated & Compliant</h6>
+                    <div class="muted small">Operating under robust regulatory frameworks to keep client funds protected.</div>
+                  </div>
+                  <i class="fa-solid fa-shield-halved fa-2x text-primary"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Execution</div>
+                    <h6 class="fw-bold mb-1">Low Latency Routes</h6>
+                    <div class="muted small">Robust infrastructure for institutional-grade trade routing.</div>
+                  </div>
+                  <i class="fa-solid fa-network-wired fa-2x text-success"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Costs</div>
+                    <h6 class="fw-bold mb-1">Competitive Spreads</h6>
+                    <div class="muted small">Trade more efficiently with tighter spreads and transparent pricing.</div>
+                  </div>
+                  <i class="fa-solid fa-percent fa-2x text-danger"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="feature">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <div class="cap mb-2">Support</div>
+                    <h6 class="fw-bold mb-1">Fund & Account Assistance</h6>
+                    <div class="muted small">24×5 dedicated helpdesk to ease deposits, withdrawals and account setup.</div>
+                  </div>
+                  <i class="fa-solid fa-hands-holding-circle fa-2x text-warning"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+  /* styles.css
+   GTCFX — INR Deposit & Withdrawal Facility
+   Modern, professional, unique class/id names prefixed with "gtcfx-" to avoid collisions.
+   Glassmorphism accent with light, professional color palette.
+*/
+
+/* -------------------------
+   Variables
+   ------------------------- */
+:root{
+  --gtcfx-blue: #2487ce;
+  --gtcfx-cyan: #00bcd4;
+  --gtcfx-orange: #ff9800;
+
+  --bg-soft: #f6fbff;
+  --card-bg: rgba(255,255,255,0.78);
+  --glass-border: rgba(36,135,206,0.10);
+
+  --text-strong: #052633;
+  --text-muted: #516675;
+
+  --shadow-1: 0 8px 28px rgba(4,28,43,0.06);
+  --shadow-2: 0 20px 60px rgba(36,135,206,0.08);
+
+  --radius-lg: 16px;
+  --radius-md: 12px;
+}
+
+/* -------------------------
+   Base
+   ------------------------- */
+*{box-sizing: border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, var(--bg-soft) 0%, #ffffff 100%);
+  color: var(--text-strong);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+}
+
+/* -------------------------
+   Section wrapper
+   ------------------------- */
+.gtcfx-inr-section{
+  --container-padding: 1.25rem;
+  padding: 3rem 0;
+}
+
+/* card outer */
+.gtcfx-inr-outer{
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  background: transparent;
+}
+
+/* central card area with glass effect */
+.gtcfx-inr-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.72));
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), 0 1px 0 rgba(255,255,255,0.6) inset;
+  position: relative;
+  overflow: visible;
+}
+
+/* outer card shadow (container look) */
+.card-shadow{
+  position: relative;
+  padding: 1rem;
+}
+.card-shadow::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--radius-lg) + 6px);
+  box-shadow: var(--shadow-2);
+  opacity: 0.06;
+  pointer-events: none;
+  transform: translateY(8px);
+  z-index: 0;
+}
+
+/* -------------------------
+   Left visual
+   ------------------------- */
+#gctfx_placeholder{} /* placeholder to keep unique IDs referenced elsewhere if needed */
+
+.gtcfx-inr-visual{
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: inline-grid;
+  place-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.gtcfx-inr-visual-ring{
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(36,135,206,0.06), rgba(0,188,212,0.03));
+  border: 1px solid rgba(36,135,206,0.08);
+  box-shadow: 0 8px 24px rgba(36,135,206,0.04);
+  transform: translateZ(0);
+}
+.gtcfx-inr-visual-inner{
+  width: 120px;
+  height: 120px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  border: 1px solid rgba(11,37,53,0.04);
+  box-shadow: 0 6px 18px rgba(11,37,53,0.03), 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+.gtcfx-inr-emoji{ font-size:48px; }
+
+/* decorative SVG */
+.gtcfx-inr-decor{
+  position: absolute;
+  right: -12px;
+  bottom: -10px;
+  z-index: 0;
+  opacity: 0.9;
+  filter: blur(0.2px);
+  pointer-events: none;
+}
+
+/* -------------------------
+   Header / Title / Copy
+   ------------------------- */
+.gtcfx-inr-header{ z-index: 3; }
+.gtcfx-inr-title{
+  font-size: 1.35rem;
+  margin: 0 0 0.35rem 0;
+  font-weight: 700;
+  color: var(--text-strong);
+  letter-spacing: -0.2px;
+}
+.gtcfx-inr-lead{
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.99rem;
+}
+
+/* -------------------------
+   Feature list
+   ------------------------- */
+.gtcfx-inr-features ul{ padding: 0; margin: 0; }
+.gtcfx-inr-feature{
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+.feature-icon{
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
+  border: 1px solid rgba(36,135,206,0.06);
+  box-shadow: 0 6px 18px rgba(36,135,206,0.04);
+  font-size: 20px;
+  flex: 0 0 40px;
+}
+.feature-text{
+  color: var(--text-strong);
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-left: 4px;
+}
+
+/* -------------------------
+   Footer CTA row
+   ------------------------- */
+.gtcfx-inr-footer{
+  z-index: 3;
+}
+.gtcfx-inr-cta{
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+/* actions & badges */
+.gtcfx-inr-actions{ align-items:center; }
+.gtcfx-btn-primary{
+  display:inline-block;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--gtcfx-blue), var(--gtcfx-cyan));
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(36,135,206,0.10);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.gtcfx-btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 20px 40px rgba(36,135,206,0.12); }
+
+.gtcfx-btn-ghost{
+  display:inline-block;
+  padding: 0.45rem 0.85rem;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--gtcfx-blue);
+  border: 1px solid rgba(36,135,206,0.12);
+  text-decoration: none;
+  font-weight: 700;
+}
+.gtcfx-badge{
+  display:inline-block;
+  padding: 0.35rem 0.6rem;
+  background: linear-gradient(90deg, rgba(36,135,206,0.09), rgba(255,152,0,0.05));
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+/* -------------------------
+   Footer decorative bar
+   ------------------------- */
+.gtcfx-inr-footerbar{ height: 6px; display:flex; gap:8px; }
+.gtcfx-inr-footerbar-left{ flex: 1; border-radius: 6px; background: linear-gradient(90deg, var(--gtcfx-blue), var(--gtcfx-cyan)); box-shadow: 0 6px 18px rgba(36,135,206,0.06); }
+.gtcfx-inr-footerbar-right{ width: 110px; border-radius: 6px; background: linear-gradient(90deg, rgba(255,152,0,0.9), rgba(255,152,0,0.5)); box-shadow: 0 6px 18px rgba(255,152,0,0.06); }
+
+/* -------------------------
+   Responsive
+   ------------------------- */
+@media (max-width: 767.98px){
+  .gtcfx-inr-visual{ width: 150px; height: 150px; }
+  .gtcfx-inr-visual-inner{ width: 100px; height: 100px; }
+  .gtcfx-inr-emoji{ font-size: 36px; }
+  .gtcfx-inr-decor{ display: none; }
+  .gtcfx-inr-features .feature-text{ font-size: 0.95rem; }
+  .gtcfx-inr-card{ padding: 1rem; }
+}
+
+/* -------------------------
+   Accessibility / reduced motion
+   ------------------------- */
+@media (prefers-reduced-motion: reduce){
+  .card-shadow::after,
+  .gtcfx-inr-decor,
+  .card-accent-stripe{
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+    <!-- INR Deposit & Withdrawal Section -->
+  <section id="gtcfx-inr-section" class="gtcfx-inr-section py-5">
+    <div class="container">
+      <div class="gtcfx-inr-outer card-shadow rounded-3 p-3 p-md-5">
+        <div class="row align-items-center gy-4">
+          <!-- Left visual / badge column -->
+          <div class="col-12 col-md-4 d-flex justify-content-center">
+            <div id="gtcfx-inr-visual" class="gtcfx-inr-visual" aria-hidden="true">
+              <div class="gtcfx-inr-visual-ring">
+                <div class="gtcfx-inr-visual-inner">
+                  <span class="gtcfx-inr-emoji" aria-hidden="true">💰</span>
+                </div>
+              </div>
+              <svg class="gtcfx-inr-decor" width="220" height="220" viewBox="0 0 220 220" fill="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="g-gtcfx-1" x1="0" x2="1">
+                    <stop offset="0" stop-color="#2487ce"/>
+                    <stop offset="1" stop-color="#00bcd4"/>
+                  </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="220" height="220" rx="28" fill="url(#g-gtcfx-1)" opacity="0.06"/>
+                <g opacity="0.08" transform="translate(12,12)">
+                  <circle cx="40" cy="40" r="36" fill="#ff9800"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Right content column -->
+          <div class="col-12 col-md-8">
+            <div id="gtcfx-inr-card" class="gtcfx-inr-card p-3 p-md-4 rounded-3">
+              <header class="gtcfx-inr-header mb-3">
+                <h3 class="gtcfx-inr-title mb-2">💰 INR Deposit & Withdrawal Facility</h3>
+                <p class="gtcfx-inr-lead mb-0">
+For the convenience of Indian traders, GTCFX provides easy INR deposit and withdrawal options through secure payment gateways and local bank transfers.
+                </p>
+              </header>
+
+              <div class="gtcfx-inr-features mt-4">
+                <ul class="list-unstyled m-0">
+                  <li class="gtcfx-inr-feature d-flex align-items-start mb-2">
+                    <span class="feature-icon">💵</span>
+                    <span class="feature-text">Instant Deposit & Fast Withdrawal</span>
+                  </li>
+
+                  <li class="gtcfx-inr-feature d-flex align-items-start mb-2">
+                    <span class="feature-icon">🏦</span>
+                    <span class="feature-text">Support for All Major Indian Banks</span>
+                  </li>
+
+                  <li class="gtcfx-inr-feature d-flex align-items-start mb-2">
+                    <span class="feature-icon">🔐</span>
+                    <span class="feature-text">Safe & Transparent Transactions</span>
+                  </li>
+
+                  <li class="gtcfx-inr-feature d-flex align-items-start mb-0">
+                    <span class="feature-icon">📱</span>
+                    <span class="feature-text">24×5 Assistance for Fund-Related Queries</span>
+                  </li>
+                </ul>
+              </div>
+
+              <footer class="gtcfx-inr-footer mt-4">
+                <p class="gtcfx-inr-cta mb-0">
+Now you can trade globally while managing your funds locally — with complete peace of mind! 🇮🇳
+                </p>
+
+                <div class="gtcfx-inr-actions mt-3 d-flex flex-wrap gap-2">
+                  <a class="gtcfx-btn-primary" href="#" role="button" aria-label="Learn more about INR deposits">Learn More</a>
+                  <a class="gtcfx-btn-ghost" href="#" role="button" aria-label="Contact support for INR">Contact Support</a>
+                  <span class="gtcfx-badge">INR • Local Banking</span>
+                </div>
+              </footer>
+            </div>
+          </div>
+        </div>
+
+        <!-- subtle decorative footer bar -->
+        <div class="gtcfx-inr-footerbar mt-4" aria-hidden="true">
+          <div class="gtcfx-inr-footerbar-left"></div>
+          <div class="gtcfx-inr-footerbar-right"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <script>
+    /* script.js
+   Lightweight interactions for the INR section.
+   - Entrance reveal when the section scrolls into view
+   - Small hover lift for primary button
+   - Respect prefers-reduced-motion
+*/
+
+/* helper */
+const $ = (sel, root = document) => root.querySelector(sel);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const section = $('#gtcfx-inr-section');
+  const card = $('#gtcfx-inr-card');
+  const primary = document.querySelectorAll('.gtcfx-btn-primary');
+
+  if (!section || !card) return;
+
+  // Initial hidden state for reveal
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReduced) {
+    card.style.opacity = 0;
+    card.style.transform = 'translateY(18px)';
+    card.style.transition = 'opacity 560ms cubic-bezier(.2,.9,.2,1), transform 560ms cubic-bezier(.2,.9,.2,1)';
+  } else {
+    card.style.opacity = 1;
+    card.style.transform = 'none';
+  }
+
+  // Reveal on enter viewport
+  try {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          card.style.opacity = 1;
+          card.style.transform = 'translateY(0)';
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.14 });
+    io.observe(card);
+  } catch (e) {
+    // fallback: reveal immediately
+    card.style.opacity = 1;
+    card.style.transform = 'none';
+  }
+
+  // Button micro-interaction
+  primary.forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transform = 'translateY(-3px)';
+      btn.style.boxShadow = '0 18px 40px rgba(36,135,206,0.12)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+      btn.style.boxShadow = '';
+    });
+    // keyboard accessibility feedback
+    btn.addEventListener('focus', () => btn.style.boxShadow = '0 14px 34px rgba(36,135,206,0.12)');
+    btn.addEventListener('blur', () => btn.style.boxShadow = '');
+  });
+});
+  </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+:root {
+  --blue: #246bfd;
+  --cyan: #04d3d3;
+  --violet: #7954f8;
+  --orange: #ff9f3f;
+  --bg: #f7f9fc;
+  --text: #0a1a2b;
+  --muted: #6b7a89;
+  --card-bg: rgba(255,255,255,0.72);
+  --radius: 22px;
+  --shadow: 0 12px 40px rgba(0,0,0,0.06);
+}
+
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Outfit", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===== Section ===== */
+#vrx-partnership-wrap {
+  position: relative;
+  padding: 4rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Animated gradient blobs (modern background) */
+.vrx-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  animation: floatBlob 14s infinite ease-in-out alternate;
+  z-index: 0;
+}
+#vrx-b1 {
+  width: 400px; height: 400px;
+  top: -100px; left: -150px;
+  background: radial-gradient(circle at 30% 30%, var(--cyan), transparent 70%);
+}
+#vrx-b2 {
+  width: 500px; height: 500px;
+  right: -180px; bottom: -160px;
+  background: radial-gradient(circle at 60% 60%, var(--violet), transparent 70%);
+}
+@keyframes floatBlob {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-40px) scale(1.05); }
+}
+
+/* ===== Cluster Layout ===== */
+.vrx-cluster {
+  position: relative;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  z-index: 1;
+  align-items: center;
+}
+@media (max-width: 880px) {
+  .vrx-cluster {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+/* ===== Visual Column ===== */
+#vrx-visual-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vrx-visual-card {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px) saturate(120%);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+.vrx-visual-card:hover {
+  transform: rotateY(8deg) rotateX(-4deg) scale(1.02);
+}
+
+/* Glow ring around center */
+.vrx-ring {
+  position: absolute;
+  width: 200px; height: 200px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid rgba(36,107,253,0.2);
+  animation: spin 8s linear infinite;
+}
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* VR Badge */
+.vrx-sticker {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(36,107,253,0.3);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Decorative spark dots */
+.vrx-spark {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, white, rgba(255,255,255,0.6));
+  opacity: 0.8;
+  animation: blink 3s infinite ease-in-out alternate;
+}
+.vrx-s1 { top: 20%; left: 25%; }
+.vrx-s2 { bottom: 20%; right: 30%; animation-delay: 0.5s; }
+.vrx-s3 { top: 60%; right: 10%; animation-delay: 1s; }
+@keyframes blink {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0.3; }
+}
+
+/* ===== Content Card ===== */
+#vrx-content-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+#vrx-heading {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+}
+#vrx-intro {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ===== Features ===== */
+.vrx-features {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.vrx-feature-pill {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+
+/* ===== Practice strip ===== */
+.vrx-practice-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1.6rem;
+}
+.vrx-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(90deg,var(--blue),var(--cyan));
+}
+.vrx-strip-line {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(36,107,253,0.15), rgba(255,159,63,0.15));
+}
+.vrx-practice-note {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ===== Buttons ===== */
+.vrx-cta-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+.vrx-btn {
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.vrx-btn-primary {
+  background: linear-gradient(90deg,var(--blue),var(--cyan));
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(36,107,253,0.25);
+}
+.vrx-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(36,107,253,0.35);
+}
+.vrx-btn-ghost {
+  background: transparent;
+  color: var(--blue);
+  border: 1px solid rgba(36,107,253,0.2);
+}
+.vrx-btn-ghost:hover {
+  background: rgba(36,107,253,0.06);
+}
+
+/* ===== Footnote ===== */
+#vrx-footnote {
+  margin-top: 1.4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 580px) {
+  #vrx-content-card {
+    padding: 1.5rem;
+  }
+  #vrx-heading {
+    font-size: 1.4rem;
+  }
+  .vrx-visual-card {
+    width: 240px;
+    height: 240px;
+  }
+  .vrx-sticker {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
+}
+</style>
+  <div id="vrx-partnership-wrap">
+    <!-- background blobs -->
+    <div class="vrx-blob" id="vrx-b1"></div>
+    <div class="vrx-blob" id="vrx-b2"></div>
+
+    <div class="vrx-cluster">
+      <!-- Visual column -->
+      <div id="vrx-visual-column">
+        <div class="vrx-visual-card" id="vrx-visual">
+          <div class="vrx-ring"></div>
+          <div class="vrx-sticker">VR</div>
+          <div class="vrx-spark vrx-s1"></div>
+          <div class="vrx-spark vrx-s2"></div>
+          <div class="vrx-spark vrx-s3"></div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div id="vrx-content-card">
+        <h3 id="vrx-heading">🤝 Partnership with VR Academy</h3>
+        <p id="vrx-intro">
+We’ve partnered with GTCFX to help our students and traders get real-world trading experience in a secure environment.
+Through this collaboration, learners can open demo or live trading accounts and practice under the guidance of VR Academy experts.
+        </p>
+
+        <div class="vrx-features">
+          <div class="vrx-feature-pill">🧭 Guided Practice</div>
+          <div class="vrx-feature-pill">🎯 Real Strategies</div>
+          <div class="vrx-feature-pill">🧪 Demo & Live</div>
+        </div>
+
+        <div class="vrx-practice-strip">
+          <div class="vrx-dot"></div>
+          <div class="vrx-strip-line"></div>
+          <div class="vrx-dot" style="background:linear-gradient(90deg,var(--orange),#ffd38c)"></div>
+          <div class="vrx-strip-line"></div>
+          <div class="vrx-dot"></div>
+          <div class="vrx-practice-note">Practice-driven learning</div>
+        </div>
+
+        <div class="vrx-cta-area">
+          <button class="vrx-btn vrx-btn-primary" id="vrx-demo-btn">Open Demo</button>
+          <button class="vrx-btn vrx-btn-ghost" id="vrx-live-btn">Explore Live</button>
+        </div>
+
+        <p id="vrx-footnote">
+Now you can trade globally while managing your funds locally — with complete peace of mind! 🇮🇳
+        </p>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* subtle parallax tilt on hover */
+const visual = document.getElementById('vrx-visual');
+const sticker = document.querySelector('.vrx-sticker');
+visual.addEventListener('mousemove', e => {
+  const rect = visual.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  visual.style.transform = `rotateY(${x * 10}deg) rotateX(${y * -6}deg)`;
+});
+visual.addEventListener('mouseleave', () => {
+  visual.style.transform = '';
+});
+
+/* button pulse feedback */
+['vrx-demo-btn','vrx-live-btn'].forEach(id=>{
+  const btn=document.getElementById(id);
+  btn.addEventListener('click',()=>{
+    btn.animate([
+      { transform:'scale(1)' },
+      { transform:'scale(1.08)' },
+      { transform:'scale(1)' }
+    ],{ duration:400, easing:'ease-out' });
+  });
+});
+</script>
+
+
+  <style>
+ 
+ 
+    .GTCFX-link-hero-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      position: relative;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #011533, #02a0e9);
+    }
+
+    .GTCFX-link-hero-section h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .GTCFX-link-hero-section p {
+      font-size: 1.2rem;
+      color: #d1d1d1;
+      max-width: 700px;
+      margin-bottom: 40px;
+    }
+
+    .cta-btn {
+      background: linear-gradient(90deg, #ff6b00, #ffa600);
+      color: #fff;
+      font-weight: 600;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      transition: 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
+    }
+
+    .cta-btn:hover {
+      background: linear-gradient(90deg, #ffa600, #ff6b00);
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: url('https://svgshare.com/i/uYd.svg');
+      background-size: cover;
+      animation: waveAnim 6s infinite linear;
+      opacity: 0.5;
+    }
+
+    @keyframes waveAnim {
+      from { background-position-x: 0; }
+      to { background-position-x: 1000px; }
+    }
+ 
+
+    .visit-link {
+      display: inline-block;
+      color: #00e0ff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .visit-link:hover {
+      color: #ff6b00;
+    }
+  </style>
+
+  <!-- Hero Section -->
+  <section class="GTCFX-link-hero-section">
+    <h1>Start Trading with GTCFX Today</h1>
+    <p>Join the world of advanced trading with GTCFX. Experience secure, fast, and powerful trading tools built for every trader. Open your account now using our referral link and start your trading journey.</p>
+    <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="cta-btn">Open Trading Account</a>
+    <div class="mt-4">
+      <a href="https://gtcfx.com" target="_blank" class="visit-link">👉 Visit GTCFX Official Website</a>
+    </div>
+    <div class="wave"></div>
+  </section>
+ 
 {% endblock content %}

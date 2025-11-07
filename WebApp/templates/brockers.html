@@ -17,703 +17,287 @@
   <meta name="description" content="GTCFX is a regulated global broker partnered with VR Academy. Trade Forex, Commodities, Indices and Crypto with INR deposit/withdrawal support." />
 
 
-
-  
-
-
-
-  <!-- Custom styles -->
-   <style>
-    /* styles.css
-   Enhanced, glassmorphism-focused visualization for the provided GTCFX content.
-   The visible textual content is kept exactly as supplied by the user and is not modified.
-   Extensive styling, responsive rules, animations and accessibility tweaks follow.
-*/
-
-/* --------------------------------------------------------------------------
-   VARIABLES
-   ----------------------------------------------------------------------- */
-:root{
-  --blue: #2487ce;
-  --cyan: #00bcd4;
-  --orange: #ff9800;
-
-  --bg-1: #f6fbff;
-  --bg-2: #ffffff;
-
-  --text-primary: #052633;
-  --muted: #516675;
-
-  --glass-bg: rgba(255,255,255,0.72);
-  --glass-border: rgba(36,135,206,0.10);
-
-  --tile-border: rgba(4,28,43,0.04);
-  --shadow-1: rgba(4,28,43,0.06);
-  --shadow-2: rgba(36,135,206,0.08);
-
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 10px;
-
-  --max-content-width: 1100px;
+</head>
+<body>
+<style>
+  /* ==========================================================================
+   GLOBAL THEME
+   ========================================================================== */
+:root {
+  --primary: #2474c6;
+  --secondary: #00bcd4;
+  --accent: #ff9800;
+  --text: #1e2a35;
+  --muted: #6c7a89;
+  --radius: 14px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-/* --------------------------------------------------------------------------
-   RESET / BASE
-   ----------------------------------------------------------------------- */
-*,
-*::before,
-*::after{box-sizing: border-box}
-
-html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
-
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
 body {
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
   background: transparent;
-  line-height: 1.45;
-  padding-bottom: 6rem;
 }
 
-/* --------------------------------------------------------------------------
-   PAGE LAYOUT
-   ----------------------------------------------------------------------- */
-.page-root{
-  position: relative;
-  display: block;
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+a:hover {
+  text-decoration: underline;
 }
 
-/* decorative background shapes (soft and subtle) */
-.bg-decor{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-.bg-decor::before,
-.bg-decor::after{
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.7;
-  transform-origin: center;
-}
-.bg-decor::before{
-  width: 680px;
-  height: 680px;
-  left: -180px;
-  top: -140px;
-  background: radial-gradient(circle at 30% 30%, rgba(36,135,206,0.14), rgba(0,188,212,0.06) 35%, transparent 55%);
-}
-.bg-decor::after{
-  width: 520px;
-  height: 520px;
-  right: -160px;
-  bottom: -80px;
-  background: radial-gradient(circle at 70% 70%, rgba(255,152,0,0.12), rgba(36,135,206,0.04) 40%, transparent 60%);
-}
-
-/* header */
-.site-header{
-  max-width: var(--max-content-width);
-  margin: 1.25rem auto 0;
-  position: relative;
-  z-index: 3;
-}
-.brand-crest{
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+.page-root {
+  padding: 3rem 1rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
 }
 
-/* --------------------------------------------------------------------------
-   BROKER SECTION
-   ----------------------------------------------------------------------- */
-.broker-section{
-  max-width: var(--max-content-width);
-  margin: 1.25rem auto 3rem;
-  position: relative;
-  z-index: 2;
-  padding: 2rem 1rem;
-}
-
-/* primary glass card */
-.broker-card{
-  position: relative;
-  background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.66));
-  -webkit-backdrop-filter: blur(10px) saturate(115%);
-  backdrop-filter: blur(10px) saturate(115%);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 30px var(--shadow-1), 0 1px 0 rgba(255,255,255,0.6) inset;
-  overflow: visible;
-  padding: 1.25rem;
-  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
-}
-
-/* accent stripe shimmer */
-.card-accent-stripe{
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 7px;
+.broker-card {
+  background: #fff;
+  border: 1px solid #e4e8ec;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.5rem;
+  max-width: 900px;
   width: 100%;
-  border-top-left-radius: var(--radius-lg);
-  border-top-right-radius: var(--radius-lg);
-  background: linear-gradient(90deg, var(--blue), var(--cyan), var(--orange));
-  background-size: 300% 100%;
-  animation: stripeFlow 5.8s linear infinite;
-  box-shadow: 0 6px 20px rgba(36,135,206,0.06);
+  transition: all 0.3s ease;
 }
 
-/* body layout inside card */
-.card-body{
-  position: relative;
+.broker-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+
+.card-body {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 0.6rem 0.6rem;
-}
-
-/* left visual block */
-.left-visual{
-  min-width: 136px;
-  max-width: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.left-visual-inner{
-  position: relative;
-  width: 128px;
-  height: 128px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
-  border: 1px solid rgba(36,135,206,0.08);
-  box-shadow: 0 8px 24px rgba(36,135,206,0.06), 0 1px 0 rgba(255,255,255,0.6) inset;
-  overflow: visible;
-}
-
-/* emoji */
-.emoji{
-  font-size: 44px;
-  line-height: 1;
-  z-index: 3;
-  transform: translateZ(0);
-}
-
-/* soft spark */
-.spark{
-  position: absolute;
-  left: -12px;
-  top: -12px;
-  z-index: 1;
-  opacity: 0.9;
-  transform: rotate(-8deg) scale(1.02);
-  pointer-events: none;
-}
-
-/* textual content */
-.content-wrap{
-  min-width: 0;
-}
-.broker-title{
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin: 0 0 0.6rem 0;
-  color: var(--text-primary);
-  letter-spacing: -0.3px;
-}
-.broker-desc{
-  margin: 0 0 0.45rem 0;
-  color: var(--muted);
-  line-height: 1.6;
-  font-size: 1rem;
-  max-width: 70ch;
-}
-
-/* visual row - small badges (decorative) */
-.visual-row{
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.65rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
-.stat-pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: linear-gradient(180deg, rgba(36,135,206,0.04), rgba(255,255,255,0.6));
-  border: 1px solid rgba(11,37,53,0.04);
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  min-width: 88px;
-  box-shadow: 0 4px 12px rgba(11,37,53,0.03);
-}
-.stat-value{
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: 0.98rem;
-}
-.stat-label{
-  font-size: 0.78rem;
-  color: var(--muted);
-}
 
-/* corner flare */
-.card-flare{
-  pointer-events: none;
-  position: absolute;
-  right: -28px;
-  top: -28px;
+.left-visual-inner {
   width: 120px;
   height: 120px;
-  border-radius: 58%;
-  background: radial-gradient(circle at 35% 35%, rgba(36,135,206,0.15), rgba(0,188,212,0.06) 30%, transparent 60%);
-  filter: blur(18px);
-}
-
-/* hover interactions */
-@media (hover: hover) and (min-width: 768px){
-  .broker-card:hover{
-    transform: translateY(-10px) scale(1.004);
-    box-shadow: 0 24px 64px var(--shadow-2);
-  }
-}
-
-/* --------------------------------------------------------------------------
-   INFO TILES (secondary visuals)
-   ----------------------------------------------------------------------- */
-.info-tile{
-  display: flex;
-  gap: 0.8rem;
-  align-items: center;
-  padding: 0.9rem;
-  border-radius: var(--radius-md);
-  background: white;
-  border: 1px solid var(--tile-border);
-  box-shadow: 0 6px 18px rgba(11,37,53,0.04);
-  transition: transform 220ms ease, box-shadow 220ms ease;
-  position: relative;
-  overflow: visible;
-}
-.info-tile + .info-tile{ margin-top: 0.75rem; }
-.tile-icon{
-  width: 54px;
-  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(36,116,198,0.08), rgba(0,188,212,0.08));
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(36,135,206,0.06), rgba(0,188,212,0.03));
-  border: 1px solid rgba(36,135,206,0.06);
+  font-size: 42px;
 }
-.tile-body{ min-width: 0; }
-.tile-title{
+
+.broker-title {
+  font-size: 1.5rem;
   font-weight: 700;
-  font-size: 0.98rem;
-  color: var(--text-primary);
+  margin-bottom: 0.75rem;
 }
-.tile-note{
-  font-size: 0.86rem;
+
+.broker-desc {
+  font-size: 1rem;
   color: var(--muted);
-  margin-top: 0.18rem;
-}
-.tile-edge{
-  position: absolute;
-  right: -8px;
-  top: -8px;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, rgba(36,135,206,0.06), rgba(255,152,0,0.03));
-  filter: blur(2px);
+  line-height: 1.6;
 }
 
-/* tile hover micro interaction */
-@media (hover: hover) and (min-width: 768px){
-  .info-tile:hover{
-    transform: translateY(-6px);
-    box-shadow: 0 18px 48px rgba(36,135,206,0.06);
-  }
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
-/* --------------------------------------------------------------------------
-   MICRO CTA (decorative)
-   ----------------------------------------------------------------------- */
-.micro-cta{
-  display: inline-flex;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: center;
-}
-.badge-swatch{
-  width: 14px;
-  height: 14px;
+.stat-pill {
+  background: #f8f9fb;
+  border: 1px solid #e0e5e9;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  display: inline-block;
-  box-shadow: 0 6px 18px rgba(36,135,206,0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text);
 }
-.s-1{ background: linear-gradient(90deg, var(--blue), var(--cyan)); }
-.s-2{ background: linear-gradient(90deg, var(--cyan), var(--orange)); }
-.s-3{ background: linear-gradient(90deg, var(--blue), var(--orange)); }
 
-/* --------------------------------------------------------------------------
-   UTILITIES & ACCESSIBILITY
-   ----------------------------------------------------------------------- */
-.btn-ghost{
-  display:inline-block;
-  padding: 0.4rem 0.6rem;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
+/* ==========================================================================
+   INFO TILES
+   ========================================================================== */
+.info-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+.info-tile {
+  background: #fff;
+  border: 1px solid #e4e8ec;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.info-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.07);
+}
+
+.tile-icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(36,116,198,0.07);
+  color: var(--primary);
+  font-size: 22px;
+}
+
+.tile-body {
+  flex: 1;
+}
+
+.tile-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.tile-note {
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
-/* focus styles */
-.broker-card:focus{
-  outline: none;
-  box-shadow: 0 18px 48px rgba(36,135,206,0.12), 0 0 0 4px rgba(36,135,206,0.06);
+/* ==========================================================================
+   CTA SECTION
+   ========================================================================== */
+.cta-section {
+  text-align: center;
+  margin-top: 3rem;
 }
 
-/* reduce-motion */
-@media (prefers-reduced-motion: reduce){
-  .card-accent-stripe,
-  .card-accent-stripe::before,
-  .card-accent-stripe::after,
-  .broker-card,
-  .info-tile{
-    animation: none !important;
-    transition: none !important;
+.cta-btn {
+  background: var(--primary);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+}
+
+.footer-note {
+  margin-top: 2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .card-body {
+    flex-direction: column;
+    text-align: center;
   }
 }
+</style>
+  
+<main class="page-root">
+    <!-- Broker Card -->
+    <article class="broker-card">
+      <div class="card-body">
+        <div class="left-visual-inner">🏦</div>
+        <div class="content-wrap">
+          <h2 class="broker-title">Our Trusted Broker – GTCFX</h2>
+          <p class="broker-desc">
+            GTCFX is our trusted global trading partner that provides a safe, transparent, and professional trading environment for learners and traders worldwide.
+          </p>
+          <p class="broker-desc">
+            With GTCFX, you can trade in Forex, Commodities, Indices, and Cryptocurrencies using world-class technology and support.
+          </p>
 
-/* responsive layout adjustments */
-@media (max-width: 991.98px){
-  .card-body{ gap: 1rem; }
-  .left-visual-inner{ width: 116px; height: 116px; }
-  .emoji{ font-size: 40px; }
-}
-@media (max-width: 575.98px){
-  .broker-section{ padding: 1rem; }
-  .card-body{ flex-direction: column; align-items:center; text-align:center; padding: 0.4rem; }
-  .left-visual{ margin-bottom: 0.25rem; }
-  .broker-desc{ max-width: 100%; }
-}
-
-/* keyframes */
-@keyframes stripeFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* small helper: ensure page doesn't grow too wide */
-.container, .page-root > .container { max-width: var(--max-content-width); margin-left:auto; margin-right:auto; }
-   </style>
-  <main class="page-root">
-    <!-- Decorative canvas for soft shapes and pattern -->
-    <div class="bg-decor" aria-hidden="true"></div>
-
-    <header class="site-header container">
-      <div class="row align-items-center">
- 
-        <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
-          <!-- purely decorative action slot -->
-          <div class="header-actions" aria-hidden="true">
-            <button class="btn btn-ghost" disabled> </button>
+          <div class="stat-row">
+            <div class="stat-pill">💬 24/7 Support</div>
+            <div class="stat-pill">⚡ 99.9% Uptime</div>
+            <div class="stat-pill">🌍 100+ Markets</div>
           </div>
         </div>
       </div>
-    </header>
+    </article>
 
-    <section class="broker-section container">
-      <div class="row justify-content-center">
-        <div class="col-12 col-lg-10">
-          <!-- Primary glass card visualizing the provided content -->
-          <article class="broker-card" tabindex="0" role="article" aria-labelledby="broker-title">
-            <div class="card-accent-stripe" aria-hidden="true"></div>
-
-            <div class="card-body d-flex flex-column flex-lg-row align-items-center gap-4">
-              <div class="left-visual d-flex align-items-center justify-content-center">
-                <div class="left-visual-inner">
-                  <div class="emoji">🏦</div>
-                  <svg class="spark" width="160" height="160" viewBox="0 0 160 160" aria-hidden="true">
-                    <defs>
-                      <radialGradient id="rad" cx="50%" cy="40%">
-                        <stop offset="0%" stop-color="#00bcd4" stop-opacity="0.24"/>
-                        <stop offset="60%" stop-color="#2487ce" stop-opacity="0.06"/>
-                        <stop offset="100%" stop-color="#ff9800" stop-opacity="0"/>
-                      </radialGradient>
-                    </defs>
-                    <rect width="160" height="160" rx="20" fill="url(#rad)"></rect>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="content-wrap flex-fill">
-                <!-- Exact provided heading text (kept unchanged) -->
-                <h2 id="broker-title" class="broker-title">🏦 Our Trusted Broker – GTCFX</h2>
-
-                <!-- Exact provided paragraphs (kept unchanged) -->
-                <p class="broker-desc">
-GTCFX is our trusted global trading partner that provides a safe, transparent, and professional trading environment for learners and traders worldwide.
-                </p>
-
-                <p class="broker-desc mb-0">
-With GTCFX, you can trade in Forex, Commodities, Indices, and Cryptocurrencies using world-class technology and support.
-                </p>
-
-                <!-- Visual data row: purely decorative and numeric badges (no new descriptive sentences) -->
-                <div class="visual-row mt-4">
-                  <div class="stat-pill" aria-hidden="true">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">Support</div>
-                  </div>
-                  <div class="stat-pill" aria-hidden="true">
-                    <div class="stat-value">99.9%</div>
-                    <div class="stat-label">Uptime</div>
-                  </div>
-                  <div class="stat-pill" aria-hidden="true">
-                    <div class="stat-value">100+</div>
-                    <div class="stat-label">Markets</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- decorative corner flare -->
-            <div class="card-flare" aria-hidden="true"></div>
-          </article>
+    <!-- Info Tiles -->
+    <section class="info-tiles">
+      <div class="info-tile">
+        <div class="tile-icon">🔒</div>
+        <div class="tile-body">
+          <div class="tile-title">Secure</div>
+          <div class="tile-note">Multi-layer protection</div>
         </div>
       </div>
 
-      <!-- Secondary visualization: value proposition tiles (no new sentences, only icons and numbers) -->
-      <div class="row mt-5 gx-4">
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="info-tile">
-            <div class="tile-icon" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 12h18" stroke="#2487ce" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <div class="tile-body">
-              <div class="tile-title">Secure</div>
-              <div class="tile-note">Multi-layer protection</div>
-            </div>
-            <div class="tile-edge" aria-hidden="true"></div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="info-tile">
-            <div class="tile-icon" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 20h16" stroke="#00bcd4" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <div class="tile-body">
-              <div class="tile-title">Transparent</div>
-              <div class="tile-note">Clear pricing</div>
-            </div>
-            <div class="tile-edge" aria-hidden="true"></div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="info-tile">
-            <div class="tile-icon" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3v18" stroke="#ff9800" stroke-width="1.6" stroke-linecap="round"/></svg>
-            </div>
-            <div class="tile-body">
-              <div class="tile-title">Professional</div>
-              <div class="tile-note">World-class tech</div>
-            </div>
-            <div class="tile-edge" aria-hidden="true"></div>
-          </div>
+      <div class="info-tile">
+        <div class="tile-icon">📊</div>
+        <div class="tile-body">
+          <div class="tile-title">Transparent</div>
+          <div class="tile-note">Clear pricing</div>
         </div>
       </div>
 
-      <!-- Footer small CTA area (keeps content text unchanged; CTA is visual only) -->
-      <div class="row mt-5">
-        <div class="col-12 text-center">
-          <div class="micro-cta" aria-hidden="true">
-            <!-- decorative badges -->
-            <span class="badge-swatch s-1"></span>
-            <span class="badge-swatch s-2"></span>
-            <span class="badge-swatch s-3"></span>
-          </div>
+      <div class="info-tile">
+        <div class="tile-icon">💼</div>
+        <div class="tile-body">
+          <div class="tile-title">Professional</div>
+          <div class="tile-note">World-class technology</div>
         </div>
       </div>
     </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="btn cta-btn">
+        Open Trading Account
+      </a>
+      <div class="footer-note mt-3">
+        👉 <a href="https://gtcfx.com" target="_blank">Visit GTCFX Official Website</a>
+      </div>
+    </section>
   </main>
- 
+
   <script>
-    /* script.js
-   Interactive behaviors for the enhanced GTCFX visualization.
-   Focus: reveal animations, micro-tilt (pointer), accessible keyboard interactions,
-   subtle auto-animation, and theme-safe motion handling.
-*/
-
-/* Utility helpers */
-const qs = (selector, root = document) => root.querySelector(selector);
-const qsa = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-
-/* Entry: when DOM ready */
-document.addEventListener('DOMContentLoaded', () => {
-  const card = qs('.broker-card');
-  const tiles = qsa('.info-tile');
-  const stripe = qs('.card-accent-stripe');
-
-  // Defensive guards
-  if (!card) return;
-
-  // Initial reveal setup
-  const initReveal = () => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(18px) scale(0.998)';
-    card.style.willChange = 'transform, opacity';
-  };
-
-  // Apply reveal when card enters viewport (IntersectionObserver)
-  const observeReveal = () => {
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // animate in
-          card.style.transition = 'opacity 560ms cubic-bezier(.2,.9,.2,1), transform 560ms cubic-bezier(.2,.9,.2,1)';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0) scale(1)';
-
-          // one-time shimmer pulse on stripe for engagement
-          try {
-            stripe.animate([
-              { filter: 'brightness(1)', transform: 'translateY(0)' },
-              { filter: 'brightness(1.06)', transform: 'translateY(-1px)' },
-              { filter: 'brightness(1)', transform: 'translateY(0)' }
-            ], { duration: 900, easing: 'ease-out' });
-          } catch (e) {
-            // ignore animation errors on older browsers
-          }
-
-          obs.disconnect();
-        }
+    // Subtle fade-in animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const elements = document.querySelectorAll('.broker-card, .info-tile, .cta-section');
+      elements.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, i * 150 + 200);
       });
-    }, { threshold: 0.12 });
-
-    io.observe(card);
-  };
-
-  // Micro-tilt interaction for pointer devices
-  const enableMicroTilt = () => {
-    if (!window.matchMedia('(hover: hover)').matches) return;
-
-    let rect = null;
-    let rafId = null;
-
-    const handleMove = (ev) => {
-      if (!rect) rect = card.getBoundingClientRect();
-      const x = ev.clientX - rect.left;
-      const y = ev.clientY - rect.top;
-      const px = (x / rect.width - 0.5) * 10;   // rotateY
-      const py = (y / rect.height - 0.5) * -6;  // rotateX
-
-      // throttle via requestAnimationFrame
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        card.style.transform = `translateY(0) rotateX(${py}deg) rotateY(${px}deg) scale(1.003)`;
-      });
-    };
-
-    const resetTilt = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      card.style.transform = 'translateY(0) rotateX(0) rotateY(0) scale(1)';
-      rect = null;
-    };
-
-    card.addEventListener('pointermove', handleMove);
-    card.addEventListener('pointerleave', resetTilt);
-    card.addEventListener('pointercancel', resetTilt);
-    window.addEventListener('resize', () => rect = null);
-  };
-
-  // Keyboard focus micro interaction
-  const enableFocusRing = () => {
-    card.addEventListener('focusin', () => {
-      card.style.boxShadow = '0 20px 60px rgba(36,135,206,0.12)';
-      card.style.transform = 'translateY(-6px) scale(1.003)';
     });
-    card.addEventListener('focusout', () => {
-      card.style.boxShadow = '';
-      card.style.transform = 'translateY(0) scale(1)';
-    });
-  };
-
-  // Tile entrance stagger
-  const revealTiles = () => {
-    tiles.forEach((t, i) => {
-      t.style.opacity = '0';
-      t.style.transform = 'translateY(14px)';
-      t.style.transition = `opacity 420ms ${120 + i*80}ms cubic-bezier(.2,.9,.2,1), transform 420ms ${120 + i*80}ms cubic-bezier(.2,.9,.2,1)`;
-      setTimeout(() => {
-        t.style.opacity = '1';
-        t.style.transform = 'translateY(0)';
-      }, 80 + i * 90);
-    });
-  };
-
-  // Small decorative wave on the spark to keep page lively but subtle
-  const animateSpark = () => {
-    const spark = qs('.spark');
-    if (!spark) return;
-    spark.animate([
-      { transform: 'rotate(-8deg) scale(1.02)', opacity: 0.92 },
-      { transform: 'rotate(-6deg) scale(1.04)', opacity: 0.98 },
-      { transform: 'rotate(-8deg) scale(1.02)', opacity: 0.92 }
-    ], {
-      duration: 4000,
-      iterations: Infinity,
-      easing: 'ease-in-out'
-    });
-  };
-
-  // Respect reduced motion preference
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReduced) {
-    // only simple reveal, no heavy animation
-    card.style.opacity = '1';
-    card.style.transform = 'none';
-    tiles.forEach(t => {
-      t.style.opacity = '1';
-      t.style.transform = 'none';
-    });
-  } else {
-    initReveal();
-    observeReveal();
-    enableMicroTilt();
-    enableFocusRing();
-    revealTiles();
-    animateSpark();
-  }
-
-  // Small accessibility: allow pressing Enter on card to briefly pulse the stripe
-  card.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Enter' || ev.key === ' ') {
-      ev.preventDefault();
-      if (!stripe) return;
-      try {
-        stripe.animate([
-          { transform: 'scaleX(1)', opacity: 1 },
-          { transform: 'scaleX(1.02)', opacity: 1 },
-          { transform: 'scaleX(1)', opacity: 1 }
-        ], { duration: 450, easing: 'ease-out' });
-      } catch (e) {}
-    }
-  });
-});
   </script>
-
-
+  
 
 
   <style>
@@ -801,8 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
  
   </style>
-</head>
-<body>
 
   <!-- WHY GTCFX -->
   <section id="why" class="py-5">
@@ -1357,476 +939,449 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <style>
-    /*
-      Single-file creative UI/UX section for:
-      "🤝 Partnership with VR Academy
+:root {
+  --blue: #246bfd;
+  --cyan: #04d3d3;
+  --violet: #7954f8;
+  --orange: #ff9f3f;
+  --bg: #f7f9fc;
+  --text: #0a1a2b;
+  --muted: #6b7a89;
+  --card-bg: rgba(255,255,255,0.72);
+  --radius: 22px;
+  --shadow: 0 12px 40px rgba(0,0,0,0.06);
+}
 
-      We’ve partnered with GTCFX to help our students and traders get real-world trading experience in a secure environment.
-      Through this collaboration, learners can open demo or live trading accounts and practice under the guidance of VR Academy experts."
-      
-      Design goals:
-      - Modern, playful, visual, and creative (NOT a professional dashboard)
-      - Single standalone file with unique IDs/classes prefixed with vrx-
-      - Keep the text exactly as provided (no edits)
-    */
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Outfit", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
 
-    :root{
-      --accent-blue: #2487ce;
-      --accent-cyan: #00bcd4;
-      --accent-orange: #ff9800;
+/* ===== Section ===== */
+#vrx-partnership-wrap {
+  position: relative;
+  padding: 4rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
 
-      --bg-1: #f8fbff;
-      --bg-2: #ffffff;
+/* Animated gradient blobs (modern background) */
+.vrx-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  animation: floatBlob 14s infinite ease-in-out alternate;
+  z-index: 0;
+}
+#vrx-b1 {
+  width: 400px; height: 400px;
+  top: -100px; left: -150px;
+  background: radial-gradient(circle at 30% 30%, var(--cyan), transparent 70%);
+}
+#vrx-b2 {
+  width: 500px; height: 500px;
+  right: -180px; bottom: -160px;
+  background: radial-gradient(circle at 60% 60%, var(--violet), transparent 70%);
+}
+@keyframes floatBlob {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-40px) scale(1.05); }
+}
 
-      --glass: rgba(255,255,255,0.7);
-      --glass-2: rgba(255,255,255,0.55);
+/* ===== Cluster Layout ===== */
+.vrx-cluster {
+  position: relative;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  z-index: 1;
+  align-items: center;
+}
+@media (max-width: 880px) {
+  .vrx-cluster {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
 
-      --muted: #5b6b75;
-      --text: #04252f;
+/* ===== Visual Column ===== */
+#vrx-visual-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-      --max-width: 1100px;
-    }
+.vrx-visual-card {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px) saturate(120%);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+.vrx-visual-card:hover {
+  transform: rotateY(8deg) rotateX(-4deg) scale(1.02);
+}
 
-    *{box-sizing:border-box}
- 
+/* Glow ring around center */
+.vrx-ring {
+  position: absolute;
+  width: 200px; height: 200px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid rgba(36,107,253,0.2);
+  animation: spin 8s linear infinite;
+}
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
-    /* Container */
-    #vrx-partnership-wrap{
-      width:100%;
-    }
+/* VR Badge */
+.vrx-sticker {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(36,107,253,0.3);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
 
-    /* Big playful background shapes */
-    #vrx-bg-shapes{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      z-index:0;
-      overflow:visible;
-    }
+/* Decorative spark dots */
+.vrx-spark {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, white, rgba(255,255,255,0.6));
+  opacity: 0.8;
+  animation: blink 3s infinite ease-in-out alternate;
+}
+.vrx-s1 { top: 20%; left: 25%; }
+.vrx-s2 { bottom: 20%; right: 30%; animation-delay: 0.5s; }
+.vrx-s3 { top: 60%; right: 10%; animation-delay: 1s; }
+@keyframes blink {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0.3; }
+}
 
-    #vrx-bg-shapes .blob{
-      position:absolute;
-      border-radius:50%;
-      filter: blur(36px);
-      opacity:0.9;
-      transform: translateZ(0);
-      mix-blend-mode: screen;
-    }
-    /* blobs positions */
-    #vrx-blob-1{ width:420px; height:420px; left:-120px; top:-60px; background: linear-gradient(135deg, rgba(36,135,206,0.18), rgba(0,188,212,0.08)); }
-    #vrx-blob-2{ width:320px; height:320px; right:-100px; bottom:-40px; background: linear-gradient(135deg, rgba(255,152,0,0.14), rgba(36,135,206,0.04)); }
-    #vrx-blob-3{ width:160px; height:160px; left:20%; top:48%; background: linear-gradient(135deg, rgba(36,135,206,0.08), rgba(0,188,212,0.06)); transform:translate(-20%, -40%) rotate(12deg); }
+/* ===== Content Card ===== */
+#vrx-content-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
 
-    /* Main creative card cluster */
-    .vrx-cluster{
-      position:relative;
-      z-index:2;
-      display:grid;
-      grid-template-columns: 360px 1fr;
-      gap:28px;
-      align-items:center;
-      padding:28px;
-    }
+#vrx-heading {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem;
+}
+#vrx-intro {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
 
-    /* On small screens stack */
-    @media (max-width:880px){
-      .vrx-cluster{ grid-template-columns: 1fr; padding:18px; gap:18px; }
-    }
+/* ===== Features ===== */
+.vrx-features {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.vrx-feature-pill {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
 
-    /* Left visual panel - playful multi-card stack */
-    #vrx-visual-column{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      height:100%;
-    }
+/* ===== Practice strip ===== */
+.vrx-practice-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1.6rem;
+}
+.vrx-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(90deg,var(--blue),var(--cyan));
+}
+.vrx-strip-line {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(36,107,253,0.15), rgba(255,159,63,0.15));
+}
+.vrx-practice-note {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
 
-    .vrx-stack{
-      position:relative;
-      width:320px;
-      height:320px;
-      display:grid;
-      place-items:center;
-      transform-style:preserve-3d;
-      perspective:1000px;
-    }
+/* ===== Buttons ===== */
+.vrx-cta-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+.vrx-btn {
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.vrx-btn-primary {
+  background: linear-gradient(90deg,var(--blue),var(--cyan));
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(36,107,253,0.25);
+}
+.vrx-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(36,107,253,0.35);
+}
+.vrx-btn-ghost {
+  background: transparent;
+  color: var(--blue);
+  border: 1px solid rgba(36,107,253,0.2);
+}
+.vrx-btn-ghost:hover {
+  background: rgba(36,107,253,0.06);
+}
 
-    .vrx-card{
-      position:absolute;
-      width:86%;
-      height:60%;
-      left:7%;
-      top:18%;
-      border-radius:18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.86));
-      box-shadow: 0 18px 40px rgba(20,40,60,0.06), 0 2px 0 rgba(255,255,255,0.6) inset;
-      border:1px solid rgba(36,135,206,0.06);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transition: transform 380ms cubic-bezier(.2,.9,.2,1), box-shadow 380ms;
-      backdrop-filter: blur(6px) saturate(120%);
-    }
+/* ===== Footnote ===== */
+#vrx-footnote {
+  margin-top: 1.4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
 
-    /* individual transforms to create layered playful look */
-    .vrx-card.v1{ transform: rotate(-8deg) translateY(-6px) scale(.98); background: linear-gradient(180deg, rgba(36,135,206,0.06), rgba(255,255,255,0.9)); border:1px solid rgba(36,135,206,0.10); }
-    .vrx-card.v2{ transform: rotate(6deg) translateY(8px) scale(0.985); width:92%; height:64%; left:4%; top:16%; background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(0,188,212,0.02)); }
-    .vrx-card.v3{ transform: rotate(-2deg) translateY(0px) scale(1); z-index:5; width:96%; height:66%; left:2%; top:14%; }
-
-    /* center sticker / badge */
-    .vrx-sticker{
-      width:120px;
-      height:120px;
-      border-radius:20px;
-      display:grid;
-      place-items:center;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-      color:white;
-      font-weight:700;
-      font-size:28px;
-      box-shadow: 0 18px 40px rgba(36,135,206,0.12);
-      transform: translateZ(28px);
-      border: 4px solid rgba(255,255,255,0.12);
-    }
-
-    /* playful floating accent lines */
-    .vrx-accent-line{
-      position:absolute;
-      width:56px;
-      height:6px;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(36,135,206,0.95), rgba(0,188,212,0.95));
-      box-shadow: 0 8px 20px rgba(36,135,206,0.06);
-      opacity:0.95;
-      transform:translateZ(40px);
-    }
-    .vrx-line-a{ right:-16px; top:10%; transform: rotate(18deg); }
-    .vrx-line-b{ left:-28px; bottom:12%; transform: rotate(-14deg); background: linear-gradient(90deg, rgba(255,152,0,0.95), rgba(248,180,80,0.85)); }
-
-    /* Right content panel (creative card) */
-    #vrx-content-card{
-      border-radius:20px;
-      padding:28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82));
-      border: 1px solid rgba(36,135,206,0.06);
-      box-shadow: 0 20px 50px rgba(4,28,43,0.06);
-      position:relative;
-      overflow:visible;
-    }
-
-    /* decorative corner */
-    #vrx-content-card::after{
-      content:"";
-      position:absolute;
-      width:120px;
-      height:120px;
-      right:-40px;
-      top:-36px;
-      background: radial-gradient(circle at 30% 30%, rgba(36,135,206,0.12), rgba(0,188,212,0.06) 40%, transparent 60%);
-      filter:blur(10px);
-      border-radius:50%;
-      pointer-events:none;
-    }
-
-    /* Heading and copy (text kept exactly as provided) */
-    #vrx-heading{
-      margin:0 0 6px 0;
-      font-size:1.4rem;
-      line-height:1.1;
-      font-weight:800;
-      letter-spacing:-0.3px;
-    }
-    #vrx-intro{
-      margin:0;
-      color:var(--muted);
-      font-size:1rem;
-      line-height:1.6;
-    }
-
-    /* Creative feature strip and visual separators */
-    .vrx-features{
-      display:flex;
-      gap:12px;
-      margin-top:18px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .vrx-feature-pill{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding:10px 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,249,255,0.98));
-      border-radius:999px;
-      border:1px solid rgba(11,37,53,0.04);
-      box-shadow: 0 8px 20px rgba(4,28,43,0.04);
-      font-weight:700;
-      color:var(--text);
-      font-size:0.95rem;
-    }
-    .vrx-feature-emoji{ font-size:18px; display:inline-block; }
-
-    /* Decorative timeline / practice indicator (creative visualization) */
-    .vrx-practice-strip{
-      margin-top:22px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .vrx-dot{
-      width:12px;height:12px;border-radius:50%;
-      background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan));
-      box-shadow: 0 8px 18px rgba(36,135,206,0.12);
-      flex:0 0 12px;
-    }
-    .vrx-strip-line{
-      height:8px;
-      flex:1;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(36,135,206,0.14), rgba(255,152,0,0.06));
-    }
-    .vrx-practice-note{
-      font-size:0.92rem;
-      color:var(--muted);
-      font-weight:600;
-      white-space:nowrap;
-    }
-
-    /* CTA-ish decorative area (no new text content) */
-    .vrx-cta-area{
-      margin-top:20px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .vrx-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:12px;
-      font-weight:700;
-      text-decoration:none;
-      cursor:pointer;
-      border: none;
-      transition: transform 180ms ease, box-shadow 180ms ease;
-    }
-    .vrx-btn-primary{
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
-      color:white;
-      box-shadow: 0 14px 36px rgba(36,135,206,0.12);
-    }
-    .vrx-btn-ghost{
-      background: transparent;
-      color: var(--accent-blue);
-      border: 1px solid rgba(36,135,206,0.10);
-    }
-    .vrx-btn:hover{ transform: translateY(-3px); }
-
-    /* footer tagline (the last provided line should remain unchanged) */
-    #vrx-footnote{
-      margin-top:18px;
-      font-size:0.98rem;
-      color:var(--muted);
-    }
-
-    /* small responsive tweaks */
-    @media (max-width:520px){
-      .vrx-feature-pill{ font-size:0.9rem; padding:8px 10px; }
-      .vrx-sticker{ width:96px;height:96px;font-size:22px; }
-      .vrx-card.v1, .vrx-card.v2, .vrx-card.v3{ left:6%; top:18%; }
-      .vrx-cluster{ gap:14px; padding:12px; }
-      #vrx-content-card{ padding:18px; border-radius:14px; }
-    }
-
-    /* subtle entrance animation */
-    .vrx-appear{ opacity:0; transform: translateY(18px) scale(0.998); transition: opacity 620ms cubic-bezier(.2,.9,.2,1), transform 620ms cubic-bezier(.2,.9,.2,1); }
-    .vrx-appear.vrx-in{ opacity:1; transform: translateY(0) scale(1); }
-
-    /* micro-interaction focus outline */
-    #vrx-content-card:focus-within{ outline: none; box-shadow: 0 20px 60px rgba(36,135,206,0.10); }
-
-    /* playful tiny sparkles inside the visual stack */
-    .vrx-spark{
-      position:absolute;
-      width:8px;height:8px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0.6));
-      box-shadow: 0 6px 16px rgba(36,135,206,0.12);
-      opacity:0.95;
-    }
-    .vrx-s1{ left:18%; top:28%; }
-    .vrx-s2{ right:12%; bottom:18%; background: radial-gradient(circle at 30% 30%, #fff, rgba(255,152,0,0.75)); }
-    .vrx-s3{ left:48%; bottom:26%; background: radial-gradient(circle at 30% 30%, #fff, rgba(0,188,212,0.55)); }
-
-  </style>
+/* ===== Responsive ===== */
+@media (max-width: 580px) {
+  #vrx-content-card {
+    padding: 1.5rem;
+  }
+  #vrx-heading {
+    font-size: 1.4rem;
+  }
+  .vrx-visual-card {
+    width: 240px;
+    height: 240px;
+  }
+  .vrx-sticker {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
+}
 </style>
-   <div id="vrx-partnership-wrap" aria-labelledby="vrx-heading-aria">
-   
+  <div id="vrx-partnership-wrap">
+    <!-- background blobs -->
+    <div class="vrx-blob" id="vrx-b1"></div>
+    <div class="vrx-blob" id="vrx-b2"></div>
 
-    <div class="vrx-cluster vrx-appear" id="vrx-cluster-1">
-      <!-- Left visual column -->
-      <div id="vrx-visual-column" aria-hidden="true">
-        <div class="vrx-stack" id="vrx-stack">
-          <div class="vrx-card v1" id="vrx-card-1" title="Layer 1"></div>
-          <div class="vrx-card v2" id="vrx-card-2"></div>
-          <div class="vrx-card v3" id="vrx-card-3">
-            <div class="vrx-sticker" id="vrx-sticker-main">VR</div>
-          </div>
-
-          <div class="vrx-accent-line vrx-line-a"></div>
-          <div class="vrx-accent-line vrx-line-b"></div>
-
+    <div class="vrx-cluster">
+      <!-- Visual column -->
+      <div id="vrx-visual-column">
+        <div class="vrx-visual-card" id="vrx-visual">
+          <div class="vrx-ring"></div>
+          <div class="vrx-sticker">VR</div>
           <div class="vrx-spark vrx-s1"></div>
           <div class="vrx-spark vrx-s2"></div>
           <div class="vrx-spark vrx-s3"></div>
         </div>
       </div>
 
-      <!-- Right content column -->
-      <div id="vrx-content-card" class="vrx-appear" tabindex="0" role="region" aria-labelledby="vrx-heading">
-        <!-- Heading: keep exact text -->
-        <h3 id="vrx-heading" aria-level="1">🤝 Partnership with VR Academy</h3>
-
-        <!-- Copy: keep exact text (unchanged) -->
+      <!-- Content -->
+      <div id="vrx-content-card">
+        <h3 id="vrx-heading">🤝 Partnership with VR Academy</h3>
         <p id="vrx-intro">
 We’ve partnered with GTCFX to help our students and traders get real-world trading experience in a secure environment.
 Through this collaboration, learners can open demo or live trading accounts and practice under the guidance of VR Academy experts.
         </p>
 
-        <!-- Creative features (visuals only, no added sentences) -->
-        <div class="vrx-features" aria-hidden="true">
-          <div class="vrx-feature-pill"><span class="vrx-feature-emoji">🧭</span> Guided Practice</div>
-          <div class="vrx-feature-pill"><span class="vrx-feature-emoji">🎯</span> Real Strategies</div>
-          <div class="vrx-feature-pill"><span class="vrx-feature-emoji">🧪</span> Demo & Live</div>
+        <div class="vrx-features">
+          <div class="vrx-feature-pill">🧭 Guided Practice</div>
+          <div class="vrx-feature-pill">🎯 Real Strategies</div>
+          <div class="vrx-feature-pill">🧪 Demo & Live</div>
         </div>
 
-        <!-- Practice / timeline visual (no new descriptive sentences) -->
-        <div class="vrx-practice-strip" aria-hidden="true">
+        <div class="vrx-practice-strip">
           <div class="vrx-dot"></div>
           <div class="vrx-strip-line"></div>
-          <div class="vrx-dot" style="background:linear-gradient(90deg,var(--accent-orange),#ffbe6a)"></div>
-          <div class="vrx-strip-line" style="background:linear-gradient(90deg, rgba(255,152,0,0.06), rgba(36,135,206,0.06))"></div>
-          <div class="vrx-dot" style="background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan))"></div>
-          <div class="vrx-practice-note" style="margin-left:12px;">Practice-driven learning</div>
+          <div class="vrx-dot" style="background:linear-gradient(90deg,var(--orange),#ffd38c)"></div>
+          <div class="vrx-strip-line"></div>
+          <div class="vrx-dot"></div>
+          <div class="vrx-practice-note">Practice-driven learning</div>
         </div>
 
-        <div class="vrx-cta-area" aria-hidden="true">
-          <button class="vrx-btn vrx-btn-primary" id="vrx-demo-btn" type="button">Open Demo</button>
-          <button class="vrx-btn vrx-btn-ghost" id="vrx-live-btn" type="button">Explore Live</button>
+        <div class="vrx-cta-area">
+          <button class="vrx-btn vrx-btn-primary" id="vrx-demo-btn">Open Demo</button>
+          <button class="vrx-btn vrx-btn-ghost" id="vrx-live-btn">Explore Live</button>
         </div>
 
-        <!-- Footnote: keep exact text -->
         <p id="vrx-footnote">
 Now you can trade globally while managing your funds locally — with complete peace of mind! 🇮🇳
         </p>
       </div>
     </div>
   </div>
-<style>
-  
-</style>
-  <script>
-    // Interactive behaviors for the creative section.
-    // - reveal on load/scroll
-    // - subtle hover tilt on the sticker
-    // - gentle bobbing animation on the stack
-    // - respects prefers-reduced-motion
 
-    (function () {
-      const root = document.getElementById('vrx-partnership-wrap');
-      const appearEls = document.querySelectorAll('.vrx-appear');
-      const sticker = document.getElementById('vrx-sticker-main');
-      const stack = document.getElementById('vrx-stack');
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+<script>
+/* subtle parallax tilt on hover */
+const visual = document.getElementById('vrx-visual');
+const sticker = document.querySelector('.vrx-sticker');
+visual.addEventListener('mousemove', e => {
+  const rect = visual.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  visual.style.transform = `rotateY(${x * 10}deg) rotateX(${y * -6}deg)`;
+});
+visual.addEventListener('mouseleave', () => {
+  visual.style.transform = '';
+});
 
-      // Entrance: reveal when cluster is visible
-      const reveal = () => {
-        appearEls.forEach(el => el.classList.add('vrx-in'));
-      };
+/* button pulse feedback */
+['vrx-demo-btn','vrx-live-btn'].forEach(id=>{
+  const btn=document.getElementById(id);
+  btn.addEventListener('click',()=>{
+    btn.animate([
+      { transform:'scale(1)' },
+      { transform:'scale(1.08)' },
+      { transform:'scale(1)' }
+    ],{ duration:400, easing:'ease-out' });
+  });
+});
+</script>
 
-      if (prefersReduced) {
-        // no animations: show immediately
-        appearEls.forEach(el => el.classList.add('vrx-in'));
-      } else {
-        // use IntersectionObserver for reveal
-        try {
-          const io = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                reveal();
-                observer.disconnect();
-              }
-            });
-          }, { threshold: 0.12 });
-          io.observe(document.getElementById('vrx-cluster-1'));
-        } catch (e) {
-          reveal();
-        }
-      }
 
-      // gentle bob for the stack (subtle)
-      if (!prefersReduced) {
-        stack.animate([
-          { transform: 'translateY(0px) rotateX(0deg)' },
-          { transform: 'translateY(-8px) rotateX(1.2deg)' },
-          { transform: 'translateY(0px) rotateX(0deg)' }
-        ], {
-          duration: 4200,
-          iterations: Infinity,
-          easing: 'ease-in-out'
-        });
-      }
+  <style>
+ 
+ 
+    .GTCFX-link-hero-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      position: relative;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #011533, #02a0e9);
+    }
 
-      // micro-tilt on sticker when pointer moves
-      if (!prefersReduced && sticker) {
-        let rect = null;
-        sticker.addEventListener('pointermove', (e) => {
-          if (!rect) rect = sticker.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width - 0.5;
-          const y = (e.clientY - rect.top) / rect.height - 0.5;
-          const rx = (-y) * 8; // rotateX
-          const ry = (x) * 12; // rotateY
-          sticker.style.transform = `perspective(600px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(12px)`;
-        });
-        sticker.addEventListener('pointerleave', () => {
-          sticker.style.transform = 'translateZ(28px)';
-        });
-      }
+    .GTCFX-link-hero-section h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
 
-      // small interactive feedback for buttons (purely visual)
-      const demoBtn = document.getElementById('vrx-demo-btn');
-      const liveBtn = document.getElementById('vrx-live-btn');
-      [demoBtn, liveBtn].forEach(btn => {
-        if (!btn) return;
-        btn.addEventListener('mouseenter', () => {
-          btn.style.transform = 'translateY(-4px)';
-        });
-        btn.addEventListener('mouseleave', () => {
-          btn.style.transform = '';
-        });
-        btn.addEventListener('focus', () => btn.style.boxShadow = '0 14px 36px rgba(36,135,206,0.12)');
-        btn.addEventListener('blur', () => btn.style.boxShadow = '');
-      });
+    .GTCFX-link-hero-section p {
+      font-size: 1.2rem;
+      color: #d1d1d1;
+      max-width: 700px;
+      margin-bottom: 40px;
+    }
 
-      // Accessibility helper: keyboard users can press Enter on the content card to pulse the sticker
-      const contentCard = document.getElementById('vrx-content-card');
-      contentCard && contentCard.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Enter' || ev.key === ' ') {
-          ev.preventDefault();
-          if (prefersReduced) return;
-          sticker.animate([
-            { transform: 'translateZ(28px) scale(1)' },
-            { transform: 'translateZ(28px) scale(1.06)' },
-            { transform: 'translateZ(28px) scale(1)' }
-          ], { duration: 420, easing: 'ease-out' });
-        }
-      });
+    .cta-btn {
+      background: linear-gradient(90deg, #ff6b00, #ffa600);
+      color: #fff;
+      font-weight: 600;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      transition: 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 165, 0, 0.4);
+    }
 
-    })();
-  </script>
+    .cta-btn:hover {
+      background: linear-gradient(90deg, #ffa600, #ff6b00);
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: url('https://svgshare.com/i/uYd.svg');
+      background-size: cover;
+      animation: waveAnim 6s infinite linear;
+      opacity: 0.5;
+    }
+
+    @keyframes waveAnim {
+      from { background-position-x: 0; }
+      to { background-position-x: 1000px; }
+    }
+ 
+
+    .visit-link {
+      display: inline-block;
+      color: #00e0ff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .visit-link:hover {
+      color: #ff6b00;
+    }
+  </style>
+
+  <!-- Hero Section -->
+  <section class="GTCFX-link-hero-section">
+    <h1>Start Trading with GTCFX Today</h1>
+    <p>Join the world of advanced trading with GTCFX. Experience secure, fast, and powerful trading tools built for every trader. Open your account now using our referral link and start your trading journey.</p>
+    <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="cta-btn">Open Trading Account</a>
+    <div class="mt-4">
+      <a href="https://gtcfx.com" target="_blank" class="visit-link">👉 Visit GTCFX Official Website</a>
+    </div>
+    <div class="wave"></div>
+  </section>
+ 
+
 </body>
 </html>
