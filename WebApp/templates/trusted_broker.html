@@ -23,488 +23,917 @@
       </div>
     </div><!-- End Page Title -->
 
+    <style>
+        /* ==========================================================================
+           GLOBAL THEME ENHANCED
+           ========================================================================== */
+        :root {
+            --primary: #2474c6;
+            --primary-light: #4a90e2;
+            --secondary: #00bcd4;
+            --accent: #ff9800;
+            --text: #1e2a35;
+            --text-light: #4a5568;
+            --muted: #6c7a89;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --shadow: 0 8px 32px rgba(36, 116, 198, 0.08);
+            --shadow-hover: 0 16px 48px rgba(36, 116, 198, 0.12);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+            --gradient-accent: linear-gradient(135deg, var(--secondary), var(--accent));
+        }
 
-<style>
-  /* ==========================================================================
-   GLOBAL THEME
-   ========================================================================== */
-:root {
-  --primary: #2474c6;
-  --secondary: #00bcd4;
-  --accent: #ff9800;
-  --text: #1e2a35;
-  --muted: #6c7a89;
-  --radius: 14px;
-  --shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
+        /* ==========================================================================
+           BASE STYLES ENHANCED
+           ========================================================================== */
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            line-height: 1.6;
+        }
 
-/* ==========================================================================
-   BASE STYLES
-   ========================================================================== */
-body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
-  color: var(--text);
-  background: transparent;
-}
+        a {
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: var(--primary-light);
+        }
 
-a {
-  text-decoration: none;
-  color: var(--primary);
-}
-a:hover {
-  text-decoration: underline;
-}
+        /* ==========================================================================
+           LAYOUT ENHANCED
+           ========================================================================== */
+        .page-root {
+            padding: 4rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* ==========================================================================
-   LAYOUT
-   ========================================================================== */
-.page-root {
-  padding: 3rem 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+        .broker-card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            max-width: 1000px;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
 
-.broker-card {
-  background: #fff;
-  border: 1px solid #e4e8ec;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 2rem 1.5rem;
-  max-width: 900px;
-  width: 100%;
-  transition: all 0.3s ease;
-}
+        .broker-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
 
-.broker-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
-}
+        .broker-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
 
-.card-body {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
+        .card-body {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
 
-.left-visual-inner {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(36,116,198,0.08), rgba(0,188,212,0.08));
-  display: grid;
-  place-items: center;
-  font-size: 42px;
-}
+        .left-visual-inner {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(36,116,198,0.1), rgba(0,188,212,0.1));
+            display: grid;
+            place-items: center;
+            font-size: 48px;
+            box-shadow: 0 8px 24px rgba(36, 116, 198, 0.15);
+            transition: all 0.4s ease;
+            position: relative;
+        }
 
-.broker-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
+        .broker-card:hover .left-visual-inner {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 12px 32px rgba(36, 116, 198, 0.2);
+        }
 
-.broker-desc {
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
+        .content-wrap {
+            flex: 1;
+            min-width: 300px;
+        }
 
-.stat-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
+        .broker-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.stat-pill {
-  background: #f8f9fb;
-  border: 1px solid #e0e5e9;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.88rem;
-  color: var(--text);
-}
+        .broker-desc {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
 
-/* ==========================================================================
-   INFO TILES
-   ========================================================================== */
-.info-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.25rem;
-  margin-top: 2.5rem;
-  max-width: 900px;
-  width: 100%;
-}
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
 
-.info-tile {
-  background: #fff;
-  border: 1px solid #e4e8ec;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: all 0.3s ease;
-}
+        .stat-pill {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-.info-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.07);
-}
+        .stat-pill:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
 
-.tile-icon {
-  width: 50px;
-  height: 50px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(36,116,198,0.07);
-  color: var(--primary);
-  font-size: 22px;
-}
+        /* ==========================================================================
+           INFO TILES ENHANCED
+           ========================================================================== */
+        .info-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+            max-width: 1000px;
+            width: 100%;
+        }
 
-.tile-body {
-  flex: 1;
-}
+        .info-tile {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
 
-.tile-title {
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-}
+        .info-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.4s ease;
+        }
 
-.tile-note {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
+        .info-tile:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
 
-/* ==========================================================================
-   CTA SECTION
-   ========================================================================== */
-.cta-section {
-  text-align: center;
-  margin-top: 3rem;
-}
+        .info-tile:hover::before {
+            transform: scaleY(1);
+        }
 
-.cta-btn {
-  background: var(--primary);
-  color: #fff;
-  padding: 0.75rem 2rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 999px;
-  transition: all 0.3s ease;
-}
+        .tile-icon {
+            width: 60px;
+            height: 60px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: rgba(36,116,198,0.08);
+            color: var(--primary);
+            font-size: 24px;
+            transition: all 0.4s ease;
+        }
 
-.cta-btn:hover {
-  background: var(--secondary);
-  transform: translateY(-2px);
-}
+        .info-tile:hover .tile-icon {
+            background: var(--gradient-primary);
+            color: white;
+            transform: scale(1.1);
+        }
 
-.footer-note {
-  margin-top: 2rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
+        .tile-body {
+            flex: 1;
+        }
 
-/* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
-@media (max-width: 768px) {
-  .card-body {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-</style>
+        .tile-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+        }
+
+        .tile-note {
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        /* ==========================================================================
+           CTA SECTION ENHANCED
+           ========================================================================== */
+        .cta-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .cta-btn {
+            background: var(--gradient-primary);
+            color: #fff;
+            padding: 0.9rem 2.5rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 999px;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(36, 116, 198, 0.3);
+            font-size: 1rem;
+        }
+
+        .cta-btn:hover {
+            background: var(--gradient-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 188, 212, 0.4);
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* ==========================================================================
+           RESPONSIVE ENHANCED
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .page-root {
+                padding: 2rem 1rem;
+            }
+            
+            .card-body {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            
+            .broker-card {
+                padding: 1.5rem;
+            }
+            
+            .broker-title {
+                font-size: 1.5rem;
+            }
+            
+            .stat-row {
+                justify-content: center;
+            }
+            
+            .info-tiles {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+    </style> 
+    <main class="page-root">
+        <!-- Broker Card -->
+        <article class="broker-card animate-fade-in">
+            <div class="card-body">
+                <div class="left-visual-inner">🏦</div>
+                <div class="content-wrap">
+                    <h2 class="broker-title">Our Trusted Broker – GTCFX</h2>
+                    <p class="broker-desc">
+                        GTCFX is our trusted global trading partner that provides a safe, transparent, and professional trading environment for learners and traders worldwide.
+                    </p>
+                    <p class="broker-desc">
+                        With GTCFX, you can trade in Forex, Commodities, Indices, and Cryptocurrencies using world-class technology and support.
+                    </p>
+
+                    <div class="stat-row">
+                        <div class="stat-pill">💬 24/7 Support</div>
+                        <div class="stat-pill">⚡ 99.9% Uptime</div>
+                        <div class="stat-pill">🌍 100+ Markets</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Info Tiles -->
+        <section class="info-tiles">
+            <div class="info-tile animate-fade-in" style="animation-delay: 0.1s">
+                <div class="tile-icon">🔒</div>
+                <div class="tile-body">
+                    <div class="tile-title">Secure</div>
+                    <div class="tile-note">Multi-layer protection</div>
+                </div>
+            </div>
+
+            <div class="info-tile animate-fade-in" style="animation-delay: 0.2s">
+                <div class="tile-icon">📊</div>
+                <div class="tile-body">
+                    <div class="tile-title">Transparent</div>
+                    <div class="tile-note">Clear pricing</div>
+                </div>
+            </div>
+
+            <div class="info-tile animate-fade-in" style="animation-delay: 0.3s">
+                <div class="tile-icon">💼</div>
+                <div class="tile-body">
+                    <div class="tile-title">Professional</div>
+                    <div class="tile-note">World-class technology</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Enhanced animation with intersection observer
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.animate-fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+
+
+
   
-<main class="page-root">
-    <!-- Broker Card -->
-    <article class="broker-card">
-      <div class="card-body">
-        <div class="left-visual-inner">🏦</div>
-        <div class="content-wrap">
-          <h2 class="broker-title">Our Trusted Broker – GTCFX</h2>
-          <p class="broker-desc">
-            GTCFX is our trusted global trading partner that provides a safe, transparent, and professional trading environment for learners and traders worldwide.
-          </p>
-          <p class="broker-desc">
-            With GTCFX, you can trade in Forex, Commodities, Indices, and Cryptocurrencies using world-class technology and support.
-          </p>
-
-          <div class="stat-row">
-            <div class="stat-pill">💬 24/7 Support</div>
-            <div class="stat-pill">⚡ 99.9% Uptime</div>
-            <div class="stat-pill">🌍 100+ Markets</div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Info Tiles -->
-    <section class="info-tiles">
-      <div class="info-tile">
-        <div class="tile-icon">🔒</div>
-        <div class="tile-body">
-          <div class="tile-title">Secure</div>
-          <div class="tile-note">Multi-layer protection</div>
-        </div>
-      </div>
-
-      <div class="info-tile">
-        <div class="tile-icon">📊</div>
-        <div class="tile-body">
-          <div class="tile-title">Transparent</div>
-          <div class="tile-note">Clear pricing</div>
-        </div>
-      </div>
-
-      <div class="info-tile">
-        <div class="tile-icon">💼</div>
-        <div class="tile-body">
-          <div class="tile-title">Professional</div>
-          <div class="tile-note">World-class technology</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section">
-      <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" target="_blank" class="btn cta-btn">
-        Open Trading Account
-      </a>
-      <div class="footer-note mt-3">
-        👉 <a href="https://gtcfx.com" target="_blank">Visit GTCFX Official Website</a>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    // Subtle fade-in animation
-    document.addEventListener('DOMContentLoaded', () => {
-      const elements = document.querySelectorAll('.broker-card, .info-tile, .cta-section');
-      elements.forEach((el, i) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          el.style.transition = 'all 0.6s ease';
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
-        }, i * 150 + 200);
-      });
-    });
-  </script>
-  
-
-
   <style>
-    :root {
-      --brand-primary: #0d6efd;
-      --brand-dark: #0b2545;
-      --accent: #06b6d4;
-      --muted: #6c7a89;
-      --bg-soft: #f7f9fb;
-      --radius: 14px;
-      --shadow: 0 8px 28px rgba(11,37,69,0.08);
-    }
+        :root {
+            --gtcfx-primary: #0d6efd;
+            --gtcfx-primary-dark: #0b5ed7;
+            --gtcfx-secondary: #06b6d4;
+            --gtcfx-dark: #0b2545;
+            --gtcfx-light: #f8fafc;
+            --gtcfx-muted: #64748b;
+            --gtcfx-success: #10b981;
+            --gtcfx-warning: #f59e0b;
+            --gtcfx-danger: #ef4444;
+            --gtcfx-border: #e2e8f0;
+            --gtcfx-radius: 16px;
+            --gtcfx-shadow: 0 10px 25px rgba(11, 37, 69, 0.08);
+            --gtcfx-gradient: linear-gradient(135deg, var(--gtcfx-primary), var(--gtcfx-secondary));
+        }
 
-    body {
-      font-family: "Inter", sans-serif;
-      color: var(--brand-dark);
-      background: transparent;
-      margin: 0;
-      padding: 0;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: var(--gtcfx-dark);
+            line-height: 1.6;
+        }
 
-    h3 {
-      font-weight: 800;
-    }
+        .gtcfx-trust-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Feature cards */
-    .feature {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(11,37,69,0.05);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
+        .gtcfx-trust-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: var(--gtcfx-gradient);
+            border-radius: 50%;
+            opacity: 0.03;
+            z-index: 0;
+        }
 
-    .feature:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 30px rgba(11,37,69,0.12);
-    }
+        .gtcfx-trust-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: var(--gtcfx-gradient);
+            border-radius: 50%;
+            opacity: 0.03;
+            z-index: 0;
+        }
 
-    .feature .icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      flex-shrink: 0;
-      font-size: 1.2rem;
-    }
+        .gtcfx-section-header {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 3.5rem;
+        }
 
-    .icon-fast      { background: linear-gradient(135deg, #4f46e5, #06b6d4); }
-    .icon-low       { background: linear-gradient(135deg, #f97316, #ef4444); }
-    .icon-platform  { background: linear-gradient(135deg, #06b6d4, #10b981); }
-    .icon-support   { background: linear-gradient(135deg, #7c3aed, #0ea5a3); }
+        .gtcfx-section-badge {
+            display: inline-block;
+            background: var(--gtcfx-gradient);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        }
 
-    .muted {
-      color: var(--muted);
-    }
+        .gtcfx-section-title {
+            font-weight: 800;
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--gtcfx-dark), var(--gtcfx-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    .cap {
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--muted);
-    }
+        .gtcfx-section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gtcfx-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-    /* Buttons */
-    .btn-cta {
-      background: linear-gradient(90deg, var(--brand-primary), var(--accent));
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      border-radius: 8px;
-      padding: 0.7rem 1.2rem;
-      box-shadow: 0 4px 14px rgba(13,110,253,0.25);
-      transition: all 0.3s ease;
-    }
+        /* Feature Cards */
+        .gtcfx-feature-card {
+            background: white;
+            border-radius: var(--gtcfx-radius);
+            padding: 2rem;
+            box-shadow: var(--gtcfx-shadow);
+            border: 1px solid var(--gtcfx-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
 
-    .btn-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(13,110,253,0.35);
-    }
- 
-  </style>
+        .gtcfx-feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gtcfx-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
 
-  <!-- WHY GTCFX -->
-  <section id="why" class="py-5">
-    <div class="container">
-      <div class="row align-items-center g-4">
+        .gtcfx-feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(11, 37, 69, 0.15);
+        }
 
-        <div class="col-lg-5">
-          <h3>Why We Trust GTCFX</h3>
-          <p class="muted mb-4">
-            GTCFX operates under strict international standards, offering reliable technology and local payment support for Indian traders.
-          </p>
+        .gtcfx-feature-card:hover::before {
+            transform: scaleX(1);
+        }
 
-          <ul class="list-unstyled">
-            <li class="d-flex gap-3 mb-3">
-              <div class="icon icon-fast"><i class="fa-solid fa-bolt"></i></div>
-              <div>
-                <div class="fw-bold">Ultra-fast Trade Execution</div>
-                <div class="muted">Optimised routing and low-latency servers for consistently fast fills.</div>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3">
-              <div class="icon icon-low"><i class="fa-solid fa-scale-balanced"></i></div>
-              <div>
-                <div class="fw-bold">Low Spreads</div>
-                <div class="muted">Competitive pricing across major currency pairs and instruments.</div>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3">
-              <div class="icon icon-platform"><i class="fa-solid fa-desktop"></i></div>
-              <div>
-                <div class="fw-bold">Advanced Platforms</div>
-                <div class="muted">MT5 available on desktop, web and mobile for flexible trading workflows.</div>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3">
-              <div class="icon icon-support"><i class="fa-solid fa-headset"></i></div>
-              <div>
-                <div class="fw-bold">24×5 Customer Support</div>
-                <div class="muted">Dedicated support for account, platform and fund-related queries.</div>
-              </div>
-            </li>
-          </ul>
+        .gtcfx-feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: var(--gtcfx-light);
+            color: var(--gtcfx-primary);
+            transition: all 0.4s ease;
+        }
 
-          <div class="mt-3">
-            <a href="https://mygtcportal.com/getview?view=register&token=2cjrowwwqowwwwww" 
-               class="btn btn-cta me-2" target="_blank" rel="noopener">
-              <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Start Trading
-            </a>
-            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#faqModal">
-              Read Our FAQ
-            </button>
-          </div>
+        .gtcfx-feature-card:hover .gtcfx-feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--gtcfx-gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+        }
+
+        .gtcfx-feature-category {
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gtcfx-muted);
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .gtcfx-feature-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--gtcfx-dark);
+        }
+
+        .gtcfx-feature-description {
+            color: var(--gtcfx-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Benefit Items */
+        .gtcfx-benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--gtcfx-radius);
+            margin-bottom: 1.5rem;
+            background: white;
+            box-shadow: var(--gtcfx-shadow);
+            border: 1px solid var(--gtcfx-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gtcfx-benefit-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gtcfx-gradient);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.4s ease;
+        }
+
+        .gtcfx-benefit-item:hover {
+            transform: translateX(5px);
+        }
+
+        .gtcfx-benefit-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .gtcfx-benefit-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .gtcfx-benefit-item:hover .gtcfx-benefit-icon {
+            transform: scale(1.1);
+        }
+
+        .gtcfx-benefit-icon-fast {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+        }
+
+        .gtcfx-benefit-icon-low {
+            background: linear-gradient(135deg, #f97316, #ef4444);
+        }
+
+        .gtcfx-benefit-icon-platform {
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+        }
+
+        .gtcfx-benefit-icon-support {
+            background: linear-gradient(135deg, #7c3aed, #0ea5a3);
+        }
+
+        .gtcfx-benefit-content {
+            flex: 1;
+        }
+
+        .gtcfx-benefit-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--gtcfx-dark);
+        }
+
+        .gtcfx-benefit-description {
+            color: var(--gtcfx-muted);
+            margin: 0;
+        }
+
+        /* Buttons */
+        .gtcfx-btn-primary {
+            background: var(--gtcfx-gradient);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .gtcfx-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(13, 110, 253, 0.4);
+            color: white;
+        }
+
+        .gtcfx-btn-outline {
+            border: 2px solid var(--gtcfx-primary);
+            background: transparent;
+            color: var(--gtcfx-primary);
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .gtcfx-btn-outline:hover {
+            background: var(--gtcfx-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.2);
+        }
+
+        /* Stats */
+        .gtcfx-stats-container {
+            background: white;
+            border-radius: var(--gtcfx-radius);
+            padding: 2.5rem;
+            box-shadow: var(--gtcfx-shadow);
+            margin-top: 3rem;
+            border: 1px solid var(--gtcfx-border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .gtcfx-stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .gtcfx-stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: var(--gtcfx-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .gtcfx-stat-label {
+            font-size: 0.95rem;
+            color: var(--gtcfx-muted);
+            font-weight: 500;
+        }
+
+        /* Animation */
+        @keyframes gtcfxFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gtcfx-animate-fade-in {
+            animation: gtcfxFadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .gtcfx-section-title {
+                font-size: 2.2rem;
+            }
+            
+            .gtcfx-benefit-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .gtcfx-btn-primary, .gtcfx-btn-outline {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gtcfx-trust-section {
+                padding: 3rem 0;
+            }
+            
+            .gtcfx-section-title {
+                font-size: 1.8rem;
+            }
+            
+            .gtcfx-feature-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+ <!-- GTCFX Trust Section -->
+<section class="gtcfx-trust-section">
+    <div class="container position-relative">
+        <div class="gtcfx-section-header text-center">
+            <span class="gtcfx-section-badge">
+                <i class="bi bi-shield-check me-2"></i>Why Trust GTCFX
+            </span>
+            <h1 class="gtcfx-section-title">Trade with Confidence and Precision</h1>
+            <p class="gtcfx-section-subtitle">
+                GTCFX operates under strict international standards, offering reliable technology and local payment support for Indian traders.
+            </p>
         </div>
 
-        <div class="col-lg-7">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="feature">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="cap mb-2">Security</div>
-                    <h6 class="fw-bold mb-1">Regulated & Compliant</h6>
-                    <div class="muted small">Operating under robust regulatory frameworks to keep client funds protected.</div>
-                  </div>
-                  <i class="fa-solid fa-shield-halved fa-2x text-primary"></i>
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="row g-4">
+                    <div class="col-md-6 gtcfx-animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="gtcfx-feature-card">
+                            <div class="gtcfx-feature-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                            <span class="gtcfx-feature-category">Security</span>
+                            <h3 class="gtcfx-feature-title">Regulated & Compliant</h3>
+                            <p class="gtcfx-feature-description">
+                                Operating under robust regulatory frameworks to keep client funds protected with advanced security protocols.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 gtcfx-animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="gtcfx-feature-card">
+                            <div class="gtcfx-feature-icon">
+                                <i class="bi bi-diagram-3"></i>
+                            </div>
+                            <span class="gtcfx-feature-category">Execution</span>
+                            <h3 class="gtcfx-feature-title">Low Latency Routes</h3>
+                            <p class="gtcfx-feature-description">
+                                Robust infrastructure for institutional-grade trade routing with minimal slippage and maximum efficiency.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 gtcfx-animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="gtcfx-feature-card">
+                            <div class="gtcfx-feature-icon">
+                                <i class="bi bi-percent"></i>
+                            </div>
+                            <span class="gtcfx-feature-category">Costs</span>
+                            <h3 class="gtcfx-feature-title">Competitive Spreads</h3>
+                            <p class="gtcfx-feature-description">
+                                Trade more efficiently with tighter spreads and transparent pricing across all major currency pairs.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 gtcfx-animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="gtcfx-feature-card">
+                            <div class="gtcfx-feature-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <span class="gtcfx-feature-category">Support</span>
+                            <h3 class="gtcfx-feature-title">Fund & Account Assistance</h3>
+                            <p class="gtcfx-feature-description">
+                                24×5 dedicated helpdesk to ease deposits, withdrawals and account setup with personalized guidance.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            <div class="col-md-6">
-              <div class="feature">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="cap mb-2">Execution</div>
-                    <h6 class="fw-bold mb-1">Low Latency Routes</h6>
-                    <div class="muted small">Robust infrastructure for institutional-grade trade routing.</div>
-                  </div>
-                  <i class="fa-solid fa-network-wired fa-2x text-success"></i>
-                </div>
-              </div>
-            </div>
+            <div class="col-lg-6">
+                <div class="gtcfx-benefits-list">
+                    <div class="gtcfx-benefit-item gtcfx-animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="gtcfx-benefit-icon gtcfx-benefit-icon-fast">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <div class="gtcfx-benefit-content">
+                            <h3 class="gtcfx-benefit-title">Ultra-fast Trade Execution</h3>
+                            <p class="gtcfx-benefit-description">
+                                Optimised routing and low-latency servers for consistently fast fills with minimal slippage.
+                            </p>
+                        </div>
+                    </div>
 
-            <div class="col-md-6">
-              <div class="feature">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="cap mb-2">Costs</div>
-                    <h6 class="fw-bold mb-1">Competitive Spreads</h6>
-                    <div class="muted small">Trade more efficiently with tighter spreads and transparent pricing.</div>
-                  </div>
-                  <i class="fa-solid fa-percent fa-2x text-danger"></i>
-                </div>
-              </div>
-            </div>
+                    <div class="gtcfx-benefit-item gtcfx-animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="gtcfx-benefit-icon gtcfx-benefit-icon-low">
+                            <i class="bi bi-align-center"></i>
+                        </div>
+                        <div class="gtcfx-benefit-content">
+                            <h3 class="gtcfx-benefit-title">Low Spreads & Transparent Pricing</h3>
+                            <p class="gtcfx-benefit-description">
+                                Competitive pricing across major currency pairs and instruments with no hidden fees.
+                            </p>
+                        </div>
+                    </div>
 
-            <div class="col-md-6">
-              <div class="feature">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <div class="cap mb-2">Support</div>
-                    <h6 class="fw-bold mb-1">Fund & Account Assistance</h6>
-                    <div class="muted small">24×5 dedicated helpdesk to ease deposits, withdrawals and account setup.</div>
-                  </div>
-                  <i class="fa-solid fa-hands-holding-circle fa-2x text-warning"></i>
+                    <div class="gtcfx-benefit-item gtcfx-animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="gtcfx-benefit-icon gtcfx-benefit-icon-platform">
+                            <i class="bi bi-display"></i>
+                        </div>
+                        <div class="gtcfx-benefit-content">
+                            <h3 class="gtcfx-benefit-title">Advanced Trading Platforms</h3>
+                            <p class="gtcfx-benefit-description">
+                                MT5 available on desktop, web and mobile for flexible trading workflows with advanced charting tools.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="gtcfx-benefit-item gtcfx-animate-fade-in" style="animation-delay: 0.4s">
+                        <div class="gtcfx-benefit-icon gtcfx-benefit-icon-support">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <div class="gtcfx-benefit-content">
+                            <h3 class="gtcfx-benefit-title">24×5 Customer Support</h3>
+                            <p class="gtcfx-benefit-description">
+                                Dedicated support for account, platform and fund-related queries with quick resolution times.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-
-      </div>
     </div>
-  </section>
- 
-
+</section>
 
 
 

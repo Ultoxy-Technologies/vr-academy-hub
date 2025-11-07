@@ -180,7 +180,10 @@ body {
                       <div class="original text-muted small"><s>{{ course.original_price }}</s></div>
                     {% endif %}
                   </div>
-
+                        <div style="text-align: left; position: relative; left: -50px; color: var(--accent); font-weight: 700; font-size: 1rem;">
+                          <span><b>Free</b></span>
+                          <span><b>Paid</b></span>
+                        </div>
                         <a href="{% url 'register_user' %}" class="btn btn-dark register-btn" data-title="{{ course.title }}">
                           Register Now
                         </a>
