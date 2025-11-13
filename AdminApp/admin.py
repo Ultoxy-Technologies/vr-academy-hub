@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry
+from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
 
 
@@ -584,17 +584,6 @@ class AdvanceToProCourseAdmin(CourseBaseAdmin):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # ----------------------------
 # Certificate ADMIN
 # ----------------------------
@@ -622,7 +611,6 @@ class CertificateAdmin(admin.ModelAdmin):
 from django.contrib import admin
 from django import forms
 from django.utils import timezone
-from .models import Event
 
 
 # ✅ Custom form with HTML5 Date/Time widgets (shows clock UI)
@@ -700,3 +688,83 @@ class EventAdmin(admin.ModelAdmin):
         if obj.status == 'published' and not obj.published_at:
             obj.published_at = timezone.now()
         super().save_model(request, obj, form, change)
+
+
+
+
+
+
+
+@admin.register(EventRegistration)
+class EventRegistrationAdmin(admin.ModelAdmin):
+    list_display = (
+        'registration_id',
+        'full_name',
+        'email',
+        'event',
+        'amount_paid',
+        'payment_status',
+        'created_at',
+    )
+
+    list_filter = (
+        'payment_status',
+        'event',
+        'created_at',
+    )
+
+    search_fields = (
+        'registration_id',
+        'full_name',
+        'email',
+        'mobile_number',
+        'event__title',
+    )
+
+    readonly_fields = (
+        'registration_id',
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'razorpay_signature',
+        'created_at',
+        'updated_at',
+    )
+
+    ordering = ('-created_at',)
+    list_per_page = 25
+
+    fieldsets = (
+        ('Registration Details', {
+            'fields': ('registration_id', 'event', 'payment_status'),
+            'classes': ('wide',)
+        }),
+        ('Personal Information', {
+            'fields': ('full_name', 'email', 'mobile_number', 'address'),
+            'classes': ('collapse',)
+        }),
+        ('Payment Information', {
+            'fields': (
+                'amount_paid',
+                'razorpay_order_id',
+                'razorpay_payment_id',
+                'razorpay_signature',
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Additional Information', {
+            'fields': ('special_requirements',),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    # Optional Jazzmin customization
+    jazzmin_icon = "fa fa-ticket"  # You can pick any FontAwesome icon
+
+    def get_queryset(self, request):
+        """Optimize queryset by selecting related event"""
+        qs = super().get_queryset(request)
+        return qs.select_related('event')

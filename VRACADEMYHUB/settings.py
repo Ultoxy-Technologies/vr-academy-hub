@@ -158,8 +158,11 @@ LOGIN_URL = '/login'
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # Razorpay Configuration
-RAZORPAY_KEY_ID = 'your_razorpay_key_id'
-RAZORPAY_KEY_SECRET = 'your_razorpay_key_secret'
+
+#test api keys
+RAZORPAY_KEY_ID = 'rzp_test_RfELpk3eZdngJZ' 
+#test api secret keys
+RAZORPAY_KEY_SECRET = 'lWVYlpQE8ftiRcrmfv1M8arF'
 
 
 STATIC_URL = 'static/'

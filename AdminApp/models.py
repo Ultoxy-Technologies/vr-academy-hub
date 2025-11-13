@@ -449,6 +449,10 @@ class Event(models.Model):
         return int(float(self.registration_offer_fee or 0) * 100)
 
 
+
+import uuid
+from django.db import models
+
 class EventRegistration(models.Model):
     PAYMENT_STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -459,7 +463,7 @@ class EventRegistration(models.Model):
 
     # Registration Information
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
-    registration_id = models.CharField(max_length=20, unique=True, default=uuid.uuid4)
+    registration_id = models.CharField(max_length=20, unique=True, blank=True)
     
     # Personal Information
     full_name = models.CharField(max_length=255)
@@ -494,7 +498,12 @@ class EventRegistration(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.registration_id:
+            # Generate a unique registration ID
             self.registration_id = f"REG{str(uuid.uuid4())[:8].upper()}"
         if not self.amount_paid and not self.event.is_free:
             self.amount_paid = self.event.registration_offer_fee
         super().save(*args, **kwargs)
+
+    def generate_registration_id(self):
+        """Generate a unique registration ID"""
+        return f"REG{str(uuid.uuid4())[:8].upper()}"
