@@ -289,3 +289,212 @@ class FreeCourseProgress(models.Model):
         This is useful for template logic to allow downloads.
         """
         return self.completed and bool(self.course.certificate_template)
+
+
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+import uuid
+
+class Event(models.Model):
+    EVENT_STATUS = [
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    ]
+
+    # Thumbnail
+    thumbnail = models.ImageField(
+        upload_to="event_thumbnails/",
+        blank=True,
+        null=True,
+        help_text="Upload event thumbnail image (Recommended size: 800x600 pixels)"
+    )
+
+    # Basic event information
+    title = models.CharField(
+        max_length=200,
+        help_text="Enter the main title of the event"
+    )
+    subtitle = models.CharField(
+        max_length=300,
+        blank=True,
+        null=True,
+        help_text="Add an optional subtitle for the event"
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Write a detailed description of the event"
+    )
+
+    # Event categorization
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Specify the category or type of event (e.g., Webinar, Workshop)"
+    )
+    tags = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,  
+        help_text="List of keywords related to the event (e.g., ['Technology', 'Education'])"
+    )
+
+    # Event timing
+    event_date = models.DateField(
+        help_text="Select the event date"
+    )
+    event_start_time = models.TimeField(
+        help_text="Enter the start time of the event"
+    )
+    event_end_time = models.TimeField(
+        help_text="Enter the end time of the event"
+    )
+    timezone = models.CharField(
+        max_length=50,
+        default='IST',
+        help_text="Specify the event timezone"
+    )
+
+    # Meeting details
+    meeting_link = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Add meeting link if applicable (e.g., Zoom or Google Meet URL)"
+    )
+    meeting_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Enter meeting ID if required"
+    )
+    meeting_password = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Enter meeting password if required"
+    )
+
+    # Pricing
+    is_free = models.BooleanField(
+        default=False,
+        help_text="Check if the event is free to attend"
+    )
+    registration_strickthrough_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Enter original registration fee (for strikethrough display)"
+    )
+    registration_offer_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text="Enter discounted or current registration fee"
+    )
+
+    # Status and metadata
+    status = models.CharField(
+        max_length=20,
+        choices=EVENT_STATUS,
+        default='draft',
+        help_text="Select current event status"
+    )
+
+    # Timestamps
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Automatically set when event is created"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        help_text="Automatically updates when event is modified"
+    )
+    published_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Date and time when event was published"
+    )
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def current_price(self):
+        """Get current price in paisa for Razorpay"""
+        if self.is_free:
+            return 0
+        return int(self.registration_offer_fee * 100)  # Convert to paisa
+
+    @property
+    def display_price(self):
+        """Get display price"""
+        if self.is_free:
+            return "FREE"
+        return f"₹{self.registration_offer_fee}"
+    
+    @property
+    def current_price(self):
+        """
+        Returns price in paisa (integer) as required by Razorpay.
+        """
+        if self.is_free:
+            return 0
+        return int(float(self.registration_offer_fee or 0) * 100)
+
+
+class EventRegistration(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('success', 'Success'),
+        ('failed', 'Failed'),
+        ('refunded', 'Refunded'),
+    ]
+
+    # Registration Information
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    registration_id = models.CharField(max_length=20, unique=True, default=uuid.uuid4)
+    
+    # Personal Information
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    mobile_number = models.CharField(max_length=15)
+    address = models.TextField(blank=True, null=True)
+    
+    # Payment Information
+    razorpay_order_id = models.CharField(max_length=255, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=255, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
+    
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    payment_status = models.CharField(
+        max_length=20, 
+        choices=PAYMENT_STATUS_CHOICES, 
+        default='pending'
+    )
+    
+    # Additional Information
+    special_requirements = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Event Registration"
+        verbose_name_plural = "Event Registrations"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.event.title}"
+
+    def save(self, *args, **kwargs):
+        if not self.registration_id:
+            self.registration_id = f"REG{str(uuid.uuid4())[:8].upper()}"
+        if not self.amount_paid and not self.event.is_free:
+            self.amount_paid = self.event.registration_offer_fee
+        super().save(*args, **kwargs)

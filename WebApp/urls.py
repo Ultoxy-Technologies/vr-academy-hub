@@ -14,4 +14,10 @@ urlpatterns = [
     path('forgot-password/', request_password_reset, name='forgot_password'),
     path('reset-password/', reset_password_with_otp, name='reset_password'),
     
+    path('event/<int:event_id>/', event_detail, name='event_detail'),
+    path('event/<int:event_id>/register/', event_registration, name='event_registration'),
+    path('payment/verify/', payment_verification, name='payment_verification'),
+    path('registration/success/<str:registration_id>/', registration_success, name='registration_success'),
+    path('create-order/<int:event_id>/', create_razorpay_order, name='create_order'),
+    
 ]

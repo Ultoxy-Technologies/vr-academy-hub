@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from AdminApp.models import PasswordResetOTP,PhotoGalleryCategories, PhotoGallery, VideoGallery,FreeCourse,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
+from AdminApp.models import PasswordResetOTP,PhotoGalleryCategories, PhotoGallery, VideoGallery,FreeCourse,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate,Event
 from django.contrib import messages
 from AdminApp.models import Enquiry
 import threading
@@ -439,3 +439,199 @@ def reset_password_with_otp(request):
             return redirect('/forgot-password/')
 
     return render(request, 'reset_password.html', {'email': email})
+
+
+from django.shortcuts import render, get_object_or_404
+import razorpay
+import json
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from AdminApp.models import Event, EventRegistration
+from .forms import EventRegistrationForm
+from django.contrib import messages
+import traceback
+
+# Initialize Razorpay client
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def event_detail(request, event_id):
+    """
+    Display the full details of a single event.
+    """
+    event = get_object_or_404(Event, id=event_id) 
+
+    context = {
+        'event': event,
+         'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        'save_amount': event.registration_strickthrough_fee - event.registration_offer_fee if event.registration_strickthrough_fee else 0
+    
+    }
+    return render(request, 'event_detail.html', context)
+
+def event_registration(request, event_id):
+    """
+    Handles the event registration form and initiates payment if needed.
+    """
+    try:
+        event = get_object_or_404(Event, id=event_id, status='published')
+    except Exception as e:
+        print(f"[ERROR] Event fetch failed: {e}")
+        return HttpResponse("Event not found", status=404)
+
+    if request.method == 'POST':
+        form = EventRegistrationForm(request.POST)
+        if form.is_valid():
+            try:
+                registration = form.save(commit=False)
+                registration.event = event
+
+                # Handle Free Event
+                if event.is_free:
+                    registration.payment_status = 'success'
+                    registration.save()
+                    messages.success(request, "Registration successful! (Free event)")
+                    return redirect('registration_success', registration_id=registration.registration_id)
+
+                # Handle Paid Event
+                registration.payment_status = 'pending'
+                registration.save()
+
+                # Razorpay order creation
+                order_data = {
+                    'amount': event.current_price,  # amount in paisa
+                    'currency': 'INR',
+                    'receipt': registration.registration_id,
+                    'notes': {
+                        'event_id': str(event.id),
+                        'registration_id': registration.registration_id,
+                    }
+                }
+
+                print(f"[INFO] Creating Razorpay order for registration: {registration.registration_id}")
+                order = client.order.create(data=order_data)
+
+                registration.razorpay_order_id = order.get('id')
+                registration.save()
+
+                print("[SUCCESS] Razorpay order created successfully.")
+                return render(request, 'payment.html', {
+                    'event': event,
+                    'registration': registration,
+                    'order': order,
+                    'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                    'callback_url': request.build_absolute_uri('/payment/verify/'),
+                })
+
+            except Exception as e:
+                print(f"[ERROR] Payment initialization failed: {e}")
+                traceback.print_exc()
+                registration.payment_status = 'failed'
+                registration.save()
+                form.add_error(None, f'Payment initialization failed: {str(e)}')
+
+        else:
+            print("[WARN] Invalid form submission:", form.errors)
+            messages.error(request, "Invalid form. Please check your inputs.")
+    else:
+        form = EventRegistrationForm()
+
+    context = {
+        'event': event,
+        'form': form,
+    }
+    return render(request, 'event_registration.html', context)
+
+
+@csrf_exempt
+def payment_verification(request):
+    """
+    Handles Razorpay payment verification after payment completion.
+    """
+    if request.method != "POST":
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+    try:
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
+
+        print(f"[INFO] Verifying payment for Order ID: {razorpay_order_id}")
+
+        # Verify signature
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        }
+        client.utility.verify_payment_signature(params_dict)
+
+        # Update registration record
+        registration = EventRegistration.objects.get(razorpay_order_id=razorpay_order_id)
+        registration.razorpay_payment_id = razorpay_payment_id
+        registration.razorpay_signature = razorpay_signature
+        registration.payment_status = 'success'
+        registration.save()
+
+        print(f"[SUCCESS] Payment verified successfully for registration {registration.registration_id}")
+        return redirect('registration_success', registration_id=registration.registration_id)
+
+    except EventRegistration.DoesNotExist:
+        print("[ERROR] Registration not found for order:", razorpay_order_id)
+        return JsonResponse({'status': 'error', 'message': 'Registration not found'})
+
+    except razorpay.errors.SignatureVerificationError:
+        print("[ERROR] Invalid Razorpay signature.")
+        return JsonResponse({'status': 'error', 'message': 'Invalid payment signature'})
+
+    except Exception as e:
+        print(f"[ERROR] Payment verification failed: {e}")
+        traceback.print_exc()
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+
+def registration_success(request, registration_id):
+    """
+    Shows a success page after registration or payment confirmation.
+    """
+    try:
+        registration = get_object_or_404(EventRegistration, registration_id=registration_id)
+    except Exception as e:
+        print(f"[ERROR] Registration fetch failed: {e}")
+        return HttpResponse("Registration not found", status=404)
+
+    context = {
+        'registration': registration,
+        'event': registration.event,
+    }
+    return render(request, 'registration_success.html', context)
+
+
+@csrf_exempt
+def create_razorpay_order(request, event_id):
+    """
+    API endpoint to create a Razorpay order (if you want AJAX order creation).
+    """
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+    try:
+        event = get_object_or_404(Event, id=event_id)
+
+        order_data = {
+            'amount': event.current_price,  # amount in paisa
+            'currency': 'INR',
+            'receipt': f'event_{event_id}',
+            'notes': {'event_id': str(event.id)}
+        }
+
+        order = client.order.create(data=order_data)
+        print(f"[SUCCESS] Order created for Event {event_id}: {order['id']}")
+        return JsonResponse({'order_id': order['id']})
+
+    except Exception as e:
+        print(f"[ERROR] Razorpay order creation failed: {e}")
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=400)

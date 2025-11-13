@@ -1,0 +1,136 @@
+{% extends "website_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-4">
+                    <h2 class="mb-0 text-center">
+                        <i class="bi bi-ticket-perforated me-2"></i>
+                        Register for {{ event.title }}
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Event Summary -->
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Event Details</h5>
+                        <p class="mb-1"><strong>Date:</strong> {{ event.event_date }}</p>
+                        <p class="mb-1"><strong>Time:</strong> {{ event.event_start_time }} - {{ event.event_end_time }}</p>
+                        <p class="mb-0"><strong>Price:</strong> 
+                            {% if event.is_free %}
+                                <span class="badge bg-success">FREE</span>
+                            {% else %}
+                                ₹{{ event.registration_offer_fee }}
+                                {% if event.registration_strickthrough_fee %}
+                                    <small class="text-muted text-decoration-line-through ms-2">
+                                        ₹{{ event.registration_strickthrough_fee }}
+                                    </small>
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form method="post" id="registrationForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                                    <i class="bi bi-person me-1"></i>Full Name *
+                                </label>
+                                {{ form.full_name }}
+                                {% if form.full_name.errors %}
+                                    <div class="text-danger small">{{ form.full_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="bi bi-envelope me-1"></i>Email Address *
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.mobile_number.id_for_label }}" class="form-label">
+                                    <i class="bi bi-phone me-1"></i>Mobile Number *
+                                </label>
+                                {{ form.mobile_number }}
+                                {% if form.mobile_number.errors %}
+                                    <div class="text-danger small">{{ form.mobile_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label">
+                                    <i class="bi bi-geo-alt me-1"></i>Complete Address
+                                </label>
+                                {{ form.address }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger small">{{ form.address.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.special_requirements.id_for_label }}" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>Special Requirements
+                            </label>
+                            {{ form.special_requirements }}
+                            <div class="form-text">Any special requirements or questions you'd like to share with us.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {% if event.is_free %}
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Register for Free
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-credit-card me-2"></i>Proceed to Payment - ₹{{ event.registration_offer_fee }}
+                                </button>
+                            {% endif %}
+                            
+                            <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Event Details
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+    }
+    
+    .card {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    .alert {
+        border-radius: 15px;
+        border: none;
+    }
+</style>
+{% endblock %}

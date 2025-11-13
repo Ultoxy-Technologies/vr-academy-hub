@@ -1,5 +1,5 @@
 from django import forms
-from AdminApp.models import CustomUser
+from AdminApp.models import CustomUser, EventRegistration
 from django.core.exceptions import ValidationError
 
 
@@ -112,3 +112,41 @@ class CustomUserLoginForm(forms.Form):
             
             cleaned_data['user'] = user  # store user for later use
         return cleaned_data
+
+ 
+class EventRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = EventRegistration
+        fields = ['full_name', 'email', 'mobile_number', 'address', 'special_requirements']
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your full name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your email address'
+            }),
+            'mobile_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your mobile number'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your complete address',
+                'rows': 3
+            }),
+            'special_requirements': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Any special requirements or questions?',
+                'rows': 3
+            }),
+        }
+        labels = {
+            'full_name': 'Full Name',
+            'email': 'Email Address',
+            'mobile_number': 'Mobile Number',
+            'address': 'Complete Address',
+            'special_requirements': 'Special Requirements',
+        }
+

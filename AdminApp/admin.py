@@ -618,3 +618,85 @@ class CertificateAdmin(admin.ModelAdmin):
             'fields': ('is_active',)
         }),
     )
+
+from django.contrib import admin
+from django import forms
+from django.utils import timezone
+from .models import Event
+
+
+# ✅ Custom form with HTML5 Date/Time widgets (shows clock UI)
+class EventAdminForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'
+        widgets = {
+            'event_date': forms.DateInput(attrs={'type': 'date'}),
+            'event_start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'event_end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    form = EventAdminForm  # ✅ Connect custom form
+
+    # Displayed columns in list view
+    list_display = (
+        'title',
+        'category',
+        'event_date',
+        'event_start_time',
+        'status',
+        'is_free',
+        'registration_offer_fee',
+        'created_at',
+    )
+
+    search_fields = ('title', 'category', 'tags')
+    list_filter = ('status', 'is_free', 'category', 'event_date')
+    ordering = ('-event_date',)
+    readonly_fields = ('created_at', 'updated_at', 'published_at')
+
+    fieldsets = (
+        ('📸 Thumbnail', {
+            'fields': ('thumbnail',),
+            'description': 'Upload a thumbnail image to represent this event visually.'
+        }),
+        
+        ('📝 Basic Information', {
+            'fields': ('title', 'subtitle', 'description'),
+            'description': 'Enter the title, subtitle, and full description for this event.'
+        }),
+        
+        ('🏷️ Categorization', {
+            'fields': ('category', 'tags'),
+            'description': 'Classify the event using categories and relevant tags.'
+        }),
+        
+        ('⏰ Event Timing', {
+            'fields': ('event_date', 'event_start_time', 'event_end_time', 'timezone'),
+            'description': 'Specify when the event will take place.'
+        }),
+        
+        ('💻 Meeting Details (Optional)', {
+            'fields': ('meeting_link', 'meeting_id', 'meeting_password'),
+            'description': 'If the event is virtual, include the online meeting information here.'
+        }),
+        
+        ('💰 Pricing Details', {
+            'fields': ('is_free', 'registration_strickthrough_fee', 'registration_offer_fee'),
+            'description': 'Set pricing options for registration. Leave as free if applicable.'
+        }),
+        
+        ('⚙️ Status & Metadata', {
+            'fields': ('status', 'published_at', 'created_at', 'updated_at'),
+            'description': 'Manage event status and system timestamps.'
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        """Automatically set published_at when event is marked as published."""
+        if obj.status == 'published' and not obj.published_at:
+            obj.published_at = timezone.now()
+        super().save_model(request, obj, form, change)
