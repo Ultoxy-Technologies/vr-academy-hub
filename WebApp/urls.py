@@ -19,5 +19,7 @@ urlpatterns = [
     path('payment/verify/', payment_verification, name='payment_verification'),
     path('registration/success/<str:registration_id>/', registration_success, name='registration_success'),
     path('create-order/<int:event_id>/', create_razorpay_order, name='create_order'),
+
+    path('events/', event_list, name='event_list'),
     
 ]

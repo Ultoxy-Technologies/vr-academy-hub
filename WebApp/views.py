@@ -626,3 +626,17 @@ def registration_success(request, registration_id):
         'event': registration.event,
     }
     return render(request, 'registration_success.html', context)
+
+
+
+def event_list(request):
+    """
+    Display all events
+    """
+    # Get all events ordered by event date
+    events = Event.objects.all().order_by('event_date')
+    
+    context = {
+        'events': events
+    }
+    return render(request, 'event_list.html', context)
