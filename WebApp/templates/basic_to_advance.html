@@ -38,7 +38,7 @@
             <h6 class="fw-bold mb-3 text-primary">📘 {% trans "Overview" %}</h6>
             <p class="small mb-1"><strong>{% trans "Duration:" %}</strong> {% trans "15 Days" %}</p>
             <p class="small mb-1">
-              <strong>{% trans "Fee:" %}</strong> ₹10,000 →
+              <strong>{% trans "Fee:" %}</strong> <s>₹10,000 </s>→
               <span class="text-success fw-semibold">₹6,000 ({% trans "Offer" %})</span>
             </p>
             <p class="small mb-0">
@@ -237,6 +237,33 @@ body {
 @media (max-width: 575.98px) {
   .card-media img { height: 150px; }
 }
+
+
+
+.slug-highlight {
+  color: red;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  padding: 2px 8px;
+  border: 2px solid red;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  animation: pulse 1.4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 4px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.9);
+  }
+}
+
 </style>
 
 
@@ -257,6 +284,14 @@ body {
           <img src="{% static 'website/img/cource-thumbnail.png' %}" alt="Default thumbnail" class="img-fluid w-100" loading="lazy">
         {% endif %}
       </div>
+      
+          {% if course.new_batch_start_slug %}
+          <center>
+            <div class=" mt-2 slug-highlight">
+              {{ course.new_batch_start_slug }}
+            </div>
+          </center>
+          {% endif %}
 
       <div class="card-body p-4">
         <div class="meta mb-2">

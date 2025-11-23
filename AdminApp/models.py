@@ -198,6 +198,7 @@ class Certificate(models.Model):
 
 
 class Basic_to_Advance_Cource(models.Model):
+    new_batch_start_slug = models.CharField( help_text="e.g. New Batch Start", max_length=20,null=True, blank=True)
     title = models.CharField(max_length=255)
     event_date = models.CharField(max_length=100, help_text="e.g. 25 October (Saturday)")
     time = models.CharField(max_length=50, help_text="e.g. 06:00 PM")
@@ -212,6 +213,7 @@ class Basic_to_Advance_Cource(models.Model):
         return f"{self.title} ({self.event_date})"
 
 class Advance_to_Pro_Cource(models.Model):
+    new_batch_start_slug = models.CharField( help_text="e.g. New Batch Start", max_length=20,null=True, blank=True)
     title = models.CharField(max_length=255)
     event_date = models.CharField(max_length=100, help_text="e.g. 25 October (Saturday)")
     time = models.CharField(max_length=50, help_text="e.g. 06:00 PM")
@@ -235,6 +237,7 @@ from django.utils import timezone
 import os
 
 class FreeCourse(models.Model):
+    duration=models.CharField(null=True,blank=True, max_length=50, help_text="ex.15 Days, 2 Months, 45 min")
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     video = models.FileField(upload_to='free_courses/videos/')

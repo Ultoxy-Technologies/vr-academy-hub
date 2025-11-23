@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>  
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: gray;
+        font-family: Poppins;
+    }
+      
+    * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+      
+    .page {
+        width: 258mm;
+        height: 162mm; 
+        margin: 0cm auto;
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background-image:url("{% static 'website/img/certificate_templates.jpg' %}");
+        background-size:100% 100%; 
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    @page {
+        size:258mm 162mm;
+        margin: 0;
+    }
+    @media print {
+        .page {
+            margin: 0; 
+            page-break-after: always;
+        }
+    }
+
+    .download-btn{
+        background:green;
+        padding:5px;
+        border-radius:10px;
+        width:200px;
+        cursor:pointer;
+        color:white;
+    }
+
+    .certificate_content span{
+        font-weight:bold;
+    }
+</style>
+<body>
+    <center>
+        <h5 onclick="convertPageToImage()" class="download-btn">
+            Download Certificate
+        </h5>
+    </center>
+    <div class="book">
+        <div class="page">
+            <div class="subpage">
+                 <center>
+                    <br><br><br>
+                    <h2 >CERTIFICATE OF PARTICIPATION</h2>  
+                    <p  style="margin-top:50px; color:gray; ">This is to certify that</p>
+                    <h4 style=" color:BLACK;">{{request.user.name}}</h4>
+                    <hr style="width:50%; margin-top:-8px;">
+                    <div style="width:65%">
+                        <p style="text-align:justify;color:gray;" class="certificate_content">
+                              class <b>{{request.user.class_name}}</b> division <b>{{request.user.division}}</b> has successfully completed the class test of subject <b>{{exam_data.subject}}</b> of <b>{{exam_data.name}}</b> and got  grade <b>{{grade}}</b>.
+                        </p>
+                    </div>
+                    <br><br>
+                    <p>ORGANIZATION NAME ©</p>
+                    <hr style="width:50%; margin-top:-8px;">
+                 </center>  
+<br><br>
+                 <p style="margin-left:100px;">
+                    Date :- {{current_date}}
+                    <span style="margin-left:470px;">
+
+                        <img src="{% static 'img/principle_sign.jpg' %}" style="height:70px; width:80px; position: absolute; margin-top:-70px; margin-left:30px;" alt="">
+                        Principal Signature
+                    </span>
+                 </p>
+            </div>
+        </div>
+    </div>  
+    <script>
+        // Function to convert the page to an image
+        function convertPageToImage() {
+            var studentName = "{{dt.student_name}}";
+            // Get the page element to convert
+            const pageElement = document.querySelector('.page');
+        
+            // Set the options for html2canvas
+            const options = {
+            quality: 1.0, // Adjust the quality value (between 0 and 1)
+            scale: 4     // Adjust the scale value for higher resolution (optional)
+            };
+        
+            // Use html2canvas library to capture the page as an image
+            html2canvas(pageElement, options).then(function(canvas) {
+            // Convert the canvas to a data URL representing the image
+            const imageDataURL = canvas.toDataURL('image/jpeg');
+        
+            // Create an anchor element to trigger the image download
+            const downloadLink = document.createElement('a');
+            downloadLink.href = imageDataURL;
+            downloadLink.download = `${studentName}`;
+            downloadLink.click();
+            });
+        }
+  
+    </script>
+</body>
+</html>

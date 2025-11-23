@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>  
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: gray;
+        font-family: Poppins;
+    }
+      
+    * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+      
+    .page {
+        width: 258mm;
+        height: 162mm; 
+        margin: 0cm auto;
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background-image:url("{% static 'website/img/certificate_templates.jpg' %}");
+        background-size:100% 100%; 
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    @page {
+        size:258mm 162mm;
+        margin: 0;
+    }
+    @media print {
+        .page {
+            margin: 0; 
+            page-break-after: always;
+        }
+    }
+
+    .download-btn{
+        background:green;
+        padding:5px;
+        border-radius:10px;
+        width:200px;
+        cursor:pointer;
+        color:white;
+    }
+</style>
+
+<body>
+    <center>
+        <h5 onclick="convertPageToImage()" class="download-btn">
+            Download Certificate
+        </h5>
+    </center>
+
+    <div class="book">
+        <div class="page">
+            <div class="subpage">
+                 <center>
+                    <br><br><br>
+
+                    <h2>CERTIFICATE OF COMPLETION</h2>  
+                    <p style="margin-top:50px; color:gray;">This is to certify that</p>
+
+                    <h4 style="color:black;">{{request.user.name}}</h4>
+                    <hr style="width:50%; margin-top:-8px;">
+
+                    <div style="width:65%">
+                        <p style="text-align:justify; color:gray;">
+                            has successfully completed the 
+                            <b>Free Forex Training Course</b> 
+                            provided by <b>VR Academy Hub</b>.
+                        </p>
+                    </div>
+
+                    <br><br>
+                    <p>VR ACADEMY HUB ©</p>
+                    <hr style="width:50%; margin-top:-8px;">
+                 </center>  
+
+                 <br><br>
+
+                 <p style="margin-left:100px;">
+                    Date: {{current_date}}
+                    <span style="margin-left:470px;">
+                        <img src="{% static 'img/principle_sign.jpg' %}" 
+                             style="height:70px; width:80px; position:absolute; margin-top:-70px; margin-left:30px;" 
+                             alt="">
+                        Authorized Signature
+                    </span>
+                 </p>
+            </div>
+        </div>
+    </div>  
+
+    <script>
+        function convertPageToImage() {
+            var studentName = "{{request.user.name}}";
+
+            const pageElement = document.querySelector('.page');
+        
+            const options = {
+                quality: 1.0,
+                scale: 4
+            };
+        
+            html2canvas(pageElement, options).then(function(canvas) {
+                const imageDataURL = canvas.toDataURL('image/jpeg');
+        
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imageDataURL;
+                downloadLink.download = `${studentName}_certificate.jpg`;
+                downloadLink.click();
+            });
+        }
+    </script>
+
+</body>
+</html>

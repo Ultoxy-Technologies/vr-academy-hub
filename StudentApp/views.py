@@ -128,27 +128,57 @@ def free_course_video(request, course_id):
 
 from django.contrib import messages
 
+# @login_required
+# def download_certificate(request, course_id):
+#     """
+#     Allow certificate download only if course is completed.
+#     """
+#     course = get_object_or_404(FreeCourse, id=course_id)
+#     progress = get_object_or_404(FreeCourseProgress, student=request.user, course=course)
+
+#     if not progress.completed or not course.certificate_template:
+#         messages.error(request, "You must complete the course to download the certificate.")
+#         # returen redirect to some page
+#         return redirect(request.META.get('HTTP_REFERER', '/'))
+    
+#     certificate_path = course.certificate_template.path
+#     file_name = os.path.basename(certificate_path)
+#     mime_type, _ = mimetypes.guess_type(certificate_path)
+
+#     with open(certificate_path, 'rb') as f:
+#         response = HttpResponse(f.read(), content_type=mime_type)
+#         response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+#         return response
+
+
+
 @login_required
 def download_certificate(request, course_id):
     """
     Allow certificate download only if course is completed.
     """
+    print("######################################")
+    print("######################################")
+    print("######################################")
+    print("######################################")
+    print("######################################")
+    print("######################################")
+    print("######################################") 
     course = get_object_or_404(FreeCourse, id=course_id)
-    progress = get_object_or_404(FreeCourseProgress, student=request.user, course=course)
-
-    if not progress.completed or not course.certificate_template:
-        messages.error(request, "You must complete the course to download the certificate.")
-        # returen redirect to some page
+    # progress = get_object_or_404(FreeCourseProgress, student=request.user, course=course)
+    progress=FreeCourseProgress.objects.filter(student=request.user, course=course).first()
+    if progress:
+        if not progress.completed or not course.certificate_template:
+            print("Function called")
+            messages.error(request, "You must complete the course to download the certificate.") 
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            print("Function not called")
+    else:
+        print("Function called")
+        messages.error(request, "You must complete the course to download the certificate.") 
         return redirect(request.META.get('HTTP_REFERER', '/'))
-    
-    certificate_path = course.certificate_template.path
-    file_name = os.path.basename(certificate_path)
-    mime_type, _ = mimetypes.guess_type(certificate_path)
-
-    with open(certificate_path, 'rb') as f:
-        response = HttpResponse(f.read(), content_type=mime_type)
-        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-        return response
+    return render(request, 'cource_certificate.html', {'course': course})
 
 
 @login_required

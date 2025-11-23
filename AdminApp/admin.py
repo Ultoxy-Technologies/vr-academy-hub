@@ -527,7 +527,7 @@ class CourseBaseAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Course Details', {
-            'fields': ('title', 'event_date', 'time', 'duration', 'rating', 'total_reviews')
+            'fields': ('title', 'event_date', 'time', 'duration', 'rating', 'total_reviews','new_batch_start_slug')
         }),
         ('Pricing Information', {
             'fields': ('offer_price', 'original_price')
