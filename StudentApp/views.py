@@ -156,14 +156,7 @@ from django.contrib import messages
 def download_certificate(request, course_id):
     """
     Allow certificate download only if course is completed.
-    """
-    print("######################################")
-    print("######################################")
-    print("######################################")
-    print("######################################")
-    print("######################################")
-    print("######################################")
-    print("######################################") 
+    """ 
     course = get_object_or_404(FreeCourse, id=course_id)
     # progress = get_object_or_404(FreeCourseProgress, student=request.user, course=course)
     progress=FreeCourseProgress.objects.filter(student=request.user, course=course).first()
