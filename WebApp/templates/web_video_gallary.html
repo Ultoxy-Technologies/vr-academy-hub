@@ -100,53 +100,59 @@ h4 {
 <!-- ======= Blog Single Section ======= -->
 <section id="blog" class="blog mt-3">
     <div class="container" data-aos="fade-up">
-
-      <div class="row">
-        <div class="blog-author d-flex align-items-center">
-            <div class="container text-center ">
- 
-
-                <div class="row">
-                    {% for video in video_data %}
-                    <div class="col-sm-3 mt-3 ">
-                        <div class="video-container" style="position: relative;"  >
-                            <a href="{{video.video_url}}" target="_blank">
-                                <img src="{{video.thumbnail_url}}" alt="" style="width: 100%;" loading="lazy" >
-                                <!-- Transparent layer -->
-                                <div class="overlay"></div>
-                                <!-- Play button overlay -->
-                                <div class="play-button">
-                                    &#9658; <!-- This is a triangle play icon, you can replace it with a custom icon -->
-                                </div>
-                            </a>
+        <div class="row">
+            <div class="blog-author d-flex align-items-center">
+                <div class="container text-center">
+                    <div class="row">
+                        {% for video in video_data %}
+                        <div class="col-sm-3 mt-3">
+                            <div class="video-container" style="position: relative; cursor: pointer;">
+                                <a href="{{ video.watch_url }}" target="_blank" style="text-decoration: none;">
+                                    <img src="{{ video.thumbnail_url }}" alt="{{ video.caption }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px;" loading="lazy">
+                                    <!-- Transparent overlay -->
+                                    <div class="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; opacity: 0; transition: opacity 0.3s ease;"></div>
+                                    <!-- Play button overlay -->
+                                    <div class="play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.8); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.3s ease;">
+                                        &#9658;
+                                    </div> 
+                                </a>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
-
-            </div>
-        </div><!-- End blog author bio -->
+            </div><!-- End blog author bio -->
+        </div>
     </div>
- 
-    
+</section><!-- End Blog Single Section -->
 
-    <br><br>
+<style>
+    .video-container:hover .overlay {
+        opacity: 1 !important;
+    }
     
-
-    </div>
-  </section><!-- End Blog Single Section -->
-  {% else %}
-  <div class="container mt-4 mb-3">
+    .video-container:hover .play-button {
+        background: rgba(255, 0, 0, 1) !important;
+        transform: translate(-50%, -50%) scale(1.1) !important;
+    }
+    
+    .video-container {
+        transition: transform 0.3s ease;
+    }
+    
+    .video-container:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% else %}
+<div class="container mt-4 mb-3">
     <div class="row">
-      <div class="col-sm-12 text-center  ">
-        <h3 style="color: rgb(97, 97, 97);">No Videos Found</h3>
-      </div>
+        <div class="col-sm-12 text-center">
+            <h3 style="color: rgb(97, 97, 97);">No Videos Found</h3>
+        </div>
     </div>
-  </div>
-  {% endif %}
-    
 </div>
-
+{% endif %}
 
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.7/dist/js/uikit.min.js"></script>

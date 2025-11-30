@@ -139,7 +139,7 @@ class PhotoGallery(models.Model):
 
 class VideoGallery(models.Model): 
     caption = models.CharField(max_length=255, blank=True, null=True)
-    video_link = models.CharField(blank=True, null=True, help_text="Enter YouTube video link", max_length=255)
+    video_link = models.CharField(blank=True, null=True, help_text="Enter YouTube video link", max_length=500)
   
 
  

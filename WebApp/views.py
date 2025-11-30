@@ -143,34 +143,65 @@ def web_photos_gallary(request):
     categories = PhotoGalleryCategories.objects.prefetch_related('photos').all()
     return render(request, "web_photos_gallary.html", {'categories': categories})
 
- 
 import re
 
-def extract_video_id(embed_url):
-    match = re.search(r"embed/([a-zA-Z0-9_-]+)", embed_url)
+def extract_youtube_url_from_iframe(iframe_code):
+    """Extracts YouTube URL from iframe embed code."""
+    if not iframe_code:
+        return None
+    
+    # Extract src attribute from iframe
+    match = re.search(r'src="([^"]*youtube[^"]*)"', iframe_code)
     if match:
         return match.group(1)
     return None
 
+def extract_video_id(url_or_iframe):
+    """Extracts YouTube video ID from various formats - URLs or iframe code."""
+    if not url_or_iframe:
+        return None
+    
+    # If it's iframe code, extract the URL first
+    if '<iframe' in url_or_iframe:
+        url_or_iframe = extract_youtube_url_from_iframe(url_or_iframe)
+        if not url_or_iframe:
+            return None
+    
+    # Now extract video ID from the URL
+    patterns = [
+        r'(?:youtube\.com/watch\?v=|youtube\.com/embed/|youtube\.com/v/)([a-zA-Z0-9_-]{11})',
+        r'youtu\.be/([a-zA-Z0-9_-]{11})',
+        r'youtube\.com/watch/([a-zA-Z0-9_-]{11})',
+        r'[?&]v=([a-zA-Z0-9_-]{11})'
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url_or_iframe)
+        if match:
+            return match.group(1)
+    return None
 
 def web_videos_gallary(request): 
     data = VideoGallery.objects.all()
-    video_data=[]
-    for embed_link in data:
-        embed_url= embed_link.video_link
-        if embed_url:
-            video_id=extract_video_id(embed_url)
+    video_data = []
+    
+    for video in data:
+        video_content = video.video_link  # This could be URL or iframe code
         
+        if video_content:
+            video_id = extract_video_id(video_content)
+            
             if video_id:
-                video_data.append(
-                    {"thumbnail_url":f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
-                    "video_url":f"https://www.youtube.com/embed/{video_id}",
-                    "id":embed_link.id} 
-                )
-  
-    return render(request, 'web_video_gallary.html', {"video_data":video_data})
-
-
+                video_data.append({
+                    "thumbnail_url": f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
+                    "watch_url": f"https://www.youtube.com/watch?v={video_id}",
+                    "embed_url": f"https://www.youtube.com/embed/{video_id}",
+                    "video_id": video_id,
+                    "caption": video.caption,
+                    "id": video.id
+                })
+    
+    return render(request, 'web_video_gallary.html', {"video_data": video_data})
 
 
 # Awards & Recognition

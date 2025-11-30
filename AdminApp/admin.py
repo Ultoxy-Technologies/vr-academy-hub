@@ -360,67 +360,84 @@ class PhotoGalleryAdmin(admin.ModelAdmin):
 # VIDEO GALLERY ADMIN
 # ----------------------------- 
 import re
+from django.contrib import admin
+from django.utils.html import format_html
 
 
 @admin.register(VideoGallery)
 class VideoGalleryAdmin(admin.ModelAdmin):
-    list_display = ('caption', 'video_link', 'video_preview')
+    list_display = ('caption', 'video_link', 'thumbnail_preview')
     search_fields = ('caption', 'video_link')
     list_per_page = 20
 
-    # Keep preview visible but not interfering with editing
-    readonly_fields = ('preview_display',)
+    readonly_fields = ('thumbnail_display',)
 
     fieldsets = (
         ('Video Details', {
             'fields': ('caption', 'video_link')
         }),
         ('Preview', {
-            'fields': ('preview_display',),
-            'description': 'Live preview of your YouTube video below after saving or updating the link.'
+            'fields': ('thumbnail_display',),
+            'description': 'Click on the thumbnail to open the YouTube video.'
         }),
     )
 
-    def preview_display(self, obj):
-        """Show an embedded YouTube preview if the link is valid."""
+    def thumbnail_display(self, obj):
+        """Show YouTube thumbnail that opens YouTube when clicked."""
         if not obj.video_link:
             return "No video link provided."
 
         video_id = self.extract_youtube_id(obj.video_link)
         if video_id:
-            embed_url = f"https://www.youtube.com/embed/{video_id}"
+            # YouTube thumbnail URLs
+            thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+            youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+            
             return format_html(
-                '<iframe width="360" height="200" src="{}" frameborder="0" '
-                'allowfullscreen style="border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.2);"></iframe>',
-                embed_url
+                '<a href="{}" target="_blank" style="text-decoration: none; display: inline-block;">'
+                '<img src="{}" width="360" height="200" style="border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border: 1px solid #ddd; cursor: pointer;" '
+                'alt="YouTube Thumbnail" title="Click to watch on YouTube">'
+                '<div style="text-align: center; margin-top: 8px; color: #666; font-size: 12px;">Click thumbnail to watch video</div>'
+                '</a>',
+                youtube_url, thumbnail_url
             )
         return "Invalid or unsupported YouTube link."
-    preview_display.short_description = "Video Preview"
+    thumbnail_display.short_description = "Video Thumbnail"
 
     def extract_youtube_id(self, url):
         """Extracts YouTube video ID from various URL formats."""
-        regex_patterns = [
-            r'(?:v=|\/)([0-9A-Za-z_-]{11})(?:\?|&|$)',  # normal or embedded YouTube URL
-            r'youtu\.be\/([0-9A-Za-z_-]{11})'           # shortened YouTube link
+        if not url:
+            return None
+            
+        patterns = [
+            r'(?:youtube\.com/watch\?v=|youtube\.com/embed/|youtube\.com/v/)([a-zA-Z0-9_-]{11})',
+            r'youtu\.be/([a-zA-Z0-9_-]{11})',
+            r'youtube\.com/watch/([a-zA-Z0-9_-]{11})',
+            r'[?&]v=([a-zA-Z0-9_-]{11})'
         ]
-        for pattern in regex_patterns:
+        
+        for pattern in patterns:
             match = re.search(pattern, url)
             if match:
                 return match.group(1)
         return None
 
-    def video_preview(self, obj):
-        """For list_display column preview (small version)."""
-        video_id = self.extract_youtube_id(obj.video_link or "")
-        if video_id:
-            return format_html(
-                '<iframe width="180" height="100" src="https://www.youtube.com/embed/{}" '
-                'frameborder="0" allowfullscreen></iframe>', video_id
-            )
+    def thumbnail_preview(self, obj):
+        """For list_display column preview (small thumbnail version)."""
+        if obj and obj.video_link:
+            video_id = self.extract_youtube_id(obj.video_link)
+            if video_id:
+                thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+                youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+                
+                return format_html(
+                    '<a href="{}" target="_blank" title="Click to watch on YouTube">'
+                    '<img src="{}" width="120" height="80" style="border-radius:4px; border: 1px solid #ddd; cursor: pointer;">'
+                    '</a>',
+                    youtube_url, thumbnail_url
+                )
         return "—"
-    video_preview.short_description = "Preview"
-
-
+    thumbnail_preview.short_description = "Thumbnail"
 
 
  
