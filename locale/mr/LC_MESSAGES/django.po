@@ -346,8 +346,8 @@ msgid "Owner 2"
 msgstr "संस्थापक 2"
 
 #: .\WebApp\templates\about_us.html:1322 .\WebApp\templates\about_us.html:1397
-msgid "Prof. Varsha Bharud"
-msgstr "प्रो. वर्षा भरूड"
+msgid "Dr. Varsha Bharud"
+msgstr "डॉ. वर्षा भरूड"
 
 #: .\WebApp\templates\about_us.html:1323 .\WebApp\templates\about_us.html:1398
 msgid "Co-Founder"
@@ -372,7 +372,7 @@ msgstr "10 वर्षांपेक्षा जास्त अनुभव�
 
 #: .\WebApp\templates\about_us.html:1415
 msgid ""
-"Prof. Bharud firmly believes that <strong>“Financial education is not just "
+"Dr. Bharud firmly believes that <strong>“Financial education is not just "
 "knowledge — it’s a way of life.”</strong> \n"
 "          Under her leadership, the organization continues to work "
 "tirelessly toward women’s financial empowerment, \n"

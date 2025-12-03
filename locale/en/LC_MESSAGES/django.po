@@ -370,7 +370,7 @@ msgid "Owner 2"
 msgstr ""
 
 #: .\WebApp\templates\about_us.html:1322 .\WebApp\templates\about_us.html:1397
-msgid "Prof. Varsha Bharud"
+msgid "Dr. Varsha Bharud"
 msgstr ""
 
 #: .\WebApp\templates\about_us.html:1323 .\WebApp\templates\about_us.html:1398
@@ -431,12 +431,12 @@ msgid ""
 msgstr ""
 
 #: .\WebApp\templates\about_us.html:1392
-msgid "More About Prof. Varsha Bharud"
+msgid "More About Dr. Varsha Bharud"
 msgstr ""
 
 #: .\WebApp\templates\about_us.html:1401
 msgid ""
-"Prof. Varsha Bharud is an inspiring personality in the field of financial "
+"Dr. Varsha Bharud is an inspiring personality in the field of financial "
 "education and guidance. \n"
 "          She has made remarkable contributions toward promoting financial "
 "literacy and developing the right \n"
@@ -459,7 +459,7 @@ msgstr ""
 
 #: .\WebApp\templates\about_us.html:1415
 msgid ""
-"Prof. Bharud firmly believes that <strong>“Financial education is not just "
+"Dr. Bharud firmly believes that <strong>“Financial education is not just "
 "knowledge — it’s a way of life.”</strong> \n"
 "          Under her leadership, the organization continues to work "
 "tirelessly toward women’s financial empowerment, \n"

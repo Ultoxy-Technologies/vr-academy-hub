@@ -279,7 +279,7 @@ body {
     <article class="event-card h-100 bg-white rounded-3 shadow-sm">
       <div class="card-media">
         {% if course.thumbnail %}
-          <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="img-fluid w-100" loading="lazy">
+          <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="img-fluid w-100 " style="height: 100%;" loading="lazy">
         {% else %}
           <img src="{% static 'website/img/cource-thumbnail.png' %}" alt="Default thumbnail" class="img-fluid w-100" loading="lazy">
         {% endif %}
