@@ -132,11 +132,11 @@ from django.contrib import messages
 from .models import CustomUser
 
 
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    change_password_form = AdminPasswordChangeForm  # ✅ Enable password change form
+    change_password_form = AdminPasswordChangeForm
 
-    # 🧩 List view configuration
     list_display = (
         'id',
         'name',
@@ -144,19 +144,20 @@ class CustomUserAdmin(UserAdmin):
         'email_link',
         'location_info',
         'dob_display',
+        'role',
         'is_active_colored',
         'is_active',
         'date_joined_display',
     )
+
     list_display_links = ('id', 'name')
     ordering = ('-date_joined',)
     list_per_page = 20
     search_fields = ('name', 'mobile_number', 'email', 'dist', 'village', 'taluka')
-    list_filter = ('is_active', 'dist', 'taluka', 'village', 'date_joined')
+    list_filter = ('role', 'is_active', 'dist', 'taluka', 'village', 'date_joined')
     list_editable = ('is_active',)
     readonly_fields = ('last_login', 'date_joined')
 
-    # 🧠 Field organization
     fieldsets = (
         ('👤 Personal Information', {
             'fields': ('name', 'dob', 'mobile_number', 'email', 'password')
@@ -168,7 +169,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('action',),
         }),
         ('🔒 Permissions & Status', {
-            'fields': ('is_active', 'is_staff'),
+            'fields': ('role', 'is_active', 'is_staff'),
         }),
         ('📅 Important Dates', {
             'classes': ('collapse',),
@@ -176,19 +177,27 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    # 🧾 Fields for adding a new user
     add_fieldsets = (
         ('👤 Basic Info', {
             'classes': ('wide',),
             'fields': (
-                'mobile_number', 'name', 'email', 'password1', 'password2',
-                'dist', 'taluka', 'village', 'dob', 'action',
-                'is_active', 'is_staff'
+                'mobile_number',
+                'name',
+                'email',
+                'password1',
+                'password2',
+                'role',
+                'dist',
+                'taluka',
+                'village',
+                'dob',
+                'action',
+                'is_active',
+                'is_staff'
             ),
         }),
     )
 
-    # 🎨 Custom display functions
     def email_link(self, obj):
         if obj.email:
             return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
@@ -212,11 +221,14 @@ class CustomUserAdmin(UserAdmin):
     def is_active_colored(self, obj):
         color = "green" if obj.is_active else "red"
         text = "🟢 Active" if obj.is_active else "🔴 Inactive"
-        return format_html('<span style="color:{}; font-weight:bold;">{}</span>', color, text)
+        return format_html(
+            '<span style="color:{}; font-weight:bold;">{}</span>',
+            color,
+            text
+        )
     is_active_colored.short_description = "Status"
     is_active_colored.admin_order_field = 'is_active'
 
-    # 💡 Custom actions
     actions = ['activate_users', 'deactivate_users', 'export_selected_users']
 
     def activate_users(self, request, queryset):
@@ -230,7 +242,6 @@ class CustomUserAdmin(UserAdmin):
     deactivate_users.short_description = "🚫 Deactivate selected users"
 
     def export_selected_users(self, request, queryset):
-        """Export selected users to CSV"""
         import csv
         from django.http import HttpResponse
 
@@ -239,15 +250,17 @@ class CustomUserAdmin(UserAdmin):
 
         writer = csv.writer(response)
         writer.writerow([
-            'Name', 'Mobile', 'Email', 'District',
+            'Name', 'Mobile', 'Email', 'Role', 'District',
             'Taluka', 'Village', 'DOB', 'Action',
             'Active', 'Date Joined'
         ])
+
         for obj in queryset:
             writer.writerow([
                 obj.name,
                 obj.mobile_number,
                 obj.email or '',
+                obj.get_role_display(),
                 obj.dist,
                 obj.taluka,
                 obj.village,
@@ -259,7 +272,6 @@ class CustomUserAdmin(UserAdmin):
         return response
     export_selected_users.short_description = "⬇️ Export selected users to CSV"
 
-    # ⚙️ Password change page inside admin
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
@@ -272,7 +284,6 @@ class CustomUserAdmin(UserAdmin):
         return custom_urls + urls
 
     def change_user_password(self, request, id, form_url=''):
-        """Custom password change page"""
         user = self.get_object(request, id)
         if not user:
             messages.error(request, "User not found.")
@@ -282,7 +293,10 @@ class CustomUserAdmin(UserAdmin):
             form = self.change_password_form(user, request.POST)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"Password for {user.name or user.mobile_number} changed successfully!")
+                messages.success(
+                    request,
+                    f"Password for {user.name or user.mobile_number} changed successfully!"
+                )
                 return redirect('..')
         else:
             form = self.change_password_form(user)
@@ -294,9 +308,11 @@ class CustomUserAdmin(UserAdmin):
             'opts': self.model._meta,
             'original': user,
         }
-        return TemplateResponse(request, 'admin/auth/user/change_password.html', context)
-
-
+        return TemplateResponse(
+            request,
+            'admin/auth/user/change_password.html',
+            context
+        )
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
@@ -785,3 +801,185 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         """Optimize queryset by selecting related event"""
         qs = super().get_queryset(request)
         return qs.select_related('event')
+    
+
+ 
+from .models import CRM_Student_Interested_for_options, CRMFollowup
+
+# Register your models here.
+
+class CRM_Student_Interested_for_optionsAdmin(admin.ModelAdmin):
+    list_display = ('interest_option',)
+    search_fields = ('interest_option',)
+    ordering = ('interest_option',)
+    
+    # Simple configuration since this is just a lookup table
+    list_per_page = 20
+
+admin.site.register(CRM_Student_Interested_for_options, CRM_Student_Interested_for_optionsAdmin)
+
+
+class CRMFollowupAdmin(admin.ModelAdmin):
+    # ================== Display Configuration ==================
+    list_display = (
+        'name', 
+        'mobile_number', 
+        'status_badge', 
+        'priority_badge', 
+        'follow_up_by_display',
+        'next_followup_reminder',
+        'student_interested_for',
+        'source'
+    )
+    
+    list_display_links = ('name', 'mobile_number')
+    
+    # ================== Filters & Search ==================
+    list_filter = (
+        'status',
+        'priority',
+        'source',
+        'call_response',
+        'student_interested_for',
+        'follow_up_by',
+        'follow_up_date',
+    )
+    
+    search_fields = (
+        'name',
+        'mobile_number',
+        'follow_up_notes',
+    )
+    
+    # ================== Layout & Ordering ==================
+    list_per_page = 25
+    ordering = ('-follow_up_date', '-created_at')
+    date_hierarchy = 'follow_up_date'
+    
+    # ================== Custom Fieldsets for Form View ==================
+    fieldsets = (
+        ('Student Information', {
+            'fields': (
+                'name',
+                'mobile_number',
+                'student_interested_for',
+                'source'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Lead Status', {
+            'fields': (
+                'status',
+                'priority',
+            )
+        }),
+        ('Follow-up Details', {
+            'fields': (
+                'follow_up_by',
+                'call_response',
+                'follow_up_date',
+                'next_followup_reminder',
+                'follow_up_notes',
+            )
+        }),
+        ('Class Information', {
+            'fields': (
+                'class_start_date',
+            ),
+            'classes': ('collapse',)
+        }),
+        ('System Information', {
+            'fields': (
+                'created_at',
+            ),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    # ================== Readonly Fields ==================
+    readonly_fields = ('created_at',)
+    
+    # ================== Custom Methods for Display ==================
+    def status_badge(self, obj):
+        if not obj.status:
+            return format_html('<span class="badge badge-secondary">Not Set</span>')
+        
+        status_colors = {
+            'interested': 'info',
+            'planning': 'primary',
+            'under_review': 'warning',
+            'on_hold': 'secondary',
+            'class_joined': 'success',
+            'class_completed': 'success',
+            'not_interested': 'danger',
+        }
+        color = status_colors.get(obj.status, 'secondary')
+        return format_html(
+            '<span class="badge badge-{}">{}</span>',
+            color,
+            obj.get_status_display()
+        )
+    status_badge.short_description = 'Status'
+    
+    def priority_badge(self, obj):
+        if not obj.priority:
+            return format_html('<span class="badge badge-secondary">Not Set</span>')
+        
+        priority_colors = {
+            'high': 'danger',
+            'medium': 'warning',
+            'low': 'info',
+        }
+        color = priority_colors.get(obj.priority, 'secondary')
+        return format_html(
+            '<span class="badge badge-{}">{}</span>',
+            color,
+            obj.get_priority_display()
+        )
+    priority_badge.short_description = 'Priority'
+    
+    def follow_up_by_display(self, obj):
+        if obj.follow_up_by:
+            if hasattr(obj.follow_up_by, 'get_full_name') and obj.follow_up_by.get_full_name():
+                return obj.follow_up_by.get_full_name()
+            return str(obj.follow_up_by)
+        return "Not Assigned"
+    follow_up_by_display.short_description = 'Follow-up By'
+    
+    # ================== Action Configuration ==================
+    actions = ['mark_as_high_priority', 'mark_as_completed', 'mark_as_not_interested']
+    
+    def mark_as_high_priority(self, request, queryset):
+        updated = queryset.update(priority='high')
+        self.message_user(request, f'{updated} follow-up(s) marked as High Priority.')
+    mark_as_high_priority.short_description = "Mark selected as High Priority"
+    
+    def mark_as_completed(self, request, queryset):
+        updated = queryset.update(status='class_completed')
+        self.message_user(request, f'{updated} follow-up(s) marked as Class Completed.')
+    mark_as_completed.short_description = "Mark selected as Class Completed"
+    
+    def mark_as_not_interested(self, request, queryset):
+        updated = queryset.update(status='not_interested')
+        self.message_user(request, f'{updated} follow-up(s) marked as Not Interested.')
+    mark_as_not_interested.short_description = "Mark selected as Not Interested"
+    
+    # ================== Form Customization ==================
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        # Make some fields not required in admin if needed
+        return form
+    
+    # ================== Save Method Customization ==================
+    def save_model(self, request, obj, form, change):
+        # You can add custom save logic here
+        super().save_model(request, obj, form, change)
+    
+    # ================== Change List View Customization ==================
+    def changelist_view(self, request, extra_context=None):
+        # Add custom context if needed
+        extra_context = extra_context or {}
+        extra_context['title'] = 'CRM Follow-ups Management'
+        return super().changelist_view(request, extra_context=extra_context)
+
+admin.site.register(CRMFollowup, CRMFollowupAdmin)

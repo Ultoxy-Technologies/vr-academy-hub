@@ -1,0 +1,674 @@
+{% extends "crm_software_base.html" %}
+
+{% block title %}CRM Dashboard{% endblock title %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #10b981, #059669);
+        --info-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    /* Modern Card Design */
+    .stats-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border-left: 5px solid #667eea;
+        height: 100%;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .stats-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stats-label {
+        color: #6c757d;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 1.5rem;
+        height: 100%;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .chart-title i {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+
+    /* Activity Timeline */
+    .activity-timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .activity-timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+
+    .activity-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+
+    .activity-dot {
+        position: absolute;
+        left: -15px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #667eea;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #667eea;
+    }
+
+    .activity-content {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    /* Lead Progress */
+    .progress-container {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .progress-item {
+        margin-bottom: 1.5rem;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        color: #4b5563;
+    }
+
+    .progress-bar-container {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 5px;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-interested { background: var(--success-gradient); color: white; }
+    .status-planning { background: var(--info-gradient); color: white; }
+    .status-not_interested { background: var(--danger-gradient); color: white; }
+    .status-class_joined { background: var(--purple-gradient); color: white; }
+
+    /* Priority Indicators */
+    .priority-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .priority-high { background: #ef4444; }
+    .priority-medium { background: #f59e0b; }
+    .priority-low { background: #10b981; }
+
+    /* Source Indicators */
+    .source-badge {
+        padding: 0.3em 0.7em;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    /* Quick Stats Grid */
+    .quick-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .quick-stat {
+        text-align: center;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 10px;
+    }
+
+    .quick-stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .quick-stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .stats-number {
+            font-size: 1.8rem;
+        }
+        
+        .chart-container, .progress-container {
+            padding: 1rem;
+        }
+        
+        .quick-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stats-card, .chart-container, .progress-container {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .stats-card:nth-child(2) { animation-delay: 0.1s; }
+    .stats-card:nth-child(3) { animation-delay: 0.2s; }
+    .stats-card:nth-child(4) { animation-delay: 0.3s; }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>CRM Dashboard</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary">
+                    <i class="bi bi-download me-1"></i> Export Report
+                </button>
+                <button class="btn btn-outline-primary">
+                    <i class="bi bi-calendar me-1"></i> Date Range
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon" style="background: var(--primary-gradient);">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stats-number">{{ total_followups }}</div>
+                <div class="stats-label">Total Follow-ups</div>
+                <div class="quick-stats-grid">
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ new_followups_today }}</div>
+                        <div class="quick-stat-label">Today</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ followups_this_week }}</div>
+                        <div class="quick-stat-label">This Week</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon" style="background: var(--success-gradient);">
+                    <i class="bi bi-chat-left-text"></i>
+                </div>
+                <div class="stats-number">{{ total_enquiries }}</div>
+                <div class="stats-label">Total Enquiries</div>
+                <div class="quick-stats-grid">
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ new_enquiries_today }}</div>
+                        <div class="quick-stat-label">Today</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ pending_enquiries }}</div>
+                        <div class="quick-stat-label">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon" style="background: var(--info-gradient);">
+                    <i class="bi bi-telephone-inbound"></i>
+                </div>
+                <div class="stats-number">{{ pending_followups }}</div>
+                <div class="stats-label">Pending Follow-ups</div>
+                <div class="quick-stats-grid">
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ high_priority }}</div>
+                        <div class="quick-stat-label">High Priority</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ overdue_followups }}</div>
+                        <div class="quick-stat-label">Overdue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon" style="background: var(--warning-gradient);">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="stats-number">{{ conversion_rate }}%</div>
+                <div class="stats-label">Conversion Rate</div>
+                <div class="quick-stats-grid">
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ class_joined }}</div>
+                        <div class="quick-stat-label">Class Joined</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-number">{{ interested_leads }}</div>
+                        <div class="quick-stat-label">Interested</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Lead Status Distribution</span>
+                    </div>
+                    <select class="form-select form-select-sm" style="width: auto;">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>Last Quarter</option>
+                    </select>
+                </div>
+                <div id="leadStatusChart" style="height: 300px;">
+                    <!-- Status Chart -->
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-pie-chart"></i>
+                        <span>Source Distribution</span>
+                    </div>
+                </div>
+                <div id="sourceChart" style="height: 300px;">
+                    <!-- Source Chart -->
+                    <canvas id="sourcePieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress and Activity -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="progress-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Lead Progress Overview</span>
+                    </div>
+                </div>
+                
+                {% for status, count in status_distribution.items %}
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>{{ status|title }}</span>
+                        <span>{{ count }} leads</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" 
+                             style="width: {{ count|floatformat:0 }}%; 
+                                    background: {% if status == 'interested' %}var(--success-gradient)
+                                              {% elif status == 'planning' %}var(--info-gradient)
+                                              {% elif status == 'not_interested' %}var(--danger-gradient)
+                                              {% elif status == 'class_joined' %}var(--purple-gradient)
+                                              {% else %}var(--warning-gradient){% endif %};">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Recent Activity</span>
+                    </div>
+                    <a href="{% url 'crm_follow_up_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="activity-timeline">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-dot"></div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.title }}</div>
+                            <div class="activity-time">{{ activity.time }}</div>
+                            {% if activity.description %}
+                            <div class="mt-2 text-muted small">{{ activity.description }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-activity display-4 text-muted"></i>
+                        <p class="mt-3 text-muted">No recent activity</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Priority and Recent Data -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span>High Priority Follow-ups</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Next Follow-up</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for followup in high_priority_followups %}
+                            <tr>
+                                <td>
+                                    <strong>{{ followup.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ followup.mobile_number }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ followup.status }}">
+                                        {{ followup.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if followup.next_followup_reminder %}
+                                        {{ followup.next_followup_reminder|date:"M d, H:i" }}
+                                    {% else %}
+                                        <span class="text-muted">Not set</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="priority-indicator priority-{{ followup.priority }}"></span>
+                                    {{ followup.get_priority_display }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-muted">
+                                    No high priority follow-ups
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="bi bi-envelope"></i>
+                        <span>Recent Enquiries</span>
+                    </div>
+                    <a href="" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enquiry in recent_enquiries %}
+                            <tr>
+                                <td>
+                                    <strong>{{ enquiry.full_name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ enquiry.email }}</small>
+                                </td>
+                                <td>{{ enquiry.phone }}</td>
+                                <td>{{ enquiry.submitted_at|date:"M d, H:i" }}</td>
+                                <td>
+                                    {% if enquiry.remark %}
+                                        <span class="badge bg-success">Processed</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-muted">
+                                    No recent enquiries
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lead Status Bar Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        const statusChart = new Chart(statusCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for status in status_labels %}'{{ status }}',{% endfor %}],
+                datasets: [{
+                    label: 'Number of Leads',
+                    data: [{% for count in status_counts %}{{ count }},{% endfor %}],
+                    backgroundColor: [
+                        '#10b981', '#3b82f6', '#f59e0b', '#6b7280', 
+                        '#8b5cf6', '#06b6d4', '#ef4444'
+                    ],
+                    borderColor: [
+                        '#059669', '#1d4ed8', '#d97706', '#4b5563',
+                        '#7c3aed', '#0891b2', '#dc2626'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Source Distribution Pie Chart
+        const sourceCtx = document.getElementById('sourcePieChart').getContext('2d');
+        const sourceChart = new Chart(sourceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [{% for source in source_labels %}'{{ source }}',{% endfor %}],
+                datasets: [{
+                    data: [{% for count in source_counts %}{{ count }},{% endfor %}],
+                    backgroundColor: [
+                        '#667eea', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'white'
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock content %}

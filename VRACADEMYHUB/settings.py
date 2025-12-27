@@ -41,10 +41,10 @@ INSTALLED_APPS = [
     'WebApp',
     'AdminApp',
     'StudentApp',
-
-    
+    'SoftwareApp',
     'crispy_forms',
     'crispy_bootstrap5',
+    'simple_history',
 ]
 
 
@@ -56,6 +56,7 @@ JAZZMIN_SETTINGS = {
 
 
 MIDDLEWARE = [
+    'simple_history.middleware.HistoryRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',

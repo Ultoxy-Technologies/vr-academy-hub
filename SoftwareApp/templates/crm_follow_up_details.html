@@ -1,0 +1,912 @@
+<!-- templates/followup_detail.html -->
+{% extends "crm_software_base.html" %}
+{% load static %}
+
+{% block title %}CRM - Follow-up Details{% endblock title %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #10b981, #059669);
+        --whatsapp-gradient: linear-gradient(135deg, #25D366, #128C7E);
+        --info-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        --dark-gradient: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+
+    /* Modern Card Design with Glassmorphism */
+    .detail-card {
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-header-glass {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header-glass::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-size: cover;
+        opacity: 0.2;
+    }
+
+    /* Status Badges with Animation */
+    .status-badge {
+        padding: 0.5em 1.2em;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: badgePulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes badgePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .status-interested { background: var(--success-gradient); color: white; }
+    .status-planning { background: var(--info-gradient); color: white; }
+    .status-under_review { background: var(--warning-gradient); color: white; }
+    .status-on_hold { background: var(--dark-gradient); color: white; }
+    .status-class_joined { background: var(--purple-gradient); color: white; }
+    .status-class_completed { background: var(--cyan-gradient); color: white; }
+    .status-not_interested { background: var(--danger-gradient); color: white; }
+
+    .priority-badge {
+        padding: 0.4em 1em;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .priority-high { background: var(--danger-gradient); color: white; }
+    .priority-medium { background: var(--warning-gradient); color: white; }
+    .priority-low { background: var(--success-gradient); color: white; }
+
+    /* Action Buttons with Hover Effects */
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-action:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-call { background: var(--success-gradient); color: white; }
+    .btn-whatsapp { background: var(--whatsapp-gradient); color: white; }
+    .btn-edit { background: var(--info-gradient); color: white; }
+
+    /* Modern Info Cards */
+    .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .info-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .info-card-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-card-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Creative Timeline History */
+    .timeline-container {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline-line {
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+        border-radius: 3px;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 70px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 22px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        border: 4px solid white;
+        box-shadow: 0 0 0 3px var(--primary-gradient);
+        z-index: 2;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+    }
+
+    .timeline-content {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .timeline-content:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .timeline-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .timeline-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .timeline-changes {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .change-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+
+    .change-field {
+        min-width: 120px;
+        font-weight: 700;
+        color: #374151;
+        padding: 0.25rem 0.75rem;
+        background: #e0e7ff;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        text-transform: capitalize;
+    }
+
+    .change-values {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .old-value, .new-value {
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        position: relative;
+    }
+
+    .old-value {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        text-decoration: line-through;
+    }
+
+    .new-value {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        font-weight: 700;
+    }
+
+    .change-arrow {
+        color: #6b7280;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .creation-badge {
+        background: var(--success-gradient);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Notes Section */
+    .notes-section {
+        background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 5px solid #667eea;
+    }
+
+    .notes-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .notes-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .notes-content {
+        white-space: pre-line;
+        color: #374151;
+        line-height: 1.8;
+        font-size: 1.05rem;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .profile-info h2 {
+        margin: 0 0 0.5rem 0;
+        color: white;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+
+    .profile-info p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 992px) {
+        .info-cards-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .btn-action-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .info-cards-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .timeline-item {
+            padding-left: 50px;
+        }
+        
+        .timeline-line {
+            left: 20px;
+        }
+        
+        .timeline-dot {
+            left: 12px;
+        }
+        
+        .change-values {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .change-arrow {
+            transform: rotate(90deg);
+        }
+    }
+
+    /* Loading Animation */
+    .loading-skeleton {
+        animation: shimmer 1.5s infinite linear;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Follow-up Details</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'crm_follow_up_list' %}">Follow-ups</a></li>
+                        <li class="breadcrumb-item active text-truncate" style="max-width: 200px;">{{ followup.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div>
+                <a href="#" onclick="window.history.back()" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card detail-card">
+        <!-- Header with Profile Info -->
+        <div class="card-header card-header-glass">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ followup.name|first|upper }}
+                    </div>
+                    <div>
+                        <h2>{{ followup.name }}</h2>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-telephone"></i> 
+                                <strong>{{ followup.mobile_number }}</strong>
+                            </span>
+                            {% if followup.status %}
+                                <span class="status-badge status-{{ followup.status }}">
+                                    <i class="bi bi-flag"></i>
+                                    {{ followup.get_status_display }}
+                                </span>
+                            {% endif %}
+                            {% if followup.priority %}
+                                <span class="priority-badge priority-{{ followup.priority }}">
+                                    {{ followup.get_priority_display }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 btn-action-group">
+                    <a href="tel:{{ followup.mobile_number }}" class="btn btn-action btn-call">
+                        <i class="bi bi-telephone"></i> Call Now
+                    </a>
+                    <a href="https://wa.me/91{{ followup.mobile_number }}" target="_blank" 
+                       class="btn btn-action btn-whatsapp">
+                        <i class="bi bi-whatsapp"></i> WhatsApp
+                    </a> 
+
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'update_followup' followup.id %}" 
+                        class="btn btn-action btn-edit"  
+                        onclick="openUpdateModal(this)">
+                        <i class="bi bi-pencil-square"></i> Edit Follow-up
+                    </a>
+                    <script>
+                         
+                        // Update Modal Function
+                        function openUpdateModal(element) {
+                            const url = element.dataset.url;
+                            const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+                            if (newWindow) {
+                                newWindow.focus();
+                                const checkWindow = setInterval(function() {
+                                    if (newWindow.closed) {
+                                        clearInterval(checkWindow);
+                                        window.location.reload();
+                                    }
+                                }, 500);
+                            }
+                            return false;
+    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Info Cards Grid -->
+            <div class="info-cards-grid">
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-geo-alt"></i> Source
+                    </div>
+                    <p class="info-card-value">{{ followup.get_source_display|default:"Not specified" }}</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-mortarboard"></i> Interested In
+                    </div>
+                    <p class="info-card-value">{{ followup.student_interested_for|default:"Not specified" }}</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-person"></i> Last Follow-up By
+                    </div>
+                    <p class="info-card-value">{{ followup.follow_up_by|default:"Not assigned" }}</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-clock"></i> Follow-up Date
+                    </div>
+                    <p class="info-card-value">
+                        {% if followup.follow_up_date %}
+                            {{ followup.follow_up_date|date:"M d, Y H:i" }}
+                        {% else %}
+                            <span class="text-muted">Not scheduled</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar-plus"></i> Next Follow-up
+                    </div>
+                    <p class="info-card-value">
+                        {% if followup.next_followup_reminder %}
+                            {{ followup.next_followup_reminder|date:"M d, Y H:i" }}
+                        {% else %}
+                            <span class="text-muted">Not scheduled</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-telephone-outbound"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-chat-left"></i> Call Response
+                    </div>
+                    <p class="info-card-value">{{ followup.get_call_response_display|default:"Not recorded" }}</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar2-week"></i> Class Start Date
+                    </div>
+                    <p class="info-card-value">
+                        {% if followup.class_start_date %}
+                            {{ followup.class_start_date|date:"M d, Y H:i" }}
+                        {% else %}
+                            <span class="text-muted">Not scheduled</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar"></i> Created On
+                    </div>
+                    <p class="info-card-value">{{ followup.created_at|date:"M d, Y H:i" }}</p>
+                </div>
+            </div>
+
+            <!-- Follow-up Notes -->
+            {% if followup.follow_up_notes %}
+            <div class="notes-section">
+                <div class="notes-header">
+                    <div class="notes-icon">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+                    <h5 class="mb-0">Follow-up Notes</h5>
+                </div>
+                <div class="notes-content text-success">
+                    <b>{{ followup.follow_up_notes }}</b>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Creative Timeline History -->
+            <div class="mt-5">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-gradient); 
+                                   display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <h4 class="mb-0">Change History Timeline</h4>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ history|length }} changes</span>
+                </div>
+
+                {% if history %}
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    
+                    {% for record in history %}
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <div class="timeline-date">
+                                    <i class="bi bi-calendar3"></i>
+                                    {{ record.history_date|date:"M d, Y H:i" }}
+                                </div> 
+                            </div>
+                            
+                            <div class="timeline-changes">
+                                {% if record.prev_record %}
+                                    {% for field, changes in record.get_changes.items %}
+                                    <div class="change-item">
+                                        <div class="change-field">
+                                            {{ field|title }}
+                                        </div>
+                                        <div class="change-values" >
+                                            {% if changes.0 %}
+                                                <div class="old-value">{{ changes.0 }}</div>
+                                                <div class="change-arrow">→</div>
+                                            {% endif %}
+                                            <div class="new-value">{{ changes.1 }}</div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="creation-badge">
+                                        <i class="bi bi-plus-circle"></i> Record Created
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if record.history_change_reason %}
+                            <div class="mt-3 pt-3 border-top">
+                                <small class="text-muted">
+                                    <i class="bi bi-chat-left-text me-1"></i>
+                                    <strong>Comment:</strong> {{ record.history_change_reason }}
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-clock-history display-1 text-muted"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No History Records</h4>
+                    <p class="text-muted">Changes will appear here once you start editing this follow-up.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn-action').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                width: ${size}px;
+                height: ${size}px;
+                top: ${y}px;
+                left: ${x}px;
+                pointer-events: none;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Copy phone number with toast notification
+    function copyPhoneNumber() {
+        const phoneNumber = '{{ followup.mobile_number }}';
+        navigator.clipboard.writeText(phoneNumber).then(() => {
+            // Create custom toast
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <span>Phone number copied to clipboard!</span>
+                </div>
+            `;
+            
+            // Style the toast
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+                border-left: 4px solid #10b981;
+                z-index: 9999;
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                display: flex;
+                align-items: center;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Add animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                toast.remove();
+                style.remove();
+            }, 3000);
+        });
+    }
+
+    // Add click to copy functionality to phone number
+    document.querySelectorAll('.profile-info p, [href^="tel:"]').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.title = 'Click to copy phone number';
+        el.addEventListener('click', copyPhoneNumber);
+    });
+
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}

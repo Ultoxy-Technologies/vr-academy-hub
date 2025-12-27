@@ -1,0 +1,594 @@
+{% extends "crm_software_base.html" %}
+
+{% block title %}CRM - Follow Up List{% endblock title %}
+
+{% block content %}
+<style>
+    .card-body{
+        padding:0px!important;
+    }
+    /* Modern Card Design */
+    .card-modern {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+
+    .card-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+    }
+
+    /* Status Badges */
+    .badge-status {
+        padding: 0.35em 0.85em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-high { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
+    .badge-medium { background: linear-gradient(135deg, #ffa502, #ff7f00); }
+    .badge-low { background: linear-gradient(135deg, #1e90ff, #3742fa); }
+
+    .badge-interested { background: linear-gradient(135deg, #2ed573, #1dd1a1); }
+    .badge-planning { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .badge-not_interested { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+    .badge-class_joined { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+    /* Table Styling */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f3fa;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+
+    /* Filter Card */
+    .filter-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-export {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+    }
+
+    .btn-export:hover {
+        background: linear-gradient(135deg, #27ae60, #219653);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .btn-import {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .btn-import:hover {
+        background: linear-gradient(135deg, #2980b9, #1c6ea4);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: white;
+    }
+
+    .btn-filter:hover {
+        background: linear-gradient(135deg, #8e44ad, #7d3c98);
+        color: white;
+    }
+
+    /* Pagination */
+    .pagination-modern .page-link {
+        border: none;
+        color: #667eea;
+        padding: 0.6rem 1rem;
+        margin: 0 3px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .pagination-modern .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .pagination-modern .page-link:hover {
+        background-color: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        background: white;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .search-box input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .search-box i {
+        color: #667eea;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.5rem;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .table-modern {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Follow Up List</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Follow Up List</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-action btn-import" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-download me-1"></i> Import
+                </button>
+                <a href="{% url 'export_followups' %}" class="btn btn-action btn-export">
+                    <i class="bi bi-upload  me-1"></i> Export
+                </a> 
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'crm_create_followup' %}" 
+                        class="btn btn-primary"  
+                        onclick="openCreateModal(this)">
+                        <i class="bi bi-plus-circle me-1"></i> Add New
+                    </a>
+<script>
+    // Update Modal Function
+    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+        const url = element.dataset.url;
+        
+        // Calculate center position
+        const width = customWidth;
+        const height = customHeight;
+        const left = Math.max(0, (window.screen.width - width) / 2);
+        const top = Math.max(0, (window.screen.height - height) / 2);
+        
+        // Window features
+        const features = [
+            `width=${width}`,
+            `height=${height}`,
+            `left=${left}`,
+            `top=${top}`,
+            'scrollbars=yes',
+            'resizable=yes',
+            'centerscreen=yes',
+            'location=no',
+            'menubar=no',
+            'toolbar=no',
+            'status=no',
+            'titlebar=no'
+        ].join(',');
+        
+        // Open centered window
+        const newWindow = window.open(url, "updateWindow", features);
+        
+        if (newWindow) {
+            newWindow.focus();
+            
+            // Check if window is closed to refresh parent
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+</script>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_leads }}</div>
+                <div class="stat-label">Total Leads</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ high_priority }}</div>
+                <div class="stat-label">High Priority</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ pending_followups }}</div>
+                <div class="stat-label">Pending Follow-ups</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ today_followups }}</div>
+                <div class="stat-label">Today's Follow-ups</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card card-modern filter-card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="interested">Interested</option>
+                        <option value="planning">Planning</option>
+                        <option value="not_interested">Not Interested</option>
+                        <option value="class_joined">Class Joined</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Priority</label>
+                    <select name="priority" class="form-select">
+                        <option value="">All Priority</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Date From</label>
+                    <input type="date" name="date_from" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Date To</label>
+                    <input type="date" name="date_to" class="form-control">
+                </div>
+                <div class="col-12 d-flex justify-content-between">
+                    <div class="search-box w-50"> 
+                        <input type="text" name="search" placeholder="Search by name or mobile..." 
+                               value="{{ request.GET.search }}">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-action btn-filter me-2">
+                            <i class="bi bi-funnel me-1"></i> Apply Filters
+                        </button>
+                        <a href="{% url 'crm_follow_up_list' %}" class="btn btn-light">
+                            <i class="bi bi-x-circle me-1"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Table -->
+    <div class="card card-modern">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Next Follow-up</th>
+                            <th>Last Follow Up By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for followup in followups %}
+                        <tr>
+                            <td>
+                                <strong>{{ followup.name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ followup.student_interested_for|default:"N/A" }}</small>
+                            </td>
+                            <td>
+                                <a href="tel:{{ followup.mobile_number }}" class="text-decoration-none">
+                                    <i class="bi bi-telephone me-1"></i> {{ followup.mobile_number }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if followup.status == 'interested' %}
+                                    <span class="badge badge-status badge-interested">Interested</span>
+                                {% elif followup.status == 'planning' %}
+                                    <span class="badge badge-status badge-planning">Planning</span>
+                                {% elif followup.status == 'not_interested' %}
+                                    <span class="badge badge-status badge-not_interested">Not Interested</span>
+                                {% elif followup.status == 'class_joined' %}
+                                    <span class="badge badge-status badge-class_joined">Class Joined</span>
+                                {% else %}
+                                    <span class="badge badge-secondary bg-secondary">{{ followup.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if followup.priority == 'high' %}
+                                    <span class="badge badge-status badge-high">High</span>
+                                {% elif followup.priority == 'medium' %}
+                                    <span class="badge badge-status badge-medium">Medium</span>
+                                {% elif followup.priority == 'low' %}
+                                    <span class="badge badge-status badge-low">Low</span>
+                                {% else %}
+                                    <span class="badge badge-secondary bg-secondary">Not Set</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if followup.next_followup_reminder %}
+                                    {% if followup.is_overdue %}
+                                        <span class="text-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ followup.next_followup_reminder|date:"M d, Y" }}
+                                        </span>
+                                        <br><small class="text-danger">Overdue</small>
+                                    {% else %}
+                                        {{ followup.next_followup_reminder|date:"M d, Y" }}
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">Not Scheduled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if followup.follow_up_by %} 
+                                    <span class="text-muted">{{ followup.follow_up_by }}</span>
+                                {% else %}
+                                    <span class="text-muted">---</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url "followup_detail" followup.id %}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="" 
+                                       class="btn btn-sm btn-outline-warning" 
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a> 
+                                        <a href="javascript:void(0);" 
+                                           class="btn-delete" title="Delete Owner"
+                                           onclick="confirmDelete(this); return false;">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                        <script>
+                                                
+                                        // Delete Confirmation
+                                        function confirmDelete(button) {
+                                            var info = button.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+                                            var deleteUrl = button.getAttribute('href');
+                                            document.getElementById('delete_info').textContent = info;
+                                            document.getElementById('deleteButton').setAttribute('href', deleteUrl);
+                                            
+                                            $('#deleteModal').modal('show');
+                                            return false;
+                                        }
+    
+                                        </script>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+                                <h5>No follow-ups found</h5>
+                                <p class="text-muted">Try adjusting your filters or add a new follow-up</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            
+<!-- Delete Confirmation Modal - Bootstrap 5 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong id="delete_info"></strong>?
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-circle me-2"></i> This action cannot be undone. All associated vehicles and bills will be affected.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="deleteButton" href="#" class="btn btn-danger">
+                    <i class="bi bi-trash me-2"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Pagination -->
+            {% if followups.paginator.num_pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination pagination-modern justify-content-center">
+                    {% if followups.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ followups.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in followups.paginator.page_range %}
+                        {% if followups.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > followups.number|add:'-3' and num < followups.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if followups.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ followups.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ followups.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted mt-2">
+                    Showing {{ followups.start_index }} - {{ followups.end_index }} of {{ followups.paginator.count }} entries
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Follow-ups</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="{% url 'import_followups' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select CSV File</label>
+                            <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Download the <a href="{% url 'download_template' %}">template file</a> for proper formatting.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock content %}

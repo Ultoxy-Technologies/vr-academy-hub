@@ -41,7 +41,21 @@ class CustomUserManager(BaseUserManager):
 
 
 
-class CustomUser(AbstractUser):
+class CustomUser(AbstractUser): 
+
+    ROLE_CHOICES = (
+        ('is_website_manager', 'Website Manager'),
+        ('is_crm_manager', 'CRM Manager'),
+        ('is_staff', 'Staff'),
+        ('is_student', 'Student'),
+    )
+    role = models.CharField(
+        max_length=30,
+        choices=ROLE_CHOICES,
+        default='is_student',
+        null=True, blank=True
+    )
+
     username = None
     name = models.CharField(max_length=150)
     dob = models.DateField(verbose_name='Date of Birth', null=True, blank=True)
@@ -107,6 +121,7 @@ class Enquiry(models.Model):
     message = models.TextField()
     submitted_at = models.DateTimeField(auto_now_add=True)
     remark = models.TextField(blank=True, null=True)
+    is_added_in_CRMFollowup_model = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.full_name} ({self.email})"
@@ -510,3 +525,106 @@ class EventRegistration(models.Model):
     def generate_registration_id(self):
         """Generate a unique registration ID"""
         return f"REG{str(uuid.uuid4())[:8].upper()}"
+    
+
+
+
+
+class CRM_Student_Interested_for_options(models.Model):
+    interest_option = models.CharField(max_length=50)
+    def __str__(self):
+        return self.interest_option
+    
+
+from simple_history.models import HistoricalRecords
+
+class CRMFollowup(models.Model):
+    # ================== Choices ==================
+    PRIORITY_CHOICES = [
+        ('high', 'High Priority'),
+        ('medium', 'Medium Priority'),
+        ('low', 'Low Priority'),
+    ]
+
+    STATUS = [
+        ('interested', 'Interested'),
+        ('planning', 'Planning'),
+        ('under_review', 'Under Review'),
+        ('on_hold', 'On Hold'),
+        ('class_joined', 'Class Joined'),
+        ('class_completed', 'Class Completed'),
+        ('not_interested', 'Not Interested'),
+    ]
+
+    CALL_RESPONSE_CHOICES = [
+        ('answered', 'Answered'),
+        ('not_answered', 'Not Answered'),
+        ('busy', 'Busy'),
+        ('switched_off', 'Switched Off'),
+    ]
+
+    SOURCE_CHOICES = [
+        ('website', 'Website'),
+        ('instagram', 'Instagram'),
+        ('whatsapp', 'WhatsApp'),
+        ('walkin', 'Walk-in'),
+        ('reference', 'Reference'),
+    ]
+    
+    # ================== Student Info ==================
+    name = models.CharField(max_length=100)
+    mobile_number = models.CharField(max_length=15)
+    student_interested_for = models.ForeignKey(
+        CRM_Student_Interested_for_options,
+        on_delete=models.CASCADE, null=True, blank=True
+    )
+    source = models.CharField(
+        max_length=30,
+        choices=SOURCE_CHOICES,
+        default='website', null=True, blank=True
+    )
+
+    # ================== Lead Status ==================
+    status = models.CharField(
+        max_length=30,
+        choices=STATUS,
+        default='interested', null=True, blank=True
+    )
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default='medium', null=True, blank=True
+    )
+
+    # ================== Follow-Up Details ==================
+    follow_up_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='crm_tasks', 
+        null=True, blank=True
+    )
+    call_response = models.CharField(
+        max_length=20,
+        choices=CALL_RESPONSE_CHOICES, null=True, blank=True
+    )
+    follow_up_date = models.DateTimeField(blank=True, null=True)
+    next_followup_reminder = models.DateTimeField(blank=True, null=True)
+    follow_up_notes = models.TextField(blank=True, null=True)
+
+    # ================== Class Info ==================
+    class_start_date = models.DateTimeField(blank=True, null=True)
+
+    # ================== System Fields ==================
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    history = HistoricalRecords()
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['status', 'priority']),
+            models.Index(fields=['follow_up_date']),
+            models.Index(fields=['next_followup_reminder']),
+        ]
+        
+    def __str__(self):
+        return f"{self.name} - {self.mobile_number}"

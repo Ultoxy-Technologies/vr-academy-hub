@@ -6,12 +6,34 @@ from django.utils import timezone
 import mimetypes, os
 from AdminApp.models import FreeCourse, FreeCourseProgress, Basic_to_Advance_Cource, Advance_to_Pro_Cource
 from django.db.models import Sum
- 
+from functools import wraps
 
+def is_student(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated and user.role == 'is_student':
+            return view_func(request, *args, **kwargs)
+        # if not student → redirect to home
+        if user.is_authenticated:
+            if user.role=="is_student":
+                return redirect('/student/dashboard')
+            elif user.role=="is_staff":
+                return redirect('/software/software-welcome-page')
+            elif user.role=="is_crm_manager":
+                return redirect('/staff/dashboard')
+            elif user.is_superuser:
+                return redirect('/admin/')
+        else:
+            messages.error(request,"Not sutable role found")
+            return redirect('/')   # change 'home' if your url name is different
+    return _wrapped_view
+
+
+@is_student
 @login_required
 def student_dashboard(request):
     user = request.user
-
     # All progress records for the logged-in student
     progress_qs = FreeCourseProgress.objects.filter(student=user).select_related('course')
 
@@ -50,7 +72,7 @@ def student_dashboard(request):
 
 
 
-
+@is_student
 @login_required
 def course_list(request):
     """
@@ -62,7 +84,7 @@ def course_list(request):
     })
 
 
-
+@is_student
 @login_required
 def basic_to_advance_course_list(request):
     """
@@ -74,7 +96,7 @@ def basic_to_advance_course_list(request):
     })
 
 
-
+@is_student
 @login_required
 def advance_to_pro_course_list(request):
     """
@@ -92,6 +114,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils import timezone
 
+@is_student
 @login_required
 def free_course_video(request, course_id):
     course = get_object_or_404(FreeCourse, id=course_id)
@@ -152,6 +175,7 @@ from django.contrib import messages
 
 
 
+@is_student
 @login_required
 def download_certificate(request, course_id):
     """
@@ -174,6 +198,7 @@ def download_certificate(request, course_id):
     return render(request, 'cource_certificate.html', {'course': course})
 
 
+@is_student
 @login_required
 def certificate_list(request):
     # Show only completed courses for this user

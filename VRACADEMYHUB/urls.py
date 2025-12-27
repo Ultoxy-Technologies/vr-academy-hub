@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from WebApp import urls as web_urls
 from StudentApp import urls as student_urls
+from SoftwareApp import urls as software_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -34,6 +35,7 @@ urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include(web_urls)),
     path('student/', include(student_urls)),
+    path('software/', include(software_urls)),
 
     # Your custom auth routes preserved
     path('register/', web_urls.register_user, name='register_user'),
