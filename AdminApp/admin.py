@@ -982,4 +982,30 @@ class CRMFollowupAdmin(admin.ModelAdmin):
         extra_context['title'] = 'CRM Follow-ups Management'
         return super().changelist_view(request, extra_context=extra_context)
 
+
+from .models import  Branch
+ 
+
+# Register the Branch model
+class BranchAdmin(admin.ModelAdmin):
+    list_display = ('id', 'branch_name')  # Customize which fields are displayed in the list view
+    search_fields = ('branch_name',)  # Add search functionality for the 'branch_name'
+    list_filter = ('branch_name',)  # Add filter options for the 'branch_name' field
+    ordering = ('id',)  # Sort by 'id' by default
+    fieldsets = (
+        (None, {
+            'fields': ('branch_name',)  # Define fields to display on the model detail page
+        }),
+    )
+
+
+
 admin.site.register(CRMFollowup, CRMFollowupAdmin)
+admin.site.register(Branch, BranchAdmin)
+
+
+
+# admin.py
+
+# # Register your models with the customized admin interfaces
+# admin.site.register(CRM_Student_Interested_for_options)

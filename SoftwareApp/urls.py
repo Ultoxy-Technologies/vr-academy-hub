@@ -6,6 +6,7 @@ urlpatterns = [
     path('crm_software_dashboard', crm_software_dashboard, name='crm_software_dashboard'), 
     path('followups/', crm_follow_up_list, name='crm_follow_up_list'),
     path('creat_follow_up/', create_followup, name='crm_create_followup'),
+    path('delete_follow_up/<int:id>', delete_follow_up, name='crm_delete_follow_up'),
     path('followups/export/', export_followups, name='export_followups'),
     path('followups/import/', import_followups, name='import_followups'),
     path('followups/template/', download_template, name='download_template'), 

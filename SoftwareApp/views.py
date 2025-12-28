@@ -19,7 +19,7 @@ from django.shortcuts import render
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
-from AdminApp.models import CRMFollowup, Enquiry
+from AdminApp.models import CRMFollowup, Enquiry, Branch
 
 def crm_software_dashboard(request):
     # Get current date and time
@@ -148,16 +148,19 @@ def crm_follow_up_list(request):
     priority_filter = request.GET.get('priority', '')
     date_from = request.GET.get('date_from', '')
     date_to = request.GET.get('date_to', '')
+    branch = request.GET.get('branch', '')
+    address = request.GET.get('address', '')
     
     # Start with all follow-ups
     followups = CRMFollowup.objects.all().order_by('-follow_up_date')
-    
+    brances=Branch.objects.all()
     # Apply filters
     if search_query:
         followups = followups.filter(
             Q(name__icontains=search_query) |
             Q(mobile_number__icontains=search_query) |
-            Q(follow_up_notes__icontains=search_query)
+            Q(follow_up_notes__icontains=search_query) |
+            Q(address__icontains=search_query) 
         )
     
     if status_filter:
@@ -165,6 +168,13 @@ def crm_follow_up_list(request):
     
     if priority_filter:
         followups = followups.filter(priority=priority_filter)
+    
+    if branch:
+        followups = followups.filter(branch=branch)
+    
+    if address:
+        print( "Address Filter Applied:", address)
+        followups = followups.filter(address__icontains=address)
     
     if date_from:
         try:
@@ -220,6 +230,7 @@ def crm_follow_up_list(request):
         'priority_filter': priority_filter,
         'date_from': date_from,
         'date_to': date_to,
+        'branches': brances,
     }
     
     return render(request, 'crm_follow_up_list.html', context)
@@ -234,8 +245,8 @@ def export_followups(request):
     # Write header row
     writer.writerow([
         'Name', 'Mobile Number', 'Status', 'Priority', 'Source',
-        'Follow-up Date', 'Next Follow-up', 'Follow-up Notes',
-        'Class Start Date', 'Created At'
+        'Follow-up Date', 'Next Follow-up', 
+        'Class Start Date', 'Created At','address','branch','Follow-up Notes'
     ])
     
     # Get all follow-ups
@@ -251,9 +262,11 @@ def export_followups(request):
             followup.get_source_display(),
             followup.follow_up_date.strftime('%Y-%m-%d %H:%M') if followup.follow_up_date else '',
             followup.next_followup_reminder.strftime('%Y-%m-%d %H:%M') if followup.next_followup_reminder else '',
-            followup.follow_up_notes or '',
             followup.class_start_date.strftime('%Y-%m-%d %H:%M') if followup.class_start_date else '',
             followup.created_at.strftime('%Y-%m-%d %H:%M'),
+            followup.address or '',
+            followup.branch or '',
+            followup.follow_up_notes or '',
         ])
     
     return response
@@ -268,21 +281,19 @@ def download_template(request):
     # Write header row with example data
     writer.writerow([
         'Name', 'Mobile Number', 'Status', 'Priority', 'Source',
-        'Follow-up Date (YYYY-MM-DD HH:MM)', 'Next Follow-up (YYYY-MM-DD HH:MM)',
-        'Follow-up Notes', 'Class Start Date (YYYY-MM-DD HH:MM)'
+        'Follow-up Notes', 'Address', 'Branch'
     ])
     writer.writerow([
-        'John Doe', '9876543210', 'interested', 'high', 'website',
-        '2024-01-15 10:00', '2024-01-20 14:30',
-        'Interested in Python course', '2024-02-01 09:00'
+        'John Doe', '9876543210', 'interested', 'high', 'website', 
+        'Interested in Python course', 'Pune', 'Main Branch'
     ])
     writer.writerow([
-        'Jane Smith', '9876543211', 'planning', 'medium', 'whatsapp',
-        '2024-01-16 11:00', '2024-01-22 15:00',
-        'Planning to join next month', ''
+        'Jane Smith', '9876543211', 'planning', 'medium', 'whatsapp', 
+        'Planning to join next month', 'Mumbai', 'Secondary Branch'
     ])
     
     return response
+
 
 @login_required
 def import_followups(request):
@@ -300,27 +311,68 @@ def import_followups(request):
             reader = csv.DictReader(decoded_file)
             
             imported_count = 0
+            duplicates = []  # List to store duplicate records
+            
+            # First pass: Check for duplicates
+            rows_to_process = []
             for row in reader:
+                mobile_number = row.get('Mobile Number', '').strip()
+                name = row.get('Name', '').strip()
+                
+                # Check if mobile number already exists in database
+                if CRMFollowup.objects.filter(mobile_number=mobile_number).exists():
+                    duplicates.append(f"{name} - {mobile_number}")
+                else:
+                    rows_to_process.append(row)
+            
+            # If duplicates found, stop and show error
+            if duplicates:
+                duplicate_list = "<br>".join(duplicates)
+                messages.error(
+                    request, 
+                    f'<b>Bulk import stopped! Found {len(duplicates)} duplicate mobile numbers:<b> <br><br> {duplicate_list}'
+                )
+                print(duplicate_list)
+                return redirect('crm_follow_up_list')
+            
+            # Second pass: Import only non-duplicate records
+            for row in rows_to_process:
+                # Handle branch - get or create based on CSV value
+                branch_name = row.get('Branch', '').strip()
+                branch_instance = None
+                
+                if branch_name:
+                    # Try to find existing branch
+                    branch_qs = Branch.objects.filter(branch_name__iexact=branch_name)
+                    if branch_qs.exists():
+                        branch_instance = branch_qs.first()
+                    else:
+                        # Create new branch if it doesn't exist
+                        branch_instance = Branch.objects.create(branch_name=branch_name)
+                
                 # Create new follow-up from CSV data
                 CRMFollowup.objects.create(
-                    name=row.get('Name', ''),
-                    mobile_number=row.get('Mobile Number', ''),
-                    status=row.get('Status', 'interested').lower(),
-                    priority=row.get('Priority', 'medium').lower(),
-                    source=row.get('Source', 'website').lower(),
-                    follow_up_notes=row.get('Follow-up Notes', ''),
-                    # You might need to parse dates here
+                    name=row.get('Name', '').strip(),
+                    mobile_number=row.get('Mobile Number', '').strip(),
+                    status=row.get('Status', 'interested').lower().strip(),
+                    priority=row.get('Priority', 'medium').lower().strip(),
+                    source=row.get('Source', 'website').lower().strip(),
+                    follow_up_notes=row.get('Follow-up Notes', '').strip(),
+                    address=row.get('Address', '').strip(),
+                    branch=branch_instance,
+                    follow_up_by=request.user,
                 )
                 imported_count += 1
             
-            messages.success(request, f'Successfully imported {imported_count} follow-ups')
+            messages.success(request, f'Successfully Bulk imported {imported_count} follow-ups')
         
         except Exception as e:
             messages.error(request, f'Error importing file: {str(e)}')
     
     return redirect('crm_follow_up_list')
 
- 
+
+
  # views.py
 # views.py
 from django.shortcuts import render, get_object_or_404
@@ -573,6 +625,8 @@ def add_to_followup(request, enquiry_id):
     """Add enquiry to CRMFollowup model"""
     enquiry = get_object_or_404(Enquiry, id=enquiry_id)
     
+    mobile_number = enquiry.phone.strip()
+    print("Mobile Number to check for duplicates:", mobile_number)
     # Check if already added
     if enquiry.is_added_in_CRMFollowup_model:
         messages.info(request, 'This enquiry is already added to follow-up list.')
@@ -580,6 +634,7 @@ def add_to_followup(request, enquiry_id):
         return redirect(request.META.get('HTTP_REFERER', 'crm_enquiry_list'))   
     
     try:
+
         # Create new CRMFollowup from enquiry
         followup = CRMFollowup.objects.create(
             name=enquiry.full_name,
@@ -642,3 +697,17 @@ def export_enquiries(request):
         ])
     
     return response
+
+def delete_follow_up(request, id):
+    # Retrieve the follow-up record by ID or 404 if not found
+    rec = get_object_or_404(CRMFollowup, id=id)
+    
+    if rec:
+        # Delete the record
+        rec.delete()
+        
+        # Display success message
+        messages.success(request, 'Follow-up record deleted successfully.')
+
+    # Redirect back to the page the user came from
+    return redirect(request.META.get('HTTP_REFERER', '/software/followups'))

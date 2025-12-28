@@ -534,7 +534,11 @@ class CRM_Student_Interested_for_options(models.Model):
     interest_option = models.CharField(max_length=50)
     def __str__(self):
         return self.interest_option
-    
+   
+class Branch(models.Model):
+    branch_name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.branch_name
 
 from simple_history.models import HistoricalRecords
 
@@ -584,6 +588,10 @@ class CRMFollowup(models.Model):
         default='website', null=True, blank=True
     )
 
+    address = models.CharField(
+        max_length=100,   null=True, blank=True
+    )
+
     # ================== Lead Status ==================
     status = models.CharField(
         max_length=30,
@@ -603,6 +611,16 @@ class CRMFollowup(models.Model):
         related_name='crm_tasks', 
         null=True, blank=True
     )
+     
+        
+    # ================== Follow-Up Details ==================
+    branch = models.ForeignKey(
+        Branch,
+        on_delete=models.CASCADE,
+        related_name='crm_branch',
+        null=True, blank=True
+    )
+    
     call_response = models.CharField(
         max_length=20,
         choices=CALL_RESPONSE_CHOICES, null=True, blank=True

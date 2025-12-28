@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-l-zq3uu6&^46d2#2e0=x%3dvs+d)iw&h0qq)ha1h$a&_$pumt4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['vracademyhub.com',
+    'www.vracademyhub.com',
+    '72.60.96.41',
+    'localhost',
+    '127.0.0.1',]
 
 
 # Application definition

@@ -14,12 +14,7 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         transition: transform 0.2s;
     }
-
-    .card-modern:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(0,0,0,0.12);
-    }
-
+ 
     /* Status Badges */
     .badge-status {
         padding: 0.35em 0.85em;
@@ -237,54 +232,173 @@
                         onclick="openCreateModal(this)">
                         <i class="bi bi-plus-circle me-1"></i> Add New
                     </a>
-<script>
-    // Update Modal Function
-    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
-        const url = element.dataset.url;
-        
-        // Calculate center position
-        const width = customWidth;
-        const height = customHeight;
-        const left = Math.max(0, (window.screen.width - width) / 2);
-        const top = Math.max(0, (window.screen.height - height) / 2);
-        
-        // Window features
-        const features = [
-            `width=${width}`,
-            `height=${height}`,
-            `left=${left}`,
-            `top=${top}`,
-            'scrollbars=yes',
-            'resizable=yes',
-            'centerscreen=yes',
-            'location=no',
-            'menubar=no',
-            'toolbar=no',
-            'status=no',
-            'titlebar=no'
-        ].join(',');
-        
-        // Open centered window
-        const newWindow = window.open(url, "updateWindow", features);
-        
-        if (newWindow) {
-            newWindow.focus();
-            
-            // Check if window is closed to refresh parent
-            const checkWindow = setInterval(function() {
-                if (newWindow.closed) {
-                    clearInterval(checkWindow);
-                    window.location.reload();
+            <script>
+                // Update Modal Function
+                function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+                    const url = element.dataset.url;
+                    
+                    // Calculate center position
+                    const width = customWidth;
+                    const height = customHeight;
+                    const left = Math.max(0, (window.screen.width - width) / 2);
+                    const top = Math.max(0, (window.screen.height - height) / 2);
+                    
+                    // Window features
+                    const features = [
+                        `width=${width}`,
+                        `height=${height}`,
+                        `left=${left}`,
+                        `top=${top}`,
+                        'scrollbars=yes',
+                        'resizable=yes',
+                        'centerscreen=yes',
+                        'location=no',
+                        'menubar=no',
+                        'toolbar=no',
+                        'status=no',
+                        'titlebar=no'
+                    ].join(',');
+                    
+                    // Open centered window
+                    const newWindow = window.open(url, "updateWindow", features);
+                    
+                    if (newWindow) {
+                        newWindow.focus();
+                        
+                        // Check if window is closed to refresh parent
+                        const checkWindow = setInterval(function() {
+                            if (newWindow.closed) {
+                                clearInterval(checkWindow);
+                                window.location.reload();
+                            }
+                        }, 500);
+                    }
+                    return false;
                 }
-            }, 500);
-        }
-        return false;
-    }
-</script>
+            </script>
 
             </div>
         </div>
     </div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="messages-container">
+            {% for msg in messages %}
+            {% if "Bulk import" in msg|safe or "Import stopped" in msg|safe or "Error importing" in msg|safe %}
+            <div class="message-card message-{{ msg.tags }} animate__animated animate__fadeInRight mb-3">
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-icon">
+                            {% if msg.tags == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                            {% elif msg.tags == 'error' or msg.tags == 'danger' %}
+                            <i class="fas fa-times-circle"></i>
+                            {% elif msg.tags == 'warning' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                            {% else %}
+                            <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                        </span>
+                        <span class="message-title">
+                            {% if msg.tags == 'success' %}Success!
+                            {% elif msg.tags == 'error' or msg.tags == 'danger' %}Error!
+                            {% elif msg.tags == 'warning' %}Warning!
+                            {% else %}Info
+                            {% endif %}
+                        </span>
+                        <button type="button" class="btn-close-message" data-bs-dismiss="alert">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="message-body">
+                        {{ msg|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.messages-container {
+    position: relative;
+    z-index: 1000;
+}
+.message-card {
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+.message-content {
+    padding: 20px;
+}
+.message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.message-icon {
+    font-size: 1.5rem;
+    margin-right: 12px;
+}
+.message-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-grow: 1;
+}
+.btn-close-message {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+}
+.btn-close-message:hover {
+    color: #333;
+}
+.message-body {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Color themes */
+.message-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+}
+.message-success .message-icon { color: #a7f3d0; }
+.message-success .btn-close-message { color: #a7f3d0; }
+.message-success .btn-close-message:hover { color: white; }
+
+.message-danger, .message-error {
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    color: white;
+}
+.message-danger .message-icon, .message-error .message-icon { color: #fca5a5; }
+
+.message-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    color: white;
+}
+.message-warning .message-icon { color: #fde68a; }
+
+.message-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    color: white;
+}
+.message-info .message-icon { color: #bfdbfe; }
+</style>
+
+<!-- Add Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
 
     <!-- Stats Summary -->
     <div class="row mb-4">
@@ -331,12 +445,28 @@
                 <div class="col-md-3">
                     <label class="form-label">Priority</label>
                     <select name="priority" class="form-select">
-                        <option value="">All Priority</option>
+                        <option value="" selected>All Priority</option>
                         <option value="high">High</option>
                         <option value="medium">Medium</option>
                         <option value="low">Low</option>
                     </select>
                 </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Branch</label>
+                    <select name="branch" class="form-select">
+                        <option value="" selected>All Branches</option>
+                        {% for branch in branches  %}
+                        <option value="{{branch.id}}">{{branch.branch_name}}</option> 
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Address</label>
+                     <input type="text" name="address" placeholder="Search address..." class="form-control"  value="{{ request.GET.address }}">
+                </div>
+
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
                     <input type="date" name="date_from" class="form-control">
@@ -345,12 +475,15 @@
                     <label class="form-label">Date To</label>
                     <input type="date" name="date_to" class="form-control">
                 </div>
-                <div class="col-12 d-flex justify-content-between">
-                    <div class="search-box w-50"> 
-                        <input type="text" name="search" placeholder="Search by name or mobile..." 
-                               value="{{ request.GET.search }}">
-                    </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Name or Mobile</label>
+                     <input type="text" name="search" placeholder="Search by name or mobile..." class="form-control"  value="{{ request.GET.address }}">
+                </div>
+
+                <div class="col-md-3 d-flex justify-content-between"> 
                     <div>
+                    <br>
                         <button type="submit" class="btn btn-action btn-filter me-2">
                             <i class="bi bi-funnel me-1"></i> Apply Filters
                         </button>
@@ -375,6 +508,7 @@
                             <th>Status</th>
                             <th>Priority</th>
                             <th>Next Follow-up</th>
+                            <th>Branch</th>
                             <th>Last Follow Up By</th>
                             <th>Actions</th>
                         </tr>
@@ -432,44 +566,51 @@
                                 {% endif %}
                             </td>
                             <td>
+                                {% if followup.branch %} 
+                                    <span class="text-muted">{{ followup.branch }}</span>
+                                {% else %}
+                                    <span class="text-muted">---</span>
+                                {% endif %}
+                            </td>
+                            <td>
                                 {% if followup.follow_up_by %} 
                                     <span class="text-muted">{{ followup.follow_up_by }}</span>
                                 {% else %}
                                     <span class="text-muted">---</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{% url "followup_detail" followup.id %}" 
-                                       class="btn btn-sm btn-outline-primary" 
-                                       title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="" 
-                                       class="btn btn-sm btn-outline-warning" 
-                                       title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a> 
-                                        <a href="javascript:void(0);" 
-                                           class="btn-delete" title="Delete Owner"
-                                           onclick="confirmDelete(this); return false;">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                        <script>
-                                                
-                                        // Delete Confirmation
-                                        function confirmDelete(button) {
-                                            var info = button.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
-                                            var deleteUrl = button.getAttribute('href');
-                                            document.getElementById('delete_info').textContent = info;
-                                            document.getElementById('deleteButton').setAttribute('href', deleteUrl);
-                                            
-                                            $('#deleteModal').modal('show');
-                                            return false;
-                                        }
-    
-                                        </script>
-                            </td>
+                            <td><div class="btn-group" role="group">
+                                <a href="{% url 'followup_detail' followup.id %}" 
+                                class="btn btn-sm btn-outline-primary" 
+                                title="View Follow-Up">
+                                    <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
+                                </a>
+                                <a href="javascript:void(0);" 
+                                class="btn btn-sm btn-outline-warning" 
+                                data-url="{% url 'update_followup' followup.id %}" 
+                                onclick="openUpdateModal(this)">
+                                    <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit Follow-up</span>
+                                </a> 
+                                <a href="{% url 'crm_delete_follow_up' followup.id %}" 
+                                class="btn btn-sm btn-outline-danger btn-delete" 
+                                title="Delete Follow-Up"
+                                onclick="confirmDelete(this); return false;">
+                                    <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+                                </a>
+                                <script>
+                                    // Delete Confirmation
+                                    function confirmDelete(button) {
+                                        var info = button.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+                                        var deleteUrl = button.getAttribute('href');
+                                        document.getElementById('delete_info').textContent = info;
+                                        document.getElementById('deleteButton').setAttribute('href', deleteUrl);
+                                        
+                                        $('#deleteModal').modal('show');
+                                        return false;
+                                    }
+                                </script>
+                            </div>
+                           </td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -485,31 +626,31 @@
             </div>
 
             
-<!-- Delete Confirmation Modal - Bootstrap 5 -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">
-                    <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete <strong id="delete_info"></strong>?
-                <div class="alert alert-warning mt-3">
-                    <i class="bi bi-exclamation-circle me-2"></i> This action cannot be undone. All associated vehicles and bills will be affected.
+            <!-- Delete Confirmation Modal - Bootstrap 5 -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete <strong id="delete_info"></strong>?
+                            <div class="alert alert-warning mt-3">
+                                <i class="bi bi-exclamation-circle me-2"></i> This action cannot be undone.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a id="deleteButton" href="#" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i> Delete
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a id="deleteButton" href="#" class="btn btn-danger">
-                    <i class="bi bi-trash me-2"></i> Delete
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- Pagination -->
             {% if followups.paginator.num_pages > 1 %}
@@ -578,7 +719,7 @@
                         </div>
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
-                            Download the <a href="{% url 'download_template' %}">template file</a> for proper formatting.
+                            Download the <a href="{% url 'download_template' %}"><b style="color: #ff7300;">template file</b></a> for proper formatting.
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -590,5 +731,32 @@
         </div>
     </div>
 
+
+
+
+<script>
+        
+    // Update Modal Function
+    function openUpdateModal(element) {
+        const url = element.dataset.url;
+        const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+}
+</script>     
+
 </main>
+
+
+
+
+
 {% endblock content %}

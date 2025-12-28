@@ -416,7 +416,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table-modern">
+                <table class="table-modern table table-bordered table-sm table-auto table-modern">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -479,18 +479,17 @@
                                 </span>
                                 {% endif %}
                             </td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="{% url 'crm_add_to_followup' enquiry.id %}" class="btn btn-action btn-add-followup" 
-                                             
-                                            {% if enquiry.is_added_in_CRMFollowup_model %}disabled{% endif %}>
-                                        <i class="bi bi-plus-circle"></i>
-                                        {% if enquiry.is_added_in_CRMFollowup_model %}
-                                        Already Added
-                                        {% else %}
-                                        Add to Follow-up
-                                        {% endif %}
-                                </a>
+                            <td class="align-item-center">
+                                <div class="d-flex gap-2 text-center align-items-center">
+                                    {% if enquiry.is_added_in_CRMFollowup_model %}
+                                    <a href="#" class="btn btn-secondary disabled" >
+                                        <i class="bi bi-check-circle"></i> Added
+                                        </a>
+                                    {% else %}
+                                      <a href="{% url 'crm_add_to_followup' enquiry.id %}" class="btn btn-action btn-add-followup" >
+                                        <i class="bi bi-plus-circle"></i> Add To Follow-up
+                                        </a>
+                                    {% endif %}
                                     <button class="btn btn-action btn-view" 
                                             onclick="viewEnquiry({{ enquiry.id }})"
                                             data-bs-toggle="modal" 
@@ -498,6 +497,7 @@
                                         <i class="bi bi-eye"></i>
                                         View
                                     </button>
+                                    
                                 </div>
                             </td>
                         </tr>
