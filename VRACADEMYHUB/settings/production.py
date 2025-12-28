@@ -2,7 +2,11 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com', 'server-ip']
+ALLOWED_HOSTS = ['vracademyhub.com',
+    'www.vracademyhub.com',
+    '72.60.96.41',
+    'localhost',
+    '127.0.0.1',]
 
 DATABASES = {
     'default': {
