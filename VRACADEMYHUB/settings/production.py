@@ -25,3 +25,11 @@ EMAIL_HOST_PASSWORD = 'APP_PASSWORD'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
+
+# Production URLs
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+# Production filesystem paths
+STATIC_ROOT = '/var/www/vracademyhub_static'
+MEDIA_ROOT = '/var/www/vracademyhub_media'
