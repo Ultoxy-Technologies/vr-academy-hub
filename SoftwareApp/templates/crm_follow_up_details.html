@@ -542,15 +542,16 @@
                                 <i class="bi bi-telephone"></i> 
                                 <strong>{{ followup.mobile_number }}</strong>
                             </span>
-                            {% if followup.status %}
-                                <span class="status-badge status-{{ followup.status }}">
-                                    <i class="bi bi-flag"></i>
-                                    {{ followup.get_status_display }}
+                            {% if followup.branch %}
+                                <span class="priority-badge status-planning">
+                                    <i class="bi bi-building-fill"></i>
+                                    Branch : {{ followup.branch }}
                                 </span>
                             {% endif %}
-                            {% if followup.priority %}
-                                <span class="priority-badge priority-{{ followup.priority }}">
-                                    {{ followup.get_priority_display }}
+                            {% if followup.address %}
+                                <span class="priority-badge  status-planning">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    Add : {{ followup.address }}
                                 </span>
                             {% endif %}
                         </div>
@@ -595,6 +596,21 @@
 
         <div class="card-body p-4">
             <!-- Info Cards Grid -->
+             
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2"> 
+                            {% if followup.status %}
+                                <span class="status-badge status-{{ followup.status }}">
+                                    <i class="bi bi-flag"></i>
+                                    {{ followup.get_status_display }}
+                                </span>
+                            {% endif %}
+                            {% if followup.priority %}
+                                <span class="priority-badge priority-{{ followup.priority }}">
+                                    {{ followup.get_priority_display }}
+                                </span>
+                            {% endif %}
+                        </div> <br> 
+
             <div class="info-cards-grid">
                 <div class="info-card">
                     <div class="info-card-icon">

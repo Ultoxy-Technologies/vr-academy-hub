@@ -592,7 +592,8 @@ def event_registration(request, event_id):
 
 @csrf_exempt
 def payment_verification(request):
-    if request.method == "POST":
+    print(request.method)
+    if request.method == "POST" or request.method=="GET":
         try:
             # Get payment details from request
             razorpay_payment_id = request.POST.get('razorpay_payment_id')
