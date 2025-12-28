@@ -617,7 +617,6 @@ def enquiry_list(request):
     context = {
         'enquiries': page_obj,
     }
-    
     return render(request, 'crm_enquiry_list.html', context)
 
 @login_required

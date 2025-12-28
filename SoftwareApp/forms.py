@@ -117,15 +117,15 @@ class CRMFollowupUpdateForm(forms.ModelForm):
                     f"Mobile number already exists. It belongs to: {existing_record.name} "
                     f"(Status: {existing_record.get_status_display()})"
                 )
-        else:
-            # This is an update - check for duplicates excluding the current record
-            if CRMFollowup.objects.filter(mobile_number=mobile_number).exclude(pk=self.instance.pk).exists():
-                # Find the existing record details (excluding current one)
-                existing_record = CRMFollowup.objects.filter(mobile_number=mobile_number).exclude(pk=self.instance.pk).first()
-                raise ValidationError(
-                    f"Mobile number already exists. It belongs to: {existing_record.name} "
-                    f"(Status: {existing_record.get_status_display()})"
-                )
+        # else:
+        #     # This is an update - check for duplicates excluding the current record
+        #     if CRMFollowup.objects.filter(mobile_number=mobile_number).exclude(pk=self.instance.pk).exists():
+        #         # Find the existing record details (excluding current one)
+        #         existing_record = CRMFollowup.objects.filter(mobile_number=mobile_number).exclude(pk=self.instance.pk).first()
+        #         raise ValidationError(
+        #             f"Mobile number already exists. It belongs to: {existing_record.name} "
+        #             f"(Status: {existing_record.get_status_display()})"
+        #         )
         
         # Additional validation for mobile number format
         if not mobile_number.isdigit():
