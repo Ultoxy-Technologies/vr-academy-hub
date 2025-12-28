@@ -625,6 +625,8 @@ def add_to_followup(request, enquiry_id):
     """Add enquiry to CRMFollowup model"""
     enquiry = get_object_or_404(Enquiry, id=enquiry_id)
     
+    mobile_number = enquiry.phone.strip()
+    print("Mobile Number to check for duplicates:", mobile_number)
     # Check if already added
     if enquiry.is_added_in_CRMFollowup_model:
         messages.info(request, 'This enquiry is already added to follow-up list.')
@@ -632,6 +634,7 @@ def add_to_followup(request, enquiry_id):
         return redirect(request.META.get('HTTP_REFERER', 'crm_enquiry_list'))   
     
     try:
+
         # Create new CRMFollowup from enquiry
         followup = CRMFollowup.objects.create(
             name=enquiry.full_name,
