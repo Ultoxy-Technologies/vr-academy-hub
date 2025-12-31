@@ -109,3 +109,8 @@ JAZZMIN_UI_TWEAKS = {
     "accent": "accent-primary",
     "theme": "pulse",
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://vracademyhub.com',
+    'https://www.vracademyhub.com',
+]
