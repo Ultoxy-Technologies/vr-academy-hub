@@ -114,3 +114,4 @@ CSRF_TRUSTED_ORIGINS = [
     'https://vracademyhub.com',
     'https://www.vracademyhub.com',
 ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
