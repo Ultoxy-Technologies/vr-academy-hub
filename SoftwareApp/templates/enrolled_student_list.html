@@ -1,0 +1,759 @@
+<!-- templates/enrolled_student_list.html -->
+{% extends "enrollment_software_base.html" %}
+
+{% block title %}Enrollment Management - Student List{% endblock title %}
+
+{% block content %}
+<style>
+    .card-body{
+        padding:0px!important;
+    }
+    /* Modern Card Design */
+    .card-modern {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+ 
+    /* Status Badges */
+    .badge-status {
+        padding: 0.35em 0.85em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-active { background: linear-gradient(135deg, #2ed573, #1dd1a1); }
+    .badge-completed { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .badge-cancelled { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
+    .badge-discontinued { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+    .badge-on_hold { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .badge-pending { background: linear-gradient(135deg, #f39c12, #e67e22); }
+
+    /* Payment Status Badges */
+    .badge-payment-completed { background: linear-gradient(135deg, #27ae60, #219653); }
+    .badge-payment-partial { background: linear-gradient(135deg, #f39c12, #d68910); }
+    .badge-payment-pending { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .badge-payment-overdue { background: linear-gradient(135deg, #8e44ad, #732d91); }
+
+    /* Table Styling */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f3fa;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+
+    /* Filter Card */
+    .filter-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-export {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+    }
+
+    .btn-export:hover {
+        background: linear-gradient(135deg, #27ae60, #219653);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .btn-import {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .btn-import:hover {
+        background: linear-gradient(135deg, #2980b9, #1c6ea4);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: white;
+    }
+
+    .btn-filter:hover {
+        background: linear-gradient(135deg, #8e44ad, #7d3c98);
+        color: white;
+    }
+
+    /* Pagination */
+    .pagination-modern .page-link {
+        border: none;
+        color: #667eea;
+        padding: 0.6rem 1rem;
+        margin: 0 3px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .pagination-modern .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .pagination-modern .page-link:hover {
+        background-color: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        background: white;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .search-box input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .search-box i {
+        color: #667eea;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.5rem;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+        width: 100px;
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #2ecc71, #27ae60);
+        border-radius: 3px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .table-modern {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+        
+        .btn-action {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Amount Styling */
+    .amount-paid {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .amount-balance {
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    .amount-total {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    /* Overdue Warning */
+    .overdue-warning {
+        color: #e74c3c;
+        font-weight: 600;
+        animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.5; }
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Enrolled Students</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Enrolled Students</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-action btn-import" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-download me-1"></i> Import
+                </button>
+                <a href="{% url 'export_enrollments' %}" class="btn btn-action btn-export">
+                    <i class="bi bi-upload me-1"></i> Export
+                </a> 
+                <a href="javascript:void(0);" 
+                    data-url="{% url 'create_enrollment' %}" 
+                    class="btn btn-primary"  
+                    onclick="openCreateModal(this)">
+                    <i class="bi bi-plus-circle me-1"></i> New Enrollment
+                </a>
+                <script>
+                    // Update Modal Function
+                    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+                        const url = element.dataset.url;
+                        
+                        // Calculate center position
+                        const width = customWidth;
+                        const height = customHeight;
+                        const left = Math.max(0, (window.screen.width - width) / 2);
+                        const top = Math.max(0, (window.screen.height - height) / 2);
+                        
+                        // Window features
+                        const features = [
+                            `width=${width}`,
+                            `height=${height}`,
+                            `left=${left}`,
+                            `top=${top}`,
+                            'scrollbars=yes',
+                            'resizable=yes',
+                            'centerscreen=yes',
+                            'location=no',
+                            'menubar=no',
+                            'toolbar=no',
+                            'status=no',
+                            'titlebar=no'
+                        ].join(',');
+                        
+                        // Open centered window
+                        const newWindow = window.open(url, "updateWindow", features);
+                        
+                        if (newWindow) {
+                            newWindow.focus();
+                            
+                            // Check if window is closed to refresh parent
+                            const checkWindow = setInterval(function() {
+                                if (newWindow.closed) {
+                                    clearInterval(checkWindow);
+                                    window.location.reload();
+                                }
+                            }, 500);
+                        }
+                        return false;
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="messages-container">
+                {% for msg in messages %}
+                {% if "Bulk import" in msg|safe or "Import stopped" in msg|safe or "Error importing" in msg|safe or "Successfully imported" in msg|safe %}
+                <div class="message-card message-{{ msg.tags }} animate__animated animate__fadeInRight mb-3">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-icon">
+                                {% if msg.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}
+                                <i class="fas fa-times-circle"></i>
+                                {% elif msg.tags == 'warning' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% else %}
+                                <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                            </span>
+                            <span class="message-title">
+                                {% if msg.tags == 'success' %}Success!
+                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}Error!
+                                {% elif msg.tags == 'warning' %}Warning!
+                                {% else %}Info
+                                {% endif %}
+                            </span>
+                            <button type="button" class="btn-close-message" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="message-body">
+                            {{ msg|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Stats Summary -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_enrollments }}</div>
+                <div class="stat-label">Total Enrollments</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ active_enrollments }}</div>
+                <div class="stat-label">Active Students</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ pending_payments }}</div>
+                <div class="stat-label">Pending Payments</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">₹{{ total_revenue|floatformat:0 }}</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card card-modern filter-card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        {% for status_code, status_name in status_choices %}
+                        <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>
+                            {{ status_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Payment Status</label>
+                    <select name="payment_status" class="form-select">
+                        <option value="">All Payment Status</option>
+                        {% for status_code, status_name in payment_status_choices %}
+                        <option value="{{ status_code }}" {% if payment_status_filter == status_code %}selected{% endif %}>
+                            {{ status_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Batch</label>
+                    <select name="batch" class="form-select">
+                        <option value="">All Batches</option>
+                        {% for batch in batches %}
+                        <option value="{{ batch.id }}" {% if batch_filter == batch.id|stringformat:"s" %}selected{% endif %}>
+                            {{ batch.batch_code }} - {{ batch.batch_title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Date From</label>
+                    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Date To</label>
+                    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Search</label>
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="search" placeholder="Search by name, mobile, or enrollment ID..." 
+                               class="form-control border-0" value="{{ search_query }}">
+                    </div>
+                </div>
+
+                <div class="col-md-3 d-flex justify-content-between align-items-end">
+                    <div>
+                        <button type="submit" class="btn btn-action btn-filter me-2">
+                            <i class="bi bi-funnel me-1"></i> Apply Filters
+                        </button>
+                        <a href="{% url 'enrolled_student_list' %}" class="btn btn-light">
+                            <i class="bi bi-x-circle me-1"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Table -->
+    <div class="card card-modern">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>Enrollment ID</th>
+                            <th>Student</th>
+                            <th>Batch & Course</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Fees</th>
+                            <th>Progress</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        <tr>
+                            <td>
+                                <strong>{{ enrollment.enrollment_id }}</strong>
+                                <br>
+                                <small class="text-muted">{{ enrollment.enrollment_date|date:"M d, Y" }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ enrollment.student.name }}</strong>
+                                <br>
+                                <a href="tel:{{ enrollment.student.mobile_number }}" class="text-decoration-none text-muted">
+                                    <i class="bi bi-telephone me-1"></i> {{ enrollment.student.mobile_number }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if enrollment.batch %}
+                                    <strong>{{ enrollment.batch.batch_code }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ enrollment.course_title|truncatechars:30 }}</small>
+                                {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if enrollment.status == 'active' %}
+                                    <span class="badge badge-status badge-active">Active</span>
+                                {% elif enrollment.status == 'completed' %}
+                                    <span class="badge badge-status badge-completed">Completed</span>
+                                {% elif enrollment.status == 'cancelled' %}
+                                    <span class="badge badge-status badge-cancelled">Cancelled</span>
+                                {% elif enrollment.status == 'discontinued' %}
+                                    <span class="badge badge-status badge-discontinued">Discontinued</span>
+                                {% elif enrollment.status == 'on_hold' %}
+                                    <span class="badge badge-status badge-on_hold">On Hold</span>
+                                {% elif enrollment.status == 'pending' %}
+                                    <span class="badge badge-status badge-pending">Pending</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ enrollment.status|title }}</span>
+                                {% endif %}
+                                {% if enrollment.is_payment_overdue %}
+                                    <br>
+                                    <small class="overdue-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> Payment Overdue
+                                    </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if enrollment.payment_status == 'completed' %}
+                                    <span class="badge badge-status badge-payment-completed">Paid</span>
+                                {% elif enrollment.payment_status == 'partial' %}
+                                    <span class="badge badge-status badge-payment-partial">Partial</span>
+                                {% elif enrollment.payment_status == 'pending' %}
+                                    <span class="badge badge-status badge-payment-pending">Pending</span>
+                                {% elif enrollment.payment_status == 'overdue' %}
+                                    <span class="badge badge-status badge-payment-overdue">Overdue</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ enrollment.payment_status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="amount-total">₹{{ enrollment.total_fees|floatformat:0 }}</span>
+                                    <small>
+                                        <span class="amount-paid">Paid: ₹{{ enrollment.display_paid|floatformat:0 }}</span>
+                                        <br>
+                                        <span class="amount-balance">Balance: ₹{{ enrollment.display_balance|floatformat:0 }}</span>
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {{ enrollment.display_progress|floatformat:0 }}%
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="width: {{ enrollment.display_progress }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="" 
+                                    class="btn btn-sm btn-outline-primary" 
+                                    title="View Enrollment">
+                                        <i class="bi bi-eye"></i>
+                                        <span class="d-none d-md-inline">View</span>
+                                    </a>
+                                    <a href="javascript:void(0);" 
+                                    class="btn btn-sm btn-outline-warning" 
+                                    data-url="" 
+                                    onclick="openUpdateModal(this)">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <span class="d-none d-md-inline">Edit</span>
+                                    </a> 
+                                    <a href="" 
+                                    class="btn btn-sm btn-outline-success" 
+                                    title="Record Payment">
+                                        <i class="bi bi-cash"></i>
+                                        <span class="d-none d-md-inline">Payment</span>
+                                    </a>
+                                    <a href="" 
+                                    class="btn btn-sm btn-outline-danger btn-delete" 
+                                    title="Delete Enrollment"
+                                    onclick="confirmDelete(this); return false;">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="d-none d-md-inline">Delete</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-people display-4 text-muted mb-3"></i>
+                                <h5>No enrollments found</h5>
+                                <p class="text-muted">Try adjusting your filters or add a new enrollment</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete enrollment <strong id="delete_info"></strong>?
+                            <div class="alert alert-warning mt-3">
+                                <i class="bi bi-exclamation-circle me-2"></i> 
+                                This will delete all associated payment records and cannot be undone.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a id="deleteButton" href="#" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i> Delete Enrollment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if enrollments.paginator.num_pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination pagination-modern justify-content-center">
+                    {% if enrollments.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ enrollments.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in enrollments.paginator.page_range %}
+                        {% if enrollments.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > enrollments.number|add:'-3' and num < enrollments.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if enrollments.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ enrollments.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ enrollments.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted mt-2">
+                    Showing {{ enrollments.start_index }} - {{ enrollments.end_index }} of {{ enrollments.paginator.count }} entries
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Enrollments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select CSV File</label>
+                            <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Download the <a href=""><b style="color: #ff7300;">template file</b></a> for proper formatting.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update Modal Function (reused from above)
+        function openUpdateModal(element) {
+            const url = element.dataset.url;
+            const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+            if (newWindow) {
+                newWindow.focus();
+                const checkWindow = setInterval(function() {
+                    if (newWindow.closed) {
+                        clearInterval(checkWindow);
+                        window.location.reload();
+                    }
+                }, 500);
+            }
+            return false;
+        }
+        
+        // Delete Confirmation
+        function confirmDelete(button) {
+            var info = button.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+            var deleteUrl = button.getAttribute('href');
+            document.getElementById('delete_info').textContent = info;
+            document.getElementById('deleteButton').setAttribute('href', deleteUrl);
+            
+            $('#deleteModal').modal('show');
+            return false;
+        }
+    </script>     
+
+</main>
+{% endblock content %}

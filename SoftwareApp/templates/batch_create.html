@@ -1,0 +1,878 @@
+<!-- templates/create_batch.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Batch</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            opacity: 0.2;
+        }
+
+        .form-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+        }
+
+        .section-title-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .section-title h3 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+
+        .section-title p {
+            margin: 5px 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px 12px;
+            padding-right: 45px;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Form actions */
+        .form-actions {
+            background: white;
+            padding: 30px 40px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: var(--text-primary);
+            border-color: #cbd5e1;
+        }
+
+        .form-help {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-help i {
+            color: var(--primary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-header {
+                padding: 25px 20px;
+            }
+
+            .form-body {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                padding: 25px 20px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .form-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Messages styling */
+        .messages-container {
+            margin-bottom: 20px;
+        }
+
+        .message-card {
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .message-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .message-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Course selection styling */
+        .course-selection {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .course-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .course-option:hover {
+            border-color: var(--primary-color);
+            background: #f8fafc;
+        }
+
+        .course-option.active {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .course-option-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .course-option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .basic-course-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .advance-course-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .course-option-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .course-option-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <div class="form-header-content">
+                <h1><i class="bi bi-calendar-plus me-2"></i>Create New Batch</h1>
+                <p>Create a new course batch for student enrollment</p>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="message-card message-{{ message.tags }}">
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'success' %}
+                    <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
+                    {% elif message.tags == 'error' %}
+                    <i class="bi bi-x-circle-fill me-3" style="font-size: 1.5rem;"></i>
+                    {% elif message.tags == 'warning' %}
+                    <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.5rem;"></i>
+                    {% else %}
+                    <i class="bi bi-info-circle-fill me-3" style="font-size: 1.5rem;"></i>
+                    {% endif %}
+                    <div>{{ message|safe }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form Body -->
+        <form method="post" class="form-body" id="batchForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div>
+                        <h3>Basic Information</h3>
+                        <p>Enter batch identification details</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.batch_code.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-tag"></i> Batch Code
+                        </label>
+                        {{ form.batch_code }}
+                        {% if form.batch_code.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.batch_code.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>Unique identifier for the batch (e.g., BATCH-2024-001)
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.batch_title.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-card-heading"></i> Batch Title
+                        </label>
+                        {{ form.batch_title }}
+                        {% if form.batch_title.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.batch_title.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>Display name for the batch
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.batch_status.id_for_label }}" class="form-label">
+                            <i class="bi bi-flag"></i> Batch Status
+                        </label>
+                        {{ form.batch_status }}
+                        {% if form.batch_status.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.batch_status.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Selection Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div>
+                        <h3>Course Selection</h3>
+                        <p>Select the course for this batch (choose only one)</p>
+                    </div>
+                </div>
+                
+                <div class="course-selection">
+                    <div class="course-option" id="basicCourseOption" onclick="selectCourseType('basic')">
+                        <div class="course-option-header">
+                            <div class="course-option-icon basic-course-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="course-option-title">Basic to Advance Course</div>
+                        </div>
+                        <div class="course-option-desc">
+                            Select this for Basic to Advance courses
+                        </div>
+                    </div>
+                    
+                    <div class="course-option" id="advanceCourseOption" onclick="selectCourseType('advance')">
+                        <div class="course-option-header">
+                            <div class="course-option-icon advance-course-icon">
+                                <i class="bi bi-star"></i>
+                            </div>
+                            <div class="course-option-title">Advance to Pro Course</div>
+                        </div>
+                        <div class="course-option-desc">
+                            Select this for Advance to Pro courses
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group" id="basicCourseField">
+                        <label for="{{ form.basic_to_advance_cource.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-book"></i> Basic to Advance Course
+                        </label>
+                        {{ form.basic_to_advance_cource }}
+                        {% if form.basic_to_advance_cource.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.basic_to_advance_cource.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group" id="advanceCourseField">
+                        <label for="{{ form.advance_to_pro_cource.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-stars"></i> Advance to Pro Course
+                        </label>
+                        {{ form.advance_to_pro_cource }}
+                        {% if form.advance_to_pro_cource.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.advance_to_pro_cource.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Note:</strong> Please select only one course type. You cannot select both Basic to Advance and Advance to Pro courses for the same batch.
+                </div>
+            </div>
+
+            <!-- Schedule & Capacity Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <i class="bi bi-calendar-week"></i>
+                    </div>
+                    <div>
+                        <h3>Schedule & Capacity</h3>
+                        <p>Set batch schedule and student capacity</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.start_date.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-calendar-event"></i> Start Date
+                        </label>
+                        {{ form.start_date }}
+                        {% if form.start_date.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.start_date.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.end_date.id_for_label }}" class="form-label">
+                            <i class="bi bi-calendar-check"></i> End Date
+                        </label>
+                        {{ form.end_date }}
+                        {% if form.end_date.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.end_date.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>Optional: Leave blank for ongoing batches
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.max_students.id_for_label }}" class="form-label required-field">
+                            <i class="bi bi-people"></i> Maximum Students
+                        </label>
+                        {{ form.max_students }}
+                        {% if form.max_students.errors %}
+                        <div class="text-danger small mt-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>{{ form.max_students.errors }}
+                        </div>
+                        {% endif %}
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>Maximum number of students allowed in this batch
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Details Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <i class="bi bi-card-text"></i>
+                    </div>
+                    <div>
+                        <h3>Additional Details</h3>
+                        <p>Additional batch information and settings</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">
+                        <i class="bi bi-text-paragraph"></i> Description
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <div class="text-danger small mt-2">
+                        <i class="bi bi-exclamation-circle me-1"></i>{{ form.description.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle me-1"></i>Optional: Detailed information about the batch, schedule, requirements, etc.
+                    </small>
+                </div>
+                
+                <div class="form-check form-switch mt-3">
+                    {{ form.is_active }}
+                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                        <i class="bi bi-toggle-on me-2"></i> Active Batch
+                    </label>
+                    <small class="text-muted d-block mt-1">
+                        <i class="bi bi-info-circle me-1"></i>Active batches are visible for student enrollment
+                    </small>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="form-help">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Batch code must be unique. Dates and capacity cannot be changed after students enroll.</span>
+                </div>
+                <div class="d-flex gap-3">
+                    <button type="button" class="btn btn-secondary" onclick="window.close()">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Batch
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Course selection functionality
+    function selectCourseType(courseType) {
+        const basicOption = document.getElementById('basicCourseOption');
+        const advanceOption = document.getElementById('advanceCourseOption');
+        const basicField = document.getElementById('basicCourseField');
+        const advanceField = document.getElementById('advanceCourseField');
+        
+        // Reset all
+        basicOption.classList.remove('active');
+        advanceOption.classList.remove('active');
+        
+        // Show/hide fields based on selection
+        if (courseType === 'basic') {
+            basicOption.classList.add('active');
+            basicField.style.display = 'block';
+            advanceField.style.display = 'none';
+            
+            // Clear advance course field
+            const advanceCourseSelect = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+            if (advanceCourseSelect) advanceCourseSelect.value = '';
+        } else if (courseType === 'advance') {
+            advanceOption.classList.add('active');
+            advanceField.style.display = 'block';
+            basicField.style.display = 'none';
+            
+            // Clear basic course field
+            const basicCourseSelect = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+            if (basicCourseSelect) basicCourseSelect.value = '';
+        }
+    }
+    
+    // Initialize based on existing values
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the actual model field values
+        const basicCourseSelect = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+        const advanceCourseSelect = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+        
+        const basicCourseValue = basicCourseSelect ? basicCourseSelect.value : '';
+        const advanceCourseValue = advanceCourseSelect ? advanceCourseSelect.value : '';
+        
+        // Show appropriate field based on existing selection
+        if (basicCourseValue) {
+            selectCourseType('basic');
+        } else if (advanceCourseValue) {
+            selectCourseType('advance');
+        } else {
+            // Default: show basic course field
+            selectCourseType('basic');
+        }
+        
+        // Auto-format batch code to uppercase
+        const batchCodeInput = document.getElementById('{{ form.batch_code.id_for_label }}');
+        if (batchCodeInput) {
+            batchCodeInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+            
+            // Also format on load
+            batchCodeInput.value = batchCodeInput.value.toUpperCase();
+        }
+        
+        // Auto-calculate end date based on course duration if available
+        const startDateInput = document.getElementById('{{ form.start_date.id_for_label }}');
+        const endDateInput = document.getElementById('{{ form.end_date.id_for_label }}');
+        
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', function() {
+                if (!endDateInput.value) {
+                    // Auto-calculate end date (2 months from start date by default)
+                    if (this.value) {
+                        const startDate = new Date(this.value);
+                        const endDate = new Date(startDate);
+                        endDate.setMonth(endDate.getMonth() + 2); // Add 2 months
+                        
+                        // Format to YYYY-MM-DD
+                        const formattedDate = endDate.toISOString().split('T')[0];
+                        endDateInput.value = formattedDate;
+                    }
+                }
+            });
+        }
+        
+        // Auto-fill course fees if available (for reference)
+        const basicCourseSelectElem = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+        const advanceCourseSelectElem = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+        
+        if (basicCourseSelectElem) {
+            basicCourseSelectElem.addEventListener('change', function() {
+                if (this.value) {
+                    // You could fetch course details via AJAX here
+                    // For now, just log the selected course
+                    console.log('Basic course selected:', this.value);
+                }
+            });
+        }
+        
+        if (advanceCourseSelectElem) {
+            advanceCourseSelectElem.addEventListener('change', function() {
+                if (this.value) {
+                    // You could fetch course details via AJAX here
+                    // For now, just log the selected course
+                    console.log('Advance course selected:', this.value);
+                }
+            });
+        }
+    });
+    
+    // Enhanced form validation
+    document.getElementById('batchForm').addEventListener('submit', function(e) {
+        const basicCourseSelect = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+        const advanceCourseSelect = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+        const batchCodeInput = document.getElementById('{{ form.batch_code.id_for_label }}');
+        const startDateInput = document.getElementById('{{ form.start_date.id_for_label }}');
+        
+        let errors = [];
+        
+        // Check course selection
+        const basicCourseValue = basicCourseSelect ? basicCourseSelect.value : '';
+        const advanceCourseValue = advanceCourseSelect ? advanceCourseSelect.value : '';
+        
+        if (!basicCourseValue && !advanceCourseValue) {
+            errors.push('Please select at least one course for the batch.');
+        }
+        
+        if (basicCourseValue && advanceCourseValue) {
+            errors.push('Cannot select both Basic to Advance and Advance to Pro courses. Please choose only one.');
+        }
+        
+        // Check batch code
+        if (batchCodeInput && !batchCodeInput.value.trim()) {
+            errors.push('Batch code is required.');
+        }
+        
+        // Check start date
+        if (startDateInput && !startDateInput.value) {
+            errors.push('Start date is required.');
+        }
+        
+        // Prevent submission if there are errors
+        if (errors.length > 0) {
+            e.preventDefault();
+            
+            // Create error message
+            let errorMessage = 'Please correct the following errors:\n\n';
+            errors.forEach((error, index) => {
+                errorMessage += `${index + 1}. ${error}\n`;
+            });
+            
+            alert(errorMessage);
+            return false;
+        }
+        
+        // Additional validation: Check if end date is after start date
+        const endDateInput = document.getElementById('{{ form.end_date.id_for_label }}');
+        if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (endDate < startDate) {
+                e.preventDefault();
+                alert('End date cannot be before start date.');
+                return false;
+            }
+        }
+        
+        return true;
+    });
+    
+    // Helper function to show/hide course fields based on selection
+    function updateCourseFieldVisibility() {
+        const basicCourseSelect = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+        const advanceCourseSelect = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+        const basicOption = document.getElementById('basicCourseOption');
+        const advanceOption = document.getElementById('advanceCourseOption');
+        
+        if (basicCourseSelect && basicCourseSelect.value) {
+            selectCourseType('basic');
+        } else if (advanceCourseSelect && advanceCourseSelect.value) {
+            selectCourseType('advance');
+        } else {
+            // If no course selected, default to basic course field
+            selectCourseType('basic');
+        }
+    }
+    
+    // Also call this function when course select changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const basicCourseSelect = document.getElementById('{{ form.basic_to_advance_cource.id_for_label }}');
+        const advanceCourseSelect = document.getElementById('{{ form.advance_to_pro_cource.id_for_label }}');
+        
+        if (basicCourseSelect) {
+            basicCourseSelect.addEventListener('change', function() {
+                if (this.value) {
+                    selectCourseType('basic');
+                }
+            });
+        }
+        
+        if (advanceCourseSelect) {
+            advanceCourseSelect.addEventListener('change', function() {
+                if (this.value) {
+                    selectCourseType('advance');
+                }
+            });
+        }
+        
+        // Also update visibility on page load
+        updateCourseFieldVisibility();
+    });
+</script>
+
+
+</body>
+</html>

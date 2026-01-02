@@ -11,6 +11,7 @@ from datetime import date, datetime
 from django.contrib import messages
 # Create your views here.
 
+@login_required
 def software_welcome_page(request):
     return render(request,'software_welcome.html')
 
@@ -21,6 +22,7 @@ from django.utils import timezone
 from datetime import timedelta
 from AdminApp.models import CRMFollowup, Enquiry, Branch
 
+@login_required
 def crm_software_dashboard(request):
     # Get current date and time
     now = timezone.now()
@@ -418,6 +420,7 @@ def followup_detail(request, pk):
     return render(request, 'crm_follow_up_details.html', context)
 
 
+@login_required
 def update_followup(request, id): 
     followup = get_object_or_404(CRMFollowup, id=id)
     
@@ -448,6 +451,7 @@ def update_followup(request, id):
 
 
 
+@login_required
 def create_followup(request): 
     
     if request.method == 'POST':
@@ -476,6 +480,7 @@ def create_followup(request):
     return render(request, 'crm_create_follow_up.html', {'form': form})
 
 
+@login_required
 def get_detailed_changes(old_record, new_record):
     """Get detailed field changes between records with better formatting"""
     changes = {}
@@ -560,6 +565,7 @@ def get_detailed_changes(old_record, new_record):
     
     return changes
 
+@login_required
 def truncate_text(text, max_length):
     """Truncate text for display"""
     if len(text) <= max_length:
@@ -700,6 +706,7 @@ def export_enquiries(request):
     
     return response
 
+@login_required
 def delete_follow_up(request, id):
     # Retrieve the follow-up record by ID or 404 if not found
     rec = get_object_or_404(CRMFollowup, id=id)

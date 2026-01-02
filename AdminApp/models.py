@@ -646,3 +646,493 @@ class CRMFollowup(models.Model):
         
     def __str__(self):
         return f"{self.name} - {self.mobile_number}"
+
+ 
+
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+from decimal import Decimal
+from django.core.exceptions import ValidationError
+# models.py - Add these methods to your existing Batch model
+class Batch(models.Model):
+    """Batch/Class for a specific course"""
+    BATCH_STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    batch_code = models.CharField(max_length=20, unique=True)
+    batch_title = models.CharField(max_length=100)
+    batch_status = models.CharField(max_length=20, choices=BATCH_STATUS_CHOICES, default='upcoming')
+    
+    # Course selection
+    basic_to_advance_cource = models.ForeignKey(
+        'Basic_to_Advance_Cource', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True
+    )
+    advance_to_pro_cource = models.ForeignKey(
+        'Advance_to_Pro_Cource', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True
+    )
+    
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    
+    # Capacity
+    max_students = models.PositiveIntegerField(default=30)
+    description = models.TextField(blank=True, help_text="Batch description and details")
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name_plural = "Batches"
+        ordering = ['-start_date']
+    
+    def __str__(self):
+        return f"{self.batch_code} - {self.batch_title}"
+    
+    def clean(self):
+        """Validate batch data"""
+        # Ensure at least one course is selected
+        if not self.basic_to_advance_cource and not self.advance_to_pro_cource:
+            raise ValidationError("Please select at least one course.")
+        
+        # Ensure not both courses are selected
+        if self.basic_to_advance_cource and self.advance_to_pro_cource:
+            raise ValidationError("Cannot select both courses.")
+        
+        # Validate dates
+        if self.end_date and self.start_date > self.end_date:
+            raise ValidationError("Batch start date cannot be after end date.")
+        
+        # Validate max students
+        if self.max_students <= 0:
+            raise ValidationError("Maximum students must be greater than 0.")
+        
+        # Auto-update batch status based on dates
+        self.update_batch_status()
+    
+    def save(self, *args, **kwargs):
+        # Auto-update batch status
+        self.update_batch_status()
+        super().save(*args, **kwargs)
+    
+    def update_batch_status(self):
+        """Update batch status based on current date"""
+        from django.utils import timezone
+        
+        today = timezone.now().date()
+        
+        if self.batch_status == 'cancelled':
+            return  # Don't change cancelled batches
+        
+        if self.start_date > today:
+            self.batch_status = 'upcoming'
+        elif self.end_date and self.end_date < today:
+            self.batch_status = 'completed'
+        elif self.start_date <= today:
+            self.batch_status = 'ongoing'
+    
+    @property
+    def course(self):
+        """Get the selected course"""
+        return self.basic_to_advance_cource or self.advance_to_pro_cource
+    
+    @property
+    def course_type(self):
+        """Get course type"""
+        if self.basic_to_advance_cource:
+            return "Basic to Advance"
+        elif self.advance_to_pro_cource:
+            return "Advance to Pro"
+        return "Not Selected"
+    
+    @property
+    def course_fees(self):
+        """Get course fees"""
+        if self.course and hasattr(self.course, 'original_price'):
+            try:
+                price_str = str(self.course.original_price).replace(',', '').replace('₹', '').strip()
+                return Decimal(price_str) if price_str else Decimal('0.00')
+            except:
+                return Decimal('0.00')
+        return Decimal('0.00')
+    
+    @property
+    def current_students(self):
+        """Number of currently enrolled students"""
+        return self.enrollments.filter(status='active').count()
+    
+    @property
+    def total_students(self):
+        """Total students ever enrolled"""
+        return self.enrollments.count()
+    
+    @property
+    def available_seats(self):
+        """Available seats in batch"""
+        return max(self.max_students - self.current_students, 0)
+    
+    @property
+    def occupancy_percentage(self):
+        """Percentage of seats occupied"""
+        if self.max_students == 0:
+            return 0
+        return (self.current_students / self.max_students) * 100
+    
+    @property
+    def duration_days(self):
+        """Batch duration in days"""
+        if self.start_date and self.end_date:
+            return (self.end_date - self.start_date).days
+        return 0
+    
+    @property
+    def days_remaining(self):
+        """Days remaining for batch completion"""
+        from django.utils import timezone
+        
+        if not self.end_date or self.end_date < timezone.now().date():
+            return 0
+        
+        return (self.end_date - timezone.now().date()).days
+    
+    @property
+    def is_full(self):
+        """Check if batch is full"""
+        return self.current_students >= self.max_students
+    
+    @property
+    def can_enroll(self):
+        """Check if new students can enroll"""
+        return (
+            self.is_active and 
+            not self.is_full and 
+            self.batch_status in ['upcoming', 'ongoing']
+        )
+    
+    
+class Enrollment(models.Model):
+    """Main enrollment record - One student can enroll in multiple batches"""
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+        ('discontinued', 'Discontinued'),
+        ('on_hold', 'On Hold'),
+    ]
+    
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Payment Pending'),
+        ('partial', 'Partial Payment'),
+        ('completed', 'Payment Completed'),
+        ('overdue', 'Payment Overdue'),
+    ]
+    
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='enrollments')
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='enrollments')
+    
+    enrollment_date = models.DateField(default=timezone.now)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    
+    # Course info
+    course_title = models.CharField(max_length=255, blank=True, editable=False)
+    
+    # Fees
+    total_fees = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    net_fees = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
+    
+    # Dates
+    class_start_date = models.DateField(null=True, blank=True)
+    class_end_date = models.DateField(null=True, blank=True)
+    
+    # Payment schedule (simple text field for reference)
+    payment_schedule = models.TextField(blank=True, help_text="e.g., 5000 on 10th Dec, 5000 on 10th Jan")
+    
+    # System fields
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
+    
+    class Meta:
+        unique_together = ['student', 'batch']
+        ordering = ['-enrollment_date']
+    
+    def clean(self):
+        """Validate enrollment data"""
+        if self.discount > self.total_fees:
+            raise ValidationError("Discount cannot exceed total fees.")
+    
+    def save(self, *args, **kwargs):
+        # Auto-set fees from batch if not provided
+        if not self.total_fees and self.batch:
+            self.total_fees = self.batch.course_fees
+        
+        # Auto-set course title from batch
+        if self.batch:
+            if self.batch.basic_to_advance_cource:
+                self.course_title = self.batch.basic_to_advance_cource.title
+            elif self.batch.advance_to_pro_cource:
+                self.course_title = self.batch.advance_to_pro_cource.title
+        
+        # Auto-set dates from batch if not provided
+        if not self.class_start_date and self.batch:
+            self.class_start_date = self.batch.start_date
+        if not self.class_end_date and self.batch and self.batch.end_date:
+            self.class_end_date = self.batch.end_date
+        
+        # Calculate net fees
+        self.net_fees = self.total_fees - self.discount
+        
+        # Update payment status based on paid amount
+        self.update_payment_status()
+        
+        super().save(*args, **kwargs)
+    
+    def update_payment_status(self):
+        """Update payment status based on paid amount"""
+        if not self.pk:
+            return  # Don't update for new objects
+        
+        if self.paid_amount >= self.net_fees:
+            self.payment_status = 'completed'
+        elif self.paid_amount > 0:
+            self.payment_status = 'partial'
+        else:
+            self.payment_status = 'pending'
+            
+        # Check for overdue payments
+        overdue_payments = self.payments.filter(
+            due_date__lt=timezone.now().date(),
+            is_overdue=True
+        ).exists()
+        
+        if overdue_payments and self.payment_status != 'completed':
+            self.payment_status = 'overdue'
+    
+    def __str__(self):
+        return f"{self.student.name} - {self.batch.batch_title}"
+    
+    @property
+    def paid_amount(self):
+        """Total paid amount"""
+        if hasattr(self, '_paid_amount'):
+            return self._paid_amount
+            
+        total = self.payments.aggregate(total=models.Sum('amount'))['total']
+        self._paid_amount = total or Decimal('0.00')
+        return self._paid_amount
+    
+    @property
+    def balance(self):
+        """Remaining balance"""
+        return max(self.net_fees - self.paid_amount, Decimal('0.00'))
+    
+    @property
+    def is_fully_paid(self):
+        """Check if all fees are paid"""
+        return self.paid_amount >= self.net_fees
+    
+    @property
+    def payment_progress(self):
+        """Payment progress percentage"""
+        if self.net_fees <= 0:
+            return 100
+        progress = (self.paid_amount / self.net_fees) * 100
+        return min(progress, 100)
+    
+    @property
+    def total_payments(self):
+        """Total number of payments"""
+        return self.payments.count()
+    
+    @property
+    def last_payment(self):
+        """Get last payment"""
+        return self.payments.order_by('-payment_date').first()
+    
+    @property
+    def first_payment(self):
+        """Get first payment"""
+        return self.payments.order_by('payment_date').first()
+    
+    @property
+    def payment_dates(self):
+        """Get all payment dates"""
+        return list(self.payments.values_list('payment_date', flat=True))
+    
+    @property
+    def can_issue_certificate(self):
+        """Check if certificate can be issued"""
+        return self.status == 'completed' and self.is_fully_paid
+    
+    @property
+    def enrollment_id(self):
+        """Generate enrollment ID"""
+        if self.pk:
+            return f"ENR-{str(self.pk).zfill(6)}"
+        return "ENR-NEW"
+    
+class Payment(models.Model):
+    """Single model for all payments - Flexible system"""
+    PAYMENT_TYPE_CHOICES = [
+        ('admission', 'Admission Fee'),
+        ('installment', 'Installment'),
+        ('full', 'Full Payment'),
+        ('partial', 'Partial Payment'),
+        ('other', 'Other'),
+    ]
+    
+    PAYMENT_MODE_CHOICES = [
+        ('cash', 'Cash'),
+        ('online', 'Online'),
+        ('cheque', 'Cheque'),
+        ('upi', 'UPI'),
+        ('card', 'Card'),
+    ]
+    
+    # Payment ID for reference
+    payment_id = models.CharField(max_length=20, unique=True, editable=False)
+    
+    # Link to enrollment
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='payments')
+    
+    # Payment details
+    payment_type = models.CharField(max_length=20, choices=PAYMENT_TYPE_CHOICES, default='installment')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField(default=timezone.now)
+    payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODE_CHOICES)
+    
+    # Installment info (optional, for tracking)
+    installment_number = models.PositiveIntegerField(null=True, blank=True, help_text="e.g., 1 for first installment")
+    due_date = models.DateField(null=True, blank=True, help_text="Due date for this payment")
+    
+    # Payment reference
+    reference_number = models.CharField(max_length=100, blank=True)
+    
+    # Who received it
+    received_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='received_payments'
+    )
+    
+    remarks = models.TextField(blank=True)
+    
+    # System fields
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    
+    class Meta:
+        ordering = ['-payment_date']
+    
+    def clean(self):
+        """Validate payment data"""
+        if self.amount <= 0:
+            raise ValidationError("Payment amount must be greater than 0.")
+        
+        if self.payment_date > timezone.now().date():
+            raise ValidationError("Payment date cannot be in the future.")
+        
+        # Validate installment number if provided
+        if self.installment_number is not None and self.installment_number <= 0:
+            raise ValidationError("Installment number must be positive.")
+    
+    def save(self, *args, **kwargs):
+        # Generate payment ID if new
+        if not self.payment_id:
+            prefix = "PAY"
+            year_month = timezone.now().strftime("%Y%m")
+            count = Payment.objects.filter(
+                payment_id__startswith=f"{prefix}-{year_month}-"
+            ).count()
+            self.payment_id = f"{prefix}-{year_month}-{count+1:04d}"
+        
+        super().save(*args, **kwargs)
+        
+        # Update enrollment payment status after saving
+        if self.enrollment:
+            self.enrollment.update_payment_status()
+            self.enrollment.save()
+    
+    def __str__(self):
+        type_display = self.get_payment_type_display()
+        return f"{self.payment_id} - ₹{self.amount} - {type_display}"
+    
+    @property
+    def is_overdue(self):
+        """Check if payment is overdue"""
+        if self.due_date:
+            if self.payment_date:
+                return self.payment_date > self.due_date
+            else:
+                return self.due_date < timezone.now().date()
+        return False
+    
+    @property
+    def days_overdue(self):
+        """Days overdue"""
+        if not self.is_overdue:
+            return 0
+        if self.payment_date:
+            overdue_date = max(self.due_date, self.payment_date)
+        else:
+            overdue_date = self.due_date
+        return (timezone.now().date() - overdue_date).days
+    
+    @property
+    def is_installment(self):
+        """Check if this is an installment payment"""
+        return self.payment_type == 'installment'
+    
+    @property
+    def is_admission(self):
+        """Check if this is an admission payment"""
+        return self.payment_type == 'admission'
+    
+    @property
+    def payment_month(self):
+        """Get payment month for reporting"""
+        return self.payment_date.strftime('%B %Y')
+    
+
+
+class StudentCertificate(models.Model):
+    """Certificate issued upon course completion"""
+    enrollment = models.OneToOneField(
+        Enrollment, 
+        on_delete=models.CASCADE, 
+        related_name='certificate'
+    )
+    
+    certificate_number = models.CharField(max_length=50, unique=True)
+    issue_date = models.DateField(default=timezone.now)
+    file = models.FileField(upload_to='certificates/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"Certificate {self.certificate_number}"
+    
+    def clean(self):
+        """Validate certificate data"""
+        if self.enrollment.status != 'completed':
+            raise ValidationError("Certificate can only be issued for completed enrollments.")
+        
+        if not self.enrollment.is_fully_paid:
+            raise ValidationError("Certificate can only be issued when all fees are paid.")
+    
+    def save(self, *args, **kwargs):
+        if not self.certificate_number:
+            import random
+            self.certificate_number = f"CERT-{self.enrollment.id}-{random.randint(1000, 9999)}"
+        super().save(*args, **kwargs)
