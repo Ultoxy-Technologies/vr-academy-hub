@@ -14061,34 +14061,57 @@
 <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-<li class="nav-item">
-    <a class="nav-link" href="{% url "crm_software_dashboard" %}">
-        <i class="bi bi-speedometer2"></i>
-        <span>Dashboard</span>
-    </a>
-</li> 
+        <!-- Existing menu items -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "crm_software_dashboard" %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li> 
 
-<li class="nav-item">
-    <a class="nav-link" href="{% url "crm_follow_up_list" %}">
-        <i class="bi bi-telephone-outbound"></i>
-        <span>Follow-ups</span>
-    </a>
-</li> 
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "crm_follow_up_list" %}">
+                <i class="bi bi-telephone-outbound"></i>
+                <span>Follow-ups</span>
+            </a>
+        </li> 
 
-<li class="nav-item">
-    <a class="nav-link" href="{% url "crm_enquiry_list" %}">
-        <i class="bi bi-chat-left-text"></i>
-        <span>Enquiries</span>
-    </a>
-</li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "crm_enquiry_list" %}">
+                <i class="bi bi-chat-left-text"></i>
+                <span>Enquiries</span>
+            </a>
+        </li>
+        
+        <!-- Settings Dropdown -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#exam-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-layout-text-window-reverse"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="exam-nav" class="nav-content collapse " data-bs-parent="#exam-nav">
+                <li>
+                    <a href="{% url 'branch_list' %}" style="text-decoration:none;">
+                        <i class="bi bi-buildings" style="font-size:15px;"></i><span>Branch List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'student_interest_list' %}" style="text-decoration:none;">
+                        <i class="bi bi-heart" style="font-size:15px;"></i><span>Student Interest List</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+      
 <li class="nav-item ">
     <a class="nav-link bg-info" href="{% url "enrollment_dashboard" %}">
-        <i class="bi bi-book"></i>
+        <i class="bi bi-people"></i>
         <span>Enrollment Software</span>
     </a>
-</li> 
-
+</li>  
     </ul>
+
+
+
 </aside><!--  End Sidebar-->
 
 

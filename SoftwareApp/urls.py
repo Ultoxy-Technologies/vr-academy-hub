@@ -47,6 +47,15 @@ urlpatterns = [
     # enroll_student_from_follow_up
     path('enroll_student_from_follow_up/<int:id>/', enroll_student_from_follow_up, name='enroll_student_from_follow_up'),
 
+    path('branches/', branch_list, name='branch_list'),
+    path('branches/create/', create_branch, name='create_branch'),
+    path('branches/<int:pk>/update/', update_branch, name='update_branch'),
+    path('branches/<int:pk>/delete/', delete_branch, name='delete_branch'),
 
+    # Student Interest CRUD URLs
+    path('student-interests/', student_interest_list, name='student_interest_list'),
+    path('student-interests/create/', create_student_interest, name='create_student_interest'),
+    path('student-interests/<int:pk>/update/', update_student_interest, name='update_student_interest'),
+    path('student-interests/<int:pk>/delete/', delete_student_interest, name='delete_student_interest'),
 
 ]

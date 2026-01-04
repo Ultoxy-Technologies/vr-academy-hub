@@ -9,6 +9,7 @@ import csv
 from django.http import HttpResponse
 from datetime import date, datetime
 from django.contrib import messages
+from .forms import BranchForm
 # Create your views here.
 
 @login_required
@@ -723,8 +724,8 @@ def delete_follow_up(request, id):
  
 
 
-from AdminApp.models import CRMFollowup, Enrollment
-from .forms import EnrollmentForm
+from AdminApp.models import CRMFollowup, Enrollment, CRM_Student_Interested_for_options
+from .forms import EnrollmentForm, StudentInterestForm
 @login_required
 def enroll_student_from_follow_up(request,id):
     """Create new enrollment (opens in modal window)"""
@@ -777,3 +778,224 @@ def enroll_student_from_follow_up(request,id):
         form = EnrollmentForm(request=request, initial={'student_mobile': mobile_number, 'student_name':name,'branch':branch})
     
     return render(request, 'enrollment_create_from_follow_up.html', {'form': form})
+
+
+
+
+
+
+
+
+# views.py (add to existing views)
+@login_required
+def branch_list(request):
+    """List all branches"""
+    branches = Branch.objects.all().order_by('branch_name')
+    
+    # Simple pagination (optional)
+    paginator = Paginator(branches, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'branches': page_obj,
+    }
+    
+    return render(request, 'branch_list.html', context)
+
+@login_required
+def create_branch(request):
+    """Create new branch (opens in modal window)"""
+    if request.method == 'POST':
+        form = BranchForm(request.POST)
+        
+        if form.is_valid():
+            try:
+                branch = form.save(commit=True)
+                messages.success(request, f'Branch "{branch.branch_name}" created successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error creating branch: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = BranchForm()
+    
+    return render(request, 'branch_create.html', {'form': form})
+
+@login_required
+def update_branch(request, pk):
+    """Update existing branch (opens in modal window)"""
+    branch = get_object_or_404(Branch, pk=pk)
+    
+    if request.method == 'POST':
+        form = BranchForm(request.POST, instance=branch)
+        
+        if form.is_valid():
+            try:
+                branch = form.save(commit=True)
+                messages.success(request, f'Branch updated to "{branch.branch_name}" successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error updating branch: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = BranchForm(instance=branch)
+    
+    return render(request, 'branch_update.html', {'form': form, 'branch': branch})
+
+@login_required
+def delete_branch(request, pk):
+    """Delete branch with confirmation"""
+    branch = get_object_or_404(Branch, pk=pk)
+     
+    branch_name = branch.branch_name
+    branch.delete()
+    messages.success(request, f'Branch "{branch_name}" deleted successfully')
+    return redirect('branch_list')
+     
+
+
+
+# views.py (add to existing views)
+@login_required
+def student_interest_list(request):
+    """List all student interest options"""
+    interests = CRM_Student_Interested_for_options.objects.all().order_by('interest_option')
+    
+    # Simple pagination
+    paginator = Paginator(interests, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'interests': page_obj,
+    }
+    
+    return render(request, 'student_interest_list.html', context)
+
+@login_required
+def create_student_interest(request):
+    """Create new student interest option (opens in modal window)"""
+    if request.method == 'POST':
+        form = StudentInterestForm(request.POST)
+        
+        if form.is_valid():
+            try:
+                interest = form.save(commit=True)
+                messages.success(request, f'Interest option "{interest.interest_option}" created successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error creating interest option: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = StudentInterestForm()
+    
+    return render(request, 'student_interest_create.html', {'form': form})
+
+@login_required
+def update_student_interest(request, pk):
+    """Update existing student interest option (opens in modal window)"""
+    interest = get_object_or_404(CRM_Student_Interested_for_options, pk=pk)
+    
+    if request.method == 'POST':
+        form = StudentInterestForm(request.POST, instance=interest)
+        
+        if form.is_valid():
+            try:
+                interest = form.save(commit=True)
+                messages.success(request, f'Interest option updated to "{interest.interest_option}" successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error updating interest option: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = StudentInterestForm(instance=interest)
+    
+    return render(request, 'student_interest_update.html', {'form': form, 'interest': interest})
+
+@login_required
+def delete_student_interest(request, pk):
+    """Delete student interest option with confirmation"""
+    interest = get_object_or_404(CRM_Student_Interested_for_options, pk=pk)
+    
+    interest_option = interest.interest_option
+    interest.delete()
+    messages.success(request, f'Interest option "{interest_option}" deleted successfully')
+    return redirect('student_interest_list')
+     

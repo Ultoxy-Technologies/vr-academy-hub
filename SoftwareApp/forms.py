@@ -717,3 +717,106 @@ class PaymentForm(forms.ModelForm):
                 self.enrollment.save()
         
         return payment
+    
+
+
+
+from AdminApp.models import Branch, CRM_Student_Interested_for_options
+
+    # forms.py (add to existing forms)
+
+
+class BranchForm(forms.ModelForm):
+    """Form for creating and updating Branch records"""
+    
+    class Meta:
+        model = Branch
+        fields = ['branch_name']
+        widgets = {
+            'branch_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Main Branch, Mumbai Branch, etc.'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Add CSS classes to all fields
+        for field_name, field in self.fields.items():
+            if not hasattr(field.widget, 'attrs'):
+                field.widget.attrs = {}
+            field.widget.attrs['class'] = 'form-control'
+    
+    def clean_branch_name(self):
+        """Validate branch name"""
+        branch_name = self.cleaned_data.get('branch_name')
+        if not branch_name:
+            raise ValidationError("Branch name is required")
+        
+        # Check for duplicates (case-insensitive)
+        branch_name_clean = branch_name.strip()
+        
+        # If updating, exclude current instance
+        if self.instance and self.instance.pk:
+            existing = Branch.objects.filter(
+                branch_name__iexact=branch_name_clean
+            ).exclude(pk=self.instance.pk)
+        else:
+            existing = Branch.objects.filter(
+                branch_name__iexact=branch_name_clean
+            )
+        
+        if existing.exists():
+            raise ValidationError(f"A branch with name '{branch_name}' already exists")
+        
+        return branch_name_clean
+    
+
+# forms.py (add to existing forms)
+
+class StudentInterestForm(forms.ModelForm):
+    """Form for creating and updating student interest options"""
+    
+    class Meta:
+        model = CRM_Student_Interested_for_options
+        fields = ['interest_option']
+        widgets = {
+            'interest_option': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Python Programming, Web Development, Data Science, etc.'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Add CSS classes to all fields
+        for field_name, field in self.fields.items():
+            if not hasattr(field.widget, 'attrs'):
+                field.widget.attrs = {}
+            field.widget.attrs['class'] = 'form-control'
+    
+    def clean_interest_option(self):
+        """Validate interest option"""
+        interest_option = self.cleaned_data.get('interest_option')
+        if not interest_option:
+            raise ValidationError("Interest option is required")
+        
+        # Check for duplicates (case-insensitive)
+        interest_option_clean = interest_option.strip()
+        
+        # If updating, exclude current instance
+        if self.instance and self.instance.pk:
+            existing = CRM_Student_Interested_for_options.objects.filter(
+                interest_option__iexact=interest_option_clean
+            ).exclude(pk=self.instance.pk)
+        else:
+            existing = CRM_Student_Interested_for_options.objects.filter(
+                interest_option__iexact=interest_option_clean
+            )
+        
+        if existing.exists():
+            raise ValidationError(f"Interest option '{interest_option}' already exists")
+        
+        return interest_option_clean
