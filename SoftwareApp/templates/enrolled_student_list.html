@@ -578,7 +578,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="" 
+                                    <a href="{% url 'enrollment_detail' enrollment.pk %}" 
                                     class="btn btn-sm btn-outline-primary" 
                                     title="View Enrollment">
                                         <i class="bi bi-eye"></i>
@@ -597,7 +597,7 @@
                                         <i class="bi bi-cash"></i>
                                         <span class="d-none d-md-inline">Payment</span>
                                     </a>
-                                    <a href="" 
+                                    <a href="{% url 'delete_enrollment' enrollment.pk %}" 
                                     class="btn btn-sm btn-outline-danger btn-delete" 
                                     title="Delete Enrollment"
                                     onclick="confirmDelete(this); return false;">

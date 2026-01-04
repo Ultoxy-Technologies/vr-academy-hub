@@ -399,7 +399,6 @@ class EnrollmentForm(forms.ModelForm):
                     role='is_student',  # Default role for students
                     is_active=True,
                     email=f"{mobile_number}@example.com",  # Temporary email
-                    username=mobile_number  # Use mobile as username
                 )
             
             # Set student and batch on enrollment
@@ -531,3 +530,208 @@ class BatchForm(forms.ModelForm):
             raise ValidationError("Cannot select both Basic to Advance and Advance to Pro courses. Please choose only one.")
         
         return cleaned_data
+    
+ 
+
+class PaymentForm(forms.ModelForm):
+    """Form for recording payments"""
+    
+    # Additional field for manual amount entry
+    custom_amount = forms.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        required=False,
+        label="Custom Amount",
+        help_text="Leave empty to use installment amount"
+    )
+    
+    # Field for selecting installment
+    installment_number = forms.IntegerField(
+        required=False,
+        label="Installment Number",
+        help_text="e.g., 1 for first installment"
+    )
+    
+    class Meta:
+        model = Payment
+        fields = [
+            'payment_type', 'amount', 'payment_date', 'payment_mode',
+            'installment_number', 'due_date', 'reference_number', 'remarks'
+        ]
+        widgets = {
+            'payment_type': forms.Select(attrs={'class': 'form-select'}),
+            'amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 5000.00',
+                'step': '0.01'
+            }),
+            'payment_date': forms.DateInput(attrs={
+                'class': 'form-control datetime-picker',
+                'type': 'date'
+            }),
+            'payment_mode': forms.Select(attrs={'class': 'form-select'}),
+            'due_date': forms.DateInput(attrs={
+                'class': 'form-control datetime-picker',
+                'type': 'date'
+            }),
+            'reference_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., TXN123456'
+            }),
+            'remarks': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Additional notes about this payment'
+            }),
+        }
+        help_texts = {
+            'payment_type': 'Type of payment (installment, admission, etc.)',
+            'amount': 'Amount received',
+            'payment_date': 'Date when payment was received',
+            'payment_mode': 'Mode of payment',
+            'due_date': 'Due date for installment (if applicable)',
+            'reference_number': 'Transaction/Cheque/Reference number',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        self.enrollment = kwargs.pop('enrollment', None)
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        
+        # Set payment date to today by default
+        if not self.instance.pk:
+            self.fields['payment_date'].initial = timezone.now().date()
+        
+        # If installment payment, suggest next installment number
+        if self.enrollment and not self.instance.pk:
+            last_installment = self.enrollment.payments.filter(
+                installment_number__isnull=False
+            ).order_by('-installment_number').first()
+            
+            if last_installment and last_installment.installment_number:
+                next_installment = last_installment.installment_number + 1
+                self.fields['installment_number'].initial = next_installment
+        
+        # Add CSS classes to all fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['payment_type', 'payment_mode']:
+                if not hasattr(field.widget, 'attrs'):
+                    field.widget.attrs = {}
+                field.widget.attrs['class'] = 'form-control'
+    
+    def clean_custom_amount(self):
+        """Validate custom amount"""
+        custom_amount = self.cleaned_data.get('custom_amount')
+        if custom_amount is not None and custom_amount <= 0:
+            raise ValidationError("Custom amount must be greater than 0")
+        return custom_amount
+    
+    def clean_amount(self):
+        """Validate payment amount"""
+        amount = self.cleaned_data.get('amount')
+        custom_amount = self.cleaned_data.get('custom_amount')
+        
+        # Use custom amount if provided
+        if custom_amount:
+            amount = custom_amount
+        
+        if not amount:
+            raise ValidationError("Payment amount is required")
+        
+        if amount <= 0:
+            raise ValidationError("Payment amount must be greater than 0")
+        
+        # Check if payment exceeds remaining balance
+        if self.enrollment:
+            remaining_balance = self.enrollment.balance
+            if amount > remaining_balance:
+                raise ValidationError(
+                    f"Payment amount (₹{amount}) exceeds remaining balance (₹{remaining_balance})"
+                )
+        
+        return amount
+    
+    def clean_payment_date(self):
+        """Validate payment date"""
+        payment_date = self.cleaned_data.get('payment_date')
+        if payment_date and payment_date > timezone.now().date():
+            raise ValidationError("Payment date cannot be in the future")
+        return payment_date
+    
+    def clean_due_date(self):
+        """Validate due date"""
+        due_date = self.cleaned_data.get('due_date')
+        payment_date = self.cleaned_data.get('payment_date')
+        
+        if due_date and payment_date and due_date < payment_date:
+            raise ValidationError("Due date cannot be before payment date")
+        
+        return due_date
+    
+    def clean_installment_number(self):
+        """Validate installment number"""
+        installment_number = self.cleaned_data.get('installment_number')
+        payment_type = self.cleaned_data.get('payment_type')
+        
+        if payment_type == 'installment' and not installment_number:
+            raise ValidationError("Installment number is required for installment payments")
+        
+        if installment_number is not None and installment_number <= 0:
+            raise ValidationError("Installment number must be positive")
+        
+        # Check for duplicate installment number for this enrollment
+        if installment_number and self.enrollment:
+            existing_payment = self.enrollment.payments.filter(
+                installment_number=installment_number
+            )
+            
+            # If updating, exclude current instance
+            if self.instance and self.instance.pk:
+                existing_payment = existing_payment.exclude(pk=self.instance.pk)
+            
+            if existing_payment.exists():
+                raise ValidationError(
+                    f"Installment #{installment_number} already exists for this enrollment"
+                )
+        
+        return installment_number
+    
+    def clean(self):
+        """Main validation"""
+        cleaned_data = super().clean()
+        
+        # Validate payment mode for cheque payments
+        payment_mode = cleaned_data.get('payment_mode')
+        reference_number = cleaned_data.get('reference_number')
+        
+        if payment_mode == 'cheque' and not reference_number:
+            raise ValidationError("Cheque number is required for cheque payments")
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        """Save payment with enrollment link"""
+        payment = super().save(commit=False)
+        
+        # Set enrollment
+        if self.enrollment:
+            payment.enrollment = self.enrollment
+        
+        # Set received by user
+        if self.request and self.request.user:
+            payment.received_by = self.request.user
+        
+        # Set installment number if provided
+        installment_number = self.cleaned_data.get('installment_number')
+        if installment_number:
+            payment.installment_number = installment_number
+        
+        if commit:
+            payment.save()
+            
+            # Update enrollment payment status
+            if self.enrollment:
+                self.enrollment.update_payment_status()
+                self.enrollment.save()
+        
+        return payment

@@ -22,6 +22,7 @@ urlpatterns = [
     # Enrollment Management URLs
     path('enrollment-dashboard/', enrollment_dashboard, name='enrollment_dashboard'),
     path('enrollments/', enrolled_student_list, name='enrolled_student_list'),
+    path('enrollments/<int:pk>/', enrollment_detail, name='enrollment_detail'),
     path('enrollments/export/', export_enrollments, name='export_enrollments'),
     path('enrollments/template/', download_enrollment_template, name='download_enrollment_template'),
     path('enrollments/import/', import_enrollments, name='import_enrollments'),
@@ -29,10 +30,14 @@ urlpatterns = [
     path('enrollments/<int:pk>/update/', update_enrollment, name='update_enrollment'),
     path('enrollments/<int:pk>/delete/', delete_enrollment, name='delete_enrollment'),
 
+    path('enrollments/<int:enrollment_id>/payment/', record_payment, name='record_payment'),
         # Batch Management URLs
     path('batches/', batch_list, name='enrollment_batch_list'),
     path('batches/create/', create_batch, name='create_batch'),
     path('batches/<int:pk>/update/', update_batch, name='update_batch'),
     path('batches/<int:pk>/delete/', delete_batch, name='delete_batch'),
+    path('batches/<int:pk>/details/', batch_detail, name='enroallments_batch_detail'),
+
+
 
 ]

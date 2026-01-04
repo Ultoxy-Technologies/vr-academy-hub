@@ -1,0 +1,881 @@
+<!-- templates/batch_detail.html -->
+{% extends "enrollment_software_base.html" %}
+{% load static %}
+
+{% block title %}CRM - Batch Details{% endblock title %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #10b981, #059669);
+        --info-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        --dark-gradient: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+
+    /* Modern Card Design with Glassmorphism */
+    .detail-card {
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-header-glass {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header-glass::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-size: cover;
+        opacity: 0.2;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.5em 1.2em;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: badgePulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes badgePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .badge-active { background: var(--success-gradient); }
+    .badge-inactive { background: var(--dark-gradient); }
+    .badge-completed { background: var(--cyan-gradient); }
+    .badge-running { background: var(--info-gradient); }
+    .badge-upcoming { background: var(--warning-gradient); }
+
+    /* Progress Bar */
+    .progress-container {
+        width: 150px;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #2ecc71, #27ae60);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    /* Table Styling */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f3fa;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary { background: var(--primary-gradient); color: white; }
+    .btn-success { background: var(--success-gradient); color: white; }
+    .btn-info { background: var(--info-gradient); color: white; }
+    .btn-warning { background: var(--warning-gradient); color: white; }
+
+    /* Course Info Card */
+    .course-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 5px solid #667eea;
+    }
+
+    .course-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .course-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* Timeline for batch progress */
+    .timeline-container {
+        margin: 2rem 0;
+    }
+
+    .timeline-bar {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        position: relative;
+        margin: 1rem 0 2rem;
+    }
+
+    .timeline-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #2ecc71, #27ae60);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        top: -12px;
+        transform: translateX(-50%);
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .timeline-marker.start {
+        left: 0;
+    }
+
+    .timeline-marker.current {
+        left: 50%;
+    }
+
+    .timeline-marker.end {
+        left: 100%;
+    }
+
+    .marker-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #667eea;
+        margin: 0 auto 5px;
+    }
+
+    .marker-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 992px) {
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        
+        .btn-action-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .table-modern {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 0.8rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .timeline-marker {
+            font-size: 0.7rem;
+            min-width: 60px;
+        }
+    }
+
+    /* Amount Styling */
+    .amount-paid {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .amount-due {
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    /* Enrollment Status Badges */
+    .enrollment-status {
+        padding: 0.4em 0.8em;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-active { background: #d1fae5; color: #065f46; }
+    .status-completed { background: #dbeafe; color: #1e40af; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+    .status-on_hold { background: #fef3c7; color: #92400e; }
+
+    /* Loading Animation */
+    .loading-skeleton {
+        animation: shimmer 1.5s infinite linear;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    /* Batch Header */
+    .batch-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .batch-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .batch-info h2 {
+        margin: 0 0 0.5rem 0;
+        color: white;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+
+    .batch-info p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    /* Occupancy Indicator */
+    .occupancy-indicator {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .occupancy-bar {
+        flex: 1;
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .occupancy-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #2ecc71, #27ae60);
+        border-radius: 5px;
+    }
+
+    .occupancy-text {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 80px;
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Batch Details</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'enrollment_batch_list' %}">Batches</a></li>
+                        <li class="breadcrumb-item active text-truncate" style="max-width: 200px;">{{ batch.batch_code }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div>
+                <a href="#" onclick="window.history.back()" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card detail-card">
+        <!-- Header with Batch Info -->
+        <div class="card-header card-header-glass">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="batch-header">
+                    <div class="batch-icon">
+                        {{ batch.batch_code|slice:"0:1"|upper }}
+                    </div>
+                    <div class="batch-info">
+                        <h2>{{ batch.batch_code }} - {{ batch.batch_title }}</h2>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-calendar"></i> 
+                                <strong>{{ batch.start_date|date:"M d, Y" }}</strong> to 
+                                <strong>{{ batch.end_date|date:"M d, Y"|default:"Ongoing" }}</strong>
+                            </span>
+                            {% if batch.is_active %}
+                                <span class="status-badge badge-active">
+                                    <i class="bi bi-check-circle"></i>
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="status-badge badge-inactive">
+                                    <i class="bi bi-x-circle"></i>
+                                    Inactive
+                                </span>
+                            {% endif %}
+                            <span class="status-badge {% if batch.is_running %}badge-running{% else %}badge-upcoming{% endif %}">
+                                <i class="bi bi-clock"></i>
+                                {% if batch.is_running %}Running{% else %}Upcoming{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 btn-action-group">
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'update_batch' batch.id %}" 
+                        class="btn btn-action btn-warning"  
+                        onclick="openUpdateModal(this)">
+                        <i class="bi bi-pencil-square"></i> Edit Batch
+                    </a>
+                    <a href="{% url 'create_enrollment' %}" 
+                        class="btn btn-action btn-success" 
+                        onclick="openCreateModal(this); return false;">
+                        <i class="bi bi-person-plus"></i> Enroll Student
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Course Information -->
+            {% if course_details %}
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">{{ course_details.title }}</h4>
+                        <p class="text-muted mb-0">{{ batch.course_type }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <i class="bi bi-clock me-2"></i>
+                            <strong>Duration:</strong> {{ course_details.duration|default:"Not specified" }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="bi bi-star me-2"></i>
+                            <strong>Rating:</strong> {{ course_details.rating|default:"Not rated" }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <i class="bi bi-tag me-2"></i>
+                            <strong>Original Price:</strong> {{ course_details.original_price|default:"Free" }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="bi bi-percent me-2"></i>
+                            <strong>Offer Price:</strong> {{ course_details.offer_price|default:"Same as original" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="stat-number">{{ total_students }}</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <div class="stat-number">{{ active_students }}</div>
+                    <div class="stat-label">Active Students</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <div class="stat-number">{{ completed_students }}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="stat-number">₹{{ total_paid|floatformat:0 }}</div>
+                    <div class="stat-label">Total Collected</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stat-number">₹{{ total_due|floatformat:0 }}</div>
+                    <div class="stat-label">Pending Amount</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="stat-number">{{ duration_days }} days</div>
+                    <div class="stat-label">Batch Duration</div>
+                </div>
+            </div>
+
+            <!-- Batch Progress Timeline -->
+            <div class="timeline-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Batch Progress
+                    </h5>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">Occupancy: {{ occupancy_percentage|floatformat:1 }}%</span>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: {{ occupancy_percentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-bar">
+                    <div class="timeline-progress" style="width: {{ batch.progress_percentage|default:0 }}%"></div>
+                    
+                    <div class="timeline-marker start">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">Start</div>
+                        <div class="text-muted small">{{ batch.start_date|date:"M d" }}</div>
+                    </div>
+                    
+                    <div class="timeline-marker current">
+                        <div class="marker-dot" style="border-color: #2ecc71;"></div>
+                        <div class="marker-label">Today</div>
+                        <div class="text-muted small">{% now "M d" %}</div>
+                    </div>
+                    
+                    {% if batch.end_date %}
+                    <div class="timeline-marker end">
+                        <div class="marker-dot" style="border-color: #e74c3c;"></div>
+                        <div class="marker-label">End</div>
+                        <div class="text-muted small">{{ batch.end_date|date:"M d" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="occupancy-indicator">
+                    <div class="occupancy-text">
+                        Seats: {{ current_students }}/{{ batch.max_students|default:"∞" }}
+                    </div>
+                    <div class="occupancy-bar">
+                        <div class="occupancy-fill" style="width: {{ occupancy_percentage }}%"></div>
+                    </div>
+                    <div class="occupancy-text">
+                        {{ available_seats }} seats left
+                    </div>
+                </div>
+                
+                {% if days_remaining > 0 %}
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>{{ days_remaining }} days remaining</strong> until batch end date.
+                </div>
+                {% elif days_remaining == 0 %}
+                <div class="alert alert-success mt-3">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>Batch completes today!</strong>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Batch ended {{ days_remaining|stringformat:"+d"|slice:"1:" }} days ago</strong>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Enrolled Students Table -->
+            <div class="mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-gradient); 
+                                   display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h4 class="mb-0">Enrolled Students</h4>
+                        <span class="badge bg-primary rounded-pill">{{ enrollments.count }} students</span>
+                    </div>
+                    <a href="javascript:void(0);" 
+                       data-url="{% url 'create_enrollment' %}" 
+                       class="btn btn-action btn-success" 
+                       onclick="openCreateModal(this)">
+                        <i class="bi bi-person-plus"></i> Enroll New Student
+                    </a>
+                </div>
+
+                {% if enrollments %}
+                <div class="table-responsive">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Enrollment Date</th>
+                                <th>Status</th>
+                                <th>Payment Status</th>
+                                <th>Fees</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr>
+                                <td>
+                                    <strong>{{ enrollment.student.name }}</strong>
+                                    <br>
+                                    <a href="tel:{{ enrollment.student.mobile_number }}" class="text-decoration-none text-muted">
+                                        <i class="bi bi-telephone me-1"></i> {{ enrollment.student.mobile_number }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{ enrollment.enrollment_date|date:"M d, Y" }}
+                                    <br>
+                                    <small class="text-muted">{{ enrollment.days_since_enrollment }} days ago</small>
+                                </td>
+                                <td>
+                                    {% if enrollment.status == 'active' %}
+                                        <span class="enrollment-status status-active">Active</span>
+                                    {% elif enrollment.status == 'completed' %}
+                                        <span class="enrollment-status status-completed">Completed</span>
+                                    {% elif enrollment.status == 'cancelled' %}
+                                        <span class="enrollment-status status-cancelled">Cancelled</span>
+                                    {% elif enrollment.status == 'on_hold' %}
+                                        <span class="enrollment-status status-on_hold">On Hold</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ enrollment.status|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if enrollment.payment_status == 'completed' %}
+                                        <span class="badge bg-success">Paid</span>
+                                    {% elif enrollment.payment_status == 'partial' %}
+                                        <span class="badge bg-warning">Partial</span>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                        <span class="badge bg-danger">Pending</span>
+                                    {% elif enrollment.payment_status == 'overdue' %}
+                                        <span class="badge bg-dark">Overdue</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ enrollment.payment_status|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="amount-total">₹{{ enrollment.total_fees|floatformat:0 }}</span>
+                                        <small>
+                                            <span class="amount-paid">Paid: ₹{{ enrollment.paid_amount|floatformat:0 }}</span>
+                                            <br>
+                                            <span class="amount-due">Due: ₹{{ enrollment.balance|floatformat:0 }}</span>
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {{ enrollment.payment_progress|floatformat:0 }}%
+                                        <div class="progress-container">
+                                            <div class="progress-bar" style="width: {{ enrollment.payment_progress }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'enrollment_detail' enrollment.id %}" 
+                                        class="btn btn-sm btn-outline-primary" 
+                                        title="View Enrollment">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" 
+                                        class="btn btn-sm btn-outline-warning" 
+                                        data-url="{% url 'update_enrollment' enrollment.id %}" 
+                                        onclick="openUpdateModal(this)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="" 
+                                        class="btn btn-sm btn-outline-success" 
+                                        title="Record Payment">
+                                            <i class="bi bi-cash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-people display-1 text-muted"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No Students Enrolled</h4>
+                    <p class="text-muted">Start by enrolling students to this batch.</p>
+                    <a href="javascript:void(0);" 
+                       data-url="{% url 'create_enrollment' %}" 
+                       class="btn btn-primary btn-action" 
+                       onclick="openCreateModal(this)">
+                        <i class="bi bi-person-plus me-2"></i> Enroll First Student
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Modal Functions (same as other templates)
+    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+        const url = element.dataset.url;
+        
+        // Calculate center position
+        const width = customWidth;
+        const height = customHeight;
+        const left = Math.max(0, (window.screen.width - width) / 2);
+        const top = Math.max(0, (window.screen.height - height) / 2);
+        
+        // Window features
+        const features = [
+            `width=${width}`,
+            `height=${height}`,
+            `left=${left}`,
+            `top=${top}`,
+            'scrollbars=yes',
+            'resizable=yes',
+            'centerscreen=yes',
+            'location=no',
+            'menubar=no',
+            'toolbar=no',
+            'status=no',
+            'titlebar=no'
+        ].join(',');
+        
+        // Open centered window
+        const newWindow = window.open(url, "updateWindow", features);
+        
+        if (newWindow) {
+            newWindow.focus();
+            
+            // Check if window is closed to refresh parent
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+    
+    function openUpdateModal(element) {
+        const url = element.dataset.url;
+        const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+    
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+</script>
+
+{% endblock content %}

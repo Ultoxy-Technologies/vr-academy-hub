@@ -1,0 +1,858 @@
+<!-- templates/enrollment_detail.html -->
+{% extends "enrollment_software_base.html" %}
+{% load static %}
+
+{% block title %}CRM - Enrollment Details{% endblock title %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #10b981, #059669);
+        --info-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        --dark-gradient: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+
+    /* Modern Card Design with Glassmorphism */
+    .detail-card {
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-header-glass {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header-glass::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-size: cover;
+        opacity: 0.2;
+    }
+
+    /* Status Badges with Animation */
+    .status-badge {
+        padding: 0.5em 1.2em;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: badgePulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes badgePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .status-active { background: var(--success-gradient); color: white; }
+    .status-completed { background: var(--cyan-gradient); color: white; }
+    .status-cancelled { background: var(--danger-gradient); color: white; }
+    .status-on_hold { background: var(--warning-gradient); color: white; }
+    .status-pending { background: var(--dark-gradient); color: white; }
+
+    .payment-status-completed { background: var(--success-gradient); color: white; }
+    .payment-status-partial { background: var(--warning-gradient); color: white; }
+    .payment-status-pending { background: var(--danger-gradient); color: white; }
+    .payment-status-overdue { background: linear-gradient(135deg, #8b0000, #dc2626); color: white; }
+
+    /* Action Buttons */
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-call { background: var(--success-gradient); color: white; }
+    .btn-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); color: white; }
+    .btn-edit { background: var(--info-gradient); color: white; }
+    .btn-payment { background: var(--purple-gradient); color: white; }
+    .btn-certificate { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+    /* Modern Info Cards */
+    .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .info-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .info-card-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-card-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Progress Bars */
+    .progress-container {
+        width: 100%;
+        height: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-payment { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+    .progress-class { background: linear-gradient(90deg, #3498db, #2980b9); }
+
+    /* Amount Styling */
+    .amount-total { font-size: 1.8rem; font-weight: 700; color: #2c3e50; }
+    .amount-paid { color: #27ae60; font-weight: 600; }
+    .amount-due { color: #e74c3c; font-weight: 600; }
+    .amount-overdue { color: #c0392b; font-weight: 700; animation: blink 1s infinite; }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.5; }
+    }
+
+    /* Payment History Table */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f3fa;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+
+    /* Certificate Card */
+    .certificate-card {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-left: 5px solid #ff9800;
+    }
+
+    .certificate-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* Timeline for Payment History */
+    .timeline-container {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline-line {
+        position: absolute;
+        left: 30px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+        border-radius: 3px;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-left: 70px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 22px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        border: 4px solid white;
+        box-shadow: 0 0 0 3px var(--primary-gradient);
+        z-index: 2;
+    }
+
+    .timeline-content {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* Profile Header */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 992px) {
+        .info-cards-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .btn-action-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .info-cards-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .timeline-item {
+            padding-left: 50px;
+        }
+        
+        .timeline-line {
+            left: 20px;
+        }
+        
+        .timeline-dot {
+            left: 12px;
+        }
+    }
+
+    /* Quick Payment Form */
+    .quick-payment-form {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Enrollment Details</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'enrolled_student_list' %}">Enrollments</a></li>
+                        <li class="breadcrumb-item active text-truncate" style="max-width: 200px;">{{ enrollment.student.name }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div>
+                <a href="#" onclick="window.history.back()" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card detail-card">
+        <!-- Header with Profile Info -->
+        <div class="card-header card-header-glass">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ enrollment.student.name|first|upper }}
+                    </div>
+                    <div>
+                        <h2>{{ enrollment.student.name }}</h2>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-telephone"></i> 
+                                <strong>{{ enrollment.student.mobile_number }}</strong>
+                            </span>
+                            <span class="status-badge">
+                                <i class="bi bi-card-text"></i>
+                                Enrollment ID: {{ enrollment.enrollment_id_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 btn-action-group">
+                    <a href="tel:{{ enrollment.student.mobile_number }}" class="btn btn-action btn-call">
+                        <i class="bi bi-telephone"></i> Call Student
+                    </a>
+                    <a href="https://wa.me/91{{ enrollment.student.mobile_number }}" target="_blank" 
+                       class="btn btn-action btn-whatsapp">
+                        <i class="bi bi-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'update_enrollment' enrollment.id %}" 
+                        class="btn btn-action btn-edit"  
+                        onclick="openUpdateModal(this)">
+                        <i class="bi bi-pencil-square"></i> Edit Enrollment
+                    </a>
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'record_payment' enrollment.id %}" 
+                        class="btn btn-action btn-payment"  
+                        onclick="openPaymentModal(this)">
+                        <i class="bi bi-cash"></i> Record Payment
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Status and Progress Section -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-3" style="background: #f8f9fa; border-radius: 12px;">
+                <div class="d-flex align-items-center gap-3">
+                    {% if enrollment.status == 'active' %}
+                        <span class="status-badge status-active">
+                            <i class="bi bi-check-circle"></i>
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    {% elif enrollment.status == 'completed' %}
+                        <span class="status-badge status-completed">
+                            <i class="bi bi-trophy"></i>
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    {% elif enrollment.status == 'cancelled' %}
+                        <span class="status-badge status-cancelled">
+                            <i class="bi bi-x-circle"></i>
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    {% elif enrollment.status == 'on_hold' %}
+                        <span class="status-badge status-on_hold">
+                            <i class="bi bi-pause-circle"></i>
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    {% endif %}
+
+                    {% if enrollment.payment_status == 'completed' %}
+                        <span class="status-badge payment-status-completed">
+                            <i class="bi bi-credit-card"></i>
+                            Payment Completed
+                        </span>
+                    {% elif enrollment.payment_status == 'partial' %}
+                        <span class="status-badge payment-status-partial">
+                            <i class="bi bi-credit-card"></i>
+                            Partial Payment
+                        </span>
+                    {% elif enrollment.payment_status == 'pending' %}
+                        <span class="status-badge payment-status-pending">
+                            <i class="bi bi-credit-card"></i>
+                            Payment Pending
+                        </span>
+                    {% elif enrollment.payment_status == 'overdue' %}
+                        <span class="status-badge payment-status-overdue">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Payment Overdue
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="text-end">
+                    <div class="amount-total">₹{{ enrollment.total_fees|floatformat:0 }}</div>
+                    <div>
+                        <span class="amount-paid">Paid: ₹{{ enrollment.paid_amount|floatformat:0 }}</span> | 
+                        {% if is_overdue %}
+                            <span class="amount-overdue">Due: ₹{{ total_due|floatformat:0 }}</span>
+                        {% else %}
+                            <span class="amount-due">Due: ₹{{ total_due|floatformat:0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bars -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-currency-rupee me-2"></i>Payment Progress</span>
+                        <span>{{ payment_progress|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-payment" style="width: {{ payment_progress }}%"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {% if class_progress > 0 %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-calendar-check me-2"></i>Class Progress</span>
+                        <span>{{ class_progress|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar progress-class" style="width: {{ class_progress }}%"></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Info Cards Grid -->
+            <div class="info-cards-grid">
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar-event"></i> Enrollment Date
+                    </div>
+                    <p class="info-card-value">
+                        {{ enrollment.enrollment_date|date:"M d, Y" }}
+                        <br>
+                        <small class="text-muted">{{ days_since_enrollment }} days ago</small>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-book"></i> Course & Batch
+                    </div>
+                    <p class="info-card-value">
+                        {{ enrollment.course_title|default:"No Course" }}
+                        <br>
+                        <small class="text-muted">{{ enrollment.batch.batch_code }}</small>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-percent"></i> Fees & Discount
+                    </div>
+                    <p class="info-card-value">
+                        ₹{{ enrollment.total_fees|floatformat:0 }}
+                        <br>
+                        <small class="text-muted">Discount: ₹{{ enrollment.discount|floatformat:0 }}</small>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar-range"></i> Class Dates
+                    </div>
+                    <p class="info-card-value">
+                        {% if enrollment.class_start_date %}
+                            {{ enrollment.class_start_date|date:"M d" }} - {{ enrollment.class_end_date|date:"M d, Y"|default:"Ongoing" }}
+                        {% else %}
+                            <span class="text-muted">Not scheduled</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Certificate Section -->
+            {% if certificate %}
+            <div class="certificate-card">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="certificate-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Certificate Issued</h5>
+                            <p class="mb-0 text-muted">
+                                Certificate #{{ certificate.certificate_number }} issued on {{ certificate.issue_date|date:"M d, Y" }}
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ certificate.file.url }}" target="_blank" class="btn btn-action btn-certificate">
+                        <i class="bi bi-download"></i> Download Certificate
+                    </a>
+                </div>
+            </div>
+            {% elif enrollment.can_issue_certificate %}
+            <div class="alert alert-success d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-award-fill me-3" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <h5 class="mb-1">Certificate Ready for Issue</h5>
+                        <p class="mb-0">All requirements met for certificate issuance.</p>
+                    </div>
+                </div>
+                <a href="{% url 'issue_certificate' enrollment.id %}" class="btn btn-success btn-action">
+                    <i class="bi bi-award"></i> Issue Certificate
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Payment History Section -->
+            <div class="mt-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-gradient); 
+                                   display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                        <h4 class="mb-0">Payment History</h4>
+                        <span class="badge bg-primary rounded-pill">{{ payments.count }} payments</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-success">Total Paid: ₹{{ total_paid|floatformat:0 }}</span>
+                        <span class="badge bg-danger">Total Due: ₹{{ total_due|floatformat:0 }}</span>
+                    </div>
+                </div>
+
+                {% if payments %}
+                <div class="table-responsive">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Mode</th>
+                                <th>Amount</th>
+                                <th>Received By</th>
+                                <th>Reference</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                            <tr>
+                                <td>
+                                    <strong>{{ payment.payment_id }}</strong>
+                                    {% if payment.installment_number %}
+                                        <br>
+                                        <small class="text-muted">Inst. #{{ payment.installment_number }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge {% if payment.payment_type == 'admission' %}bg-primary{% elif payment.payment_type == 'installment' %}bg-info{% else %}bg-secondary{% endif %}">
+                                        {{ payment.get_payment_type_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">
+                                        {{ payment.get_payment_mode_display }}
+                                    </span>
+                                </td>
+                                <td class="amount-paid">
+                                    <strong>₹{{ payment.amount|floatformat:0 }}</strong>
+                                </td>
+                                <td>
+                                    {% if payment.received_by %}
+                                        {{ payment.received_by.name }}
+                                    {% else %}
+                                        <span class="text-muted">System</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if payment.reference_number %}
+                                        <code>{{ payment.reference_number|truncatechars:15 }}</code>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if payment.is_overdue %}
+                                        <span class="badge bg-danger">Overdue</span>
+                                    {% else %}
+                                        <span class="badge bg-success">On Time</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Payment Type Summary -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-pie-chart me-2"></i>Payment Type Summary</h6>
+                        <div class="list-group">
+                            {% for type_name, amount in payment_by_type.items %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ type_name }}</span>
+                                <span class="badge bg-primary rounded-pill">₹{{ amount|floatformat:0 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-calendar-week me-2"></i>Payment Schedule</h6>
+                        {% if enrollment.payment_schedule %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            {{ enrollment.payment_schedule|linebreaks }}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            No payment schedule defined
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-cash-coin display-1 text-muted"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No Payments Recorded</h4>
+                    <p class="text-muted">Start by recording the first payment for this enrollment.</p>
+                    <a href="javascript:void(0);" 
+                       data-url="" 
+                       class="btn btn-primary btn-action" 
+                       onclick="openPaymentModal(this)">
+                        <i class="bi bi-cash me-2"></i> Record First Payment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Installment Timeline (if applicable) -->
+            {% if total_installments > 0 %}
+            <div class="timeline-container mt-5">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-gradient); 
+                               display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="bi bi-calendar-week"></i>
+                    </div>
+                    <h4 class="mb-0">Installment Timeline</h4>
+                    <span class="badge bg-primary rounded-pill">{{ paid_installments }}/{{ total_installments }} paid</span>
+                </div>
+
+                <div class="timeline-line"></div>
+                
+                <!-- This would need actual installment data from your model -->
+                <div class="text-center py-4">
+                    <p class="text-muted">Installment tracking would appear here if you have installment data.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+<script>
+    // Modal Functions
+    function openUpdateModal(element) {
+        const url = element.dataset.url;
+        const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+    
+    function openPaymentModal(element) {
+        const url = element.dataset.url;
+        const newWindow = window.open(url, "paymentWindow", "width=800,height=600,scrollbars=yes,resizable=yes");
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+    
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+    
+    // Copy enrollment ID
+    function copyEnrollmentId() {
+        const enrollmentId = '{{ enrollment.enrollment_id_display }}';
+        navigator.clipboard.writeText(enrollmentId).then(() => {
+            // Create custom toast notification
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <span>Enrollment ID copied to clipboard!</span>
+                </div>
+            `;
+            
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+                border-left: 4px solid #10b981;
+                z-index: 9999;
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                display: flex;
+                align-items: center;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        });
+    }
+    
+    // Add click to copy functionality to enrollment ID
+    document.querySelector('.status-badge i.bi-card-text').parentElement.style.cursor = 'pointer';
+    document.querySelector('.status-badge i.bi-card-text').parentElement.title = 'Click to copy Enrollment ID';
+    document.querySelector('.status-badge i.bi-card-text').parentElement.addEventListener('click', copyEnrollmentId);
+</script>
+
+{% endblock content %}

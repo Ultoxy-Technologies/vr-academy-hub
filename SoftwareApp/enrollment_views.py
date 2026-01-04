@@ -149,6 +149,103 @@ def enrolled_student_list(request):
 
 
 
+
+# views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.utils import timezone
+from decimal import Decimal 
+from django import forms
+
+@login_required
+def enrollment_detail(request, pk):
+    """View enrollment details with payment history and certificate info"""
+    enrollment = get_object_or_404(
+        Enrollment.objects.select_related(
+            'student', 'batch', 'batch__basic_to_advance_cource', 'batch__advance_to_pro_cource'
+        ).prefetch_related('payments', 'payments__received_by'),
+        pk=pk
+    )
+    
+    # Get all payments for this enrollment
+    payments = enrollment.payments.all().order_by('-payment_date')
+    
+    # Calculate payment statistics
+    total_paid = payments.aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    total_due = enrollment.balance
+    
+    # Get payment summary by type
+    payment_by_type = {}
+    for payment_type, display_name in Payment.PAYMENT_TYPE_CHOICES:
+        amount = payments.filter(payment_type=payment_type).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+        if amount > 0:
+            payment_by_type[display_name] = amount
+    
+    # Get certificate if exists
+    certificate = None
+    try:
+        certificate = StudentCertificate.objects.get(enrollment=enrollment)
+    except StudentCertificate.DoesNotExist:
+        certificate = None
+    
+    # Calculate days since enrollment
+    days_since_enrollment = (timezone.now().date() - enrollment.enrollment_date).days
+    
+    # Calculate class progress percentage
+    class_progress = 0
+    if enrollment.class_start_date and enrollment.class_end_date:
+        total_days = (enrollment.class_end_date - enrollment.class_start_date).days
+        if total_days > 0:
+            days_passed = (timezone.now().date() - enrollment.class_start_date).days
+            class_progress = min(max((days_passed / total_days) * 100, 0), 100)
+    
+    # Check if enrollment is overdue
+    is_overdue = (
+        total_due > 0 and 
+        enrollment.class_start_date and 
+        enrollment.class_start_date <= timezone.now().date()
+    )
+    
+    # Get batch details
+    batch = enrollment.batch
+    batch_details = {
+        'start_date': batch.start_date,
+        'end_date': batch.end_date,
+        'is_active': batch.is_active,
+        'course_type': batch.course_type,
+        'course_fees': batch.course_fees,
+    }
+    
+    # Payment form for quick payment recording
+    # payment_form = PaymentForm()
+    # payment_form.fields['enrollment'].initial = enrollment
+    # payment_form.fields['enrollment'].widget = forms.HiddenInput()
+    
+    context = {
+        'enrollment': enrollment,
+        'payments': payments,
+        'total_paid': total_paid,
+        'total_due': total_due,
+        'payment_by_type': payment_by_type,
+        'certificate': certificate,
+        'days_since_enrollment': days_since_enrollment,
+        'class_progress': class_progress,
+        'is_overdue': is_overdue,
+        'batch_details': batch_details,
+        # 'payment_form': payment_form,
+        
+        # For progress bars
+        'payment_progress': enrollment.payment_progress,
+        'total_installments': enrollment.total_installments if hasattr(enrollment, 'total_installments') else 0,
+        'paid_installments': enrollment.paid_installments if hasattr(enrollment, 'paid_installments') else 0,
+    }
+    
+    return render(request, 'enrollment_details.html', context)
+
+
+
+
 @login_required
 def export_enrollments(request):
     """
@@ -242,6 +339,7 @@ def download_enrollment_template(request):
 
 import csv
 from decimal import Decimal
+from .forms import PaymentForm
 
 @login_required
 def import_enrollments(request):
@@ -333,8 +431,143 @@ def import_enrollments(request):
     return redirect('enrolled_student_list')
 
 
+@login_required
+def record_payment(request, enrollment_id):
+    """Record a new payment for enrollment"""
+    enrollment = get_object_or_404(Enrollment, id=enrollment_id)
+    
+    # Calculate payment statistics with safe defaults
+    payment_stats = {
+        'total_fees': enrollment.total_fees or Decimal('0.00'),
+        'discount': enrollment.discount or Decimal('0.00'),
+        'net_fees': enrollment.net_fees or Decimal('0.00'),
+        'paid_amount': enrollment.paid_amount,
+        'balance': enrollment.balance,
+        'payment_progress': enrollment.payment_progress or 0,
+    }
+    
+    if request.method == 'POST':
+        form = PaymentForm(request.POST, enrollment=enrollment, request=request)
+        
+        if form.is_valid():
+            try:
+                payment = form.save()
+                
+                # Update payment status message based on balance
+                new_balance = enrollment.balance
+                if new_balance <= 0:
+                    status_msg = "Fully Paid! All fees have been cleared."
+                else:
+                    status_msg = f"Payment recorded. Remaining balance: ₹{new_balance}"
+                
+                messages.success(
+                    request, 
+                    f'Payment of ₹{payment.amount} recorded successfully for {enrollment.student.name}. {status_msg}'
+                )
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error recording payment: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = PaymentForm(enrollment=enrollment, request=request)
+    
+    # Get payment history
+    payment_history = enrollment.payments.all().order_by('-payment_date')
+    
+    context = {
+        'form': form,
+        'enrollment': enrollment,
+        'payment_stats': payment_stats,
+        'payment_history': payment_history,
+    }
+    
+    return render(request, 'record_payment.html', context)
 
+@login_required
+def update_payment(request, pk):
+    """Update existing payment"""
+    payment = get_object_or_404(Payment, pk=pk)
+    enrollment = payment.enrollment
+    
+    if request.method == 'POST':
+        form = PaymentForm(request.POST, instance=payment, enrollment=enrollment, request=request)
+        
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, f'Payment updated successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error updating payment: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = PaymentForm(instance=payment, enrollment=enrollment, request=request)
+    
+    context = {
+        'form': form,
+        'payment': payment,
+        'enrollment': enrollment,
+    }
+    
+    return render(request, 'update_payment.html', context)
 
+@login_required
+def delete_payment(request, pk):
+    """Delete payment with confirmation"""
+    payment = get_object_or_404(Payment, pk=pk)
+    
+    if request.method == 'POST':
+        amount = payment.amount
+        student_name = payment.enrollment.student.name
+        payment.delete()
+        
+        # Update enrollment payment status
+        payment.enrollment.update_payment_status()
+        payment.enrollment.save()
+        
+        messages.success(request, f'Payment of ₹{amount} deleted for {student_name}')
+        return redirect('payment_list')
+    
+    # For GET request, should be handled by JavaScript modal
+    return redirect('payment_list')
 
 
 # views.py
@@ -426,15 +659,16 @@ def update_enrollment(request, pk):
 def delete_enrollment(request, pk):
     """Delete enrollment with confirmation"""
     enrollment = get_object_or_404(Enrollment, pk=pk)
+    print(enrollment)
     
-    if request.method == 'POST':
+    if enrollment:
         student_name = enrollment.student.name
         enrollment.delete()
         messages.success(request, f'Enrollment for {student_name} deleted successfully')
-        return redirect('enrolled_student_list')
+        return redirect('/software/enrollments/')
     
     # For GET request, should be handled by JavaScript modal
-    return redirect('enrolled_student_list')
+    return redirect('/software/enrollments/')
 
 
 
@@ -717,7 +951,7 @@ def batch_detail(request, pk):
         'days_remaining': batch.days_remaining,
     }
     
-    return render(request, 'batch_detail.html', context)
+    return render(request, 'batch_details.html', context)
 
 @login_required
 def delete_batch(request, pk):
@@ -727,13 +961,14 @@ def delete_batch(request, pk):
     # Check if batch has enrollments
     if batch.enrollments.exists():
         messages.error(request, f'Cannot delete batch "{batch.batch_code}" because it has enrolled students.')
-        return redirect('batch_list')
+        return redirect(request.META.get('HTTP_REFERER', '/software/batches/'))
     
-    if request.method == 'POST':
+    if batch:
         batch_code = batch.batch_code
         batch.delete()
         messages.success(request, f'Batch "{batch_code}" deleted successfully')
-        return redirect('batch_list')
+        return redirect(request.META.get('HTTP_REFERER', '/software/batches/'))
     
+    messages.info(request, 'Nothing to delete.')
     # For GET request, should be handled by JavaScript modal
-    return redirect('batch_list')
+    return redirect(request.META.get('HTTP_REFERER', '/software/batches/'))
