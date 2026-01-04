@@ -720,3 +720,60 @@ def delete_follow_up(request, id):
 
     # Redirect back to the page the user came from
     return redirect(request.META.get('HTTP_REFERER', '/software/followups'))
+ 
+
+
+from AdminApp.models import CRMFollowup, Enrollment
+from .forms import EnrollmentForm
+@login_required
+def enroll_student_from_follow_up(request,id):
+    """Create new enrollment (opens in modal window)"""
+    followup = get_object_or_404(CRMFollowup, id=id)
+    mobile_number = followup.mobile_number.strip()
+    branch=followup.branch
+    enrollment_exists = Enrollment.objects.filter(student__mobile_number=mobile_number).exists()
+    if enrollment_exists:
+        messages.error(request, f'An enrollment with {mobile_number} mobile number already exists.')
+        return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+    name=followup.name
+
+    if request.method == 'POST':
+        form = EnrollmentForm(request.POST, request=request)
+        if form.is_valid():
+            try:
+                enrollment = form.save(commit=True)
+                messages.success(request, f'Enrollment created successfully for {enrollment.student.name}')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error creating enrollment: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = EnrollmentForm(request=request, initial={'student_mobile': mobile_number, 'student_name':name,'branch':branch})
+    
+    return render(request, 'enrollment_create_from_follow_up.html', {'form': form})

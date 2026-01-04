@@ -11,18 +11,240 @@ from decimal import Decimal
 from AdminApp.models import *
 from .forms import EnrollmentForm, BatchForm
 
-def enrollment_dashboard(request):
-     
-    return render(request, 'enrollment_dashboard.html')
 
+# views.py
+from django.db.models import Count, Sum, Avg, Q
+from django.utils import timezone
+from datetime import timedelta, datetime
+from decimal import Decimal
+import json
 
 @login_required
-def enrolled_student_list(request):
+def enrollment_dashboard(request):
     """
-    List all enrollments with filtering, pagination, and statistics
-    Follows the exact pattern of crm_follow_up_list
+    Modern enrollment dashboard with comprehensive analytics
     """
     # Get filter parameters
+    date_range = request.GET.get('date_range', 'month')  # day, week, month, year, custom
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    batch_filter = request.GET.get('batch', '')
+    status_filter = request.GET.get('status', '')
+    
+    # Calculate date ranges
+    today = timezone.now().date()
+    
+    if date_range == 'day':
+        start_date_obj = today
+        end_date_obj = today
+    elif date_range == 'week':
+        start_date_obj = today - timedelta(days=7)
+        end_date_obj = today
+    elif date_range == 'month':
+        start_date_obj = today - timedelta(days=30)
+        end_date_obj = today
+    elif date_range == 'year':
+        start_date_obj = today - timedelta(days=365)
+        end_date_obj = today
+    elif date_range == 'custom' and start_date and end_date:
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except:
+            start_date_obj = today - timedelta(days=30)
+            end_date_obj = today
+    else:
+        start_date_obj = today - timedelta(days=30)
+        end_date_obj = today
+    
+    # Base queryset
+    enrollments = Enrollment.objects.filter(
+        enrollment_date__range=[start_date_obj, end_date_obj]
+    ).select_related('student', 'batch')
+    
+    # Apply additional filters
+    if batch_filter:
+        enrollments = enrollments.filter(batch_id=batch_filter)
+    
+    if status_filter:
+        enrollments = enrollments.filter(status=status_filter)
+    
+    # Get all batches for filter dropdown
+    batches = Batch.objects.filter(is_active=True).order_by('batch_code')
+    
+    # ========== KEY METRICS ==========
+    total_enrollments = enrollments.count()
+    
+    # Enrollment by status
+    active_enrollments = enrollments.filter(status='active').count()
+    completed_enrollments = enrollments.filter(status='completed').count()
+    pending_payments = enrollments.filter(payment_status__in=['pending', 'partial', 'overdue']).count()
+    
+    # Financial metrics - convert to float for template
+    total_revenue = float(Decimal('0.00'))
+    total_pending = float(Decimal('0.00'))
+    total_collected = float(Decimal('0.00'))
+    
+    for enrollment in enrollments:
+        total_revenue += float(enrollment.total_fees)
+        total_collected += float(enrollment.paid_amount)
+        total_pending += float(enrollment.balance)
+    
+    avg_fee_per_student = float(total_revenue / total_enrollments) if total_enrollments > 0 else 0.00
+    
+    # ========== CHARTS DATA ==========
+    
+    # 1. Enrollment Trend (Last 7 days)
+    trend_data = []
+    for i in range(7):
+        date = today - timedelta(days=6-i)
+        count = Enrollment.objects.filter(
+            enrollment_date=date
+        ).count()
+        trend_data.append({
+            'date': date.strftime('%d %b'),
+            'count': count
+        })
+    
+    # 2. Batch-wise Enrollment Distribution
+    batch_distribution = []
+    batch_wise_data = enrollments.values('batch__batch_code', 'batch__batch_title').annotate(
+        count=Count('id'),
+        total_fees=Sum('total_fees'),
+        collected=Sum('payments__amount')
+    ).order_by('-count')
+    
+    for item in batch_wise_data[:10]:  # Top 10 batches
+        batch_distribution.append({
+            'batch': f"{item['batch__batch_code'] or 'N/A'} - {(item['batch__batch_title'] or '')[:20]}",
+            'enrollments': item['count'],
+            'revenue': float(item['total_fees'] or 0),
+            'collected': float(item['collected'] or 0)
+        })
+    
+    # 3. Status Distribution
+    status_distribution = []
+    status_data = enrollments.values('status').annotate(count=Count('id'))
+    for item in status_data:
+        status_distribution.append({
+            'status': item['status'].title(),
+            'count': item['count']
+        })
+    
+    # 4. Payment Status Distribution
+    payment_status_data = []
+    payment_stats = enrollments.values('payment_status').annotate(count=Count('id'))
+    for item in payment_stats:
+        payment_status_data.append({
+            'status': item['payment_status'].title(),
+            'count': item['count']
+        })
+    
+    # 5. Monthly Revenue Trend
+    monthly_revenue = []
+    current_year = today.year
+    for month in range(1, 13):
+        month_start = datetime(current_year, month, 1).date()
+        if month == 12:
+            month_end = datetime(current_year + 1, 1, 1).date() - timedelta(days=1)
+        else:
+            month_end = datetime(current_year, month + 1, 1).date() - timedelta(days=1)
+        
+        month_enrollments = Enrollment.objects.filter(
+            enrollment_date__range=[month_start, month_end]
+        )
+        
+        month_revenue = Decimal('0.00')
+        month_collected = Decimal('0.00')
+        
+        for enrollment in month_enrollments:
+            month_revenue += enrollment.total_fees
+            month_collected += enrollment.paid_amount
+        
+        monthly_revenue.append({
+            'month': month_start.strftime('%b'),
+            'revenue': float(month_revenue),
+            'collected': float(month_collected)
+        })
+    
+    # ========== RECENT ACTIVITIES ==========
+    recent_enrollments = Enrollment.objects.select_related(
+        'student', 'batch'
+    ).order_by('-enrollment_date')[:10]
+    
+    recent_payments = Payment.objects.select_related(
+        'enrollment', 'enrollment__student'
+    ).order_by('-payment_date')[:10]
+    
+    # ========== BATCH PERFORMANCE ==========
+     
+    
+    # Helper function to convert Decimal to float for JSON serialization
+    def decimal_to_float(obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        elif isinstance(obj, dict):
+            return {k: decimal_to_float(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [decimal_to_float(item) for item in obj]
+        return obj
+    
+    # Prepare context
+    context = {
+        # Filters
+        'batches': batches,
+        'status_choices': Enrollment.STATUS_CHOICES,
+        'date_range': date_range,
+        'start_date': start_date,
+        'end_date': end_date,
+        'batch_filter': batch_filter,
+        'status_filter': status_filter,
+        
+        # Key Metrics (already converted to float)
+        'total_enrollments': total_enrollments,
+        'active_enrollments': active_enrollments,
+        'completed_enrollments': completed_enrollments,
+        'pending_payments': pending_payments,
+        'total_revenue': total_revenue,
+        'total_collected': total_collected,
+        'total_pending': total_pending,
+        'avg_fee_per_student': avg_fee_per_student,
+        
+        # Chart Data (JSON for JavaScript) - convert all to float
+        'trend_data_json': json.dumps(trend_data),
+        'batch_distribution_json': json.dumps(batch_distribution),
+        'status_distribution_json': json.dumps(status_distribution),
+        'payment_status_json': json.dumps(payment_status_data),
+        'monthly_revenue_json': json.dumps(monthly_revenue),
+        
+        # Recent Activities
+        'recent_enrollments': recent_enrollments,
+        'recent_payments': recent_payments,
+         
+        
+        # Date info
+        'start_date_obj': start_date_obj.strftime('%Y-%m-%d'),
+        'end_date_obj': end_date_obj.strftime('%Y-%m-%d'),
+        'today': today.strftime('%Y-%m-%d'),
+    }
+    
+    return render(request, 'enrollment_dashboard.html', context)
+
+
+
+# views.py
+import pandas as pd
+from django.http import HttpResponse
+from io import BytesIO
+from datetime import datetime, timedelta
+import json
+
+@login_required
+def export_enrollments_filtered(request):
+    """
+    Export filtered enrollments to Excel with proper formatting
+    """
+    # Get all filter parameters from request
     search_query = request.GET.get('search', '')
     status_filter = request.GET.get('status', '')
     batch_filter = request.GET.get('batch', '')
@@ -30,15 +252,11 @@ def enrolled_student_list(request):
     date_to = request.GET.get('date_to', '')
     payment_status_filter = request.GET.get('payment_status', '')
     
-    # Start with all enrollments
+    # Apply filters (same logic as enrolled_student_list)
     enrollments = Enrollment.objects.all().select_related(
         'student', 'batch', 'batch__basic_to_advance_cource', 'batch__advance_to_pro_cource'
     ).prefetch_related('payments').order_by('-enrollment_date')
     
-    # Get all batches for filter dropdown
-    batches = Batch.objects.filter(is_active=True).order_by('batch_code')
-    
-    # Apply filters
     if search_query:
         enrollments = enrollments.filter(
             Q(student__name__icontains=search_query) |
@@ -69,7 +287,272 @@ def enrolled_student_list(request):
         except ValueError:
             pass
     
-    # Calculate statistics
+    # Prepare data for Excel
+    data = []
+    
+    for enrollment in enrollments:
+        # Get batch details
+        batch_info = ""
+        if enrollment.batch:
+            batch_info = f"{enrollment.batch.batch_code} - {enrollment.batch.batch_title}"
+            if enrollment.batch.course:
+                batch_info += f" ({enrollment.batch.course.title})"
+        
+        # Get payment details
+        payment_details = []
+        for payment in enrollment.payments.all():
+            payment_details.append(
+                f"{payment.payment_date.strftime('%d-%m-%Y')}: ₹{payment.amount} "
+                f"({payment.get_payment_mode_display()})"
+            )
+        
+        # Get certificate info
+        certificate_info = ""
+        if hasattr(enrollment, 'certificate'):
+            certificate_info = f"{enrollment.certificate.certificate_number} - {enrollment.certificate.issue_date}"
+        
+        # Calculate payment summary
+        paid_amount = float(enrollment.paid_amount)
+        balance_amount = float(enrollment.balance)
+        payment_progress = float(enrollment.payment_progress)
+        
+        # Prepare row data
+        row = {
+            'Enrollment ID': f"ENR-{str(enrollment.pk).zfill(6)}",
+            'Enrollment Date': enrollment.enrollment_date.strftime('%d-%m-%Y'),
+            
+            # Student Information
+            'Student ID': enrollment.student.id if enrollment.student else '',
+            'Student Name': enrollment.student.name if enrollment.student else '',
+            'Mobile Number': enrollment.student.mobile_number if enrollment.student else '',
+            'Email': enrollment.student.email if enrollment.student else '',
+            'Address': enrollment.student.address if hasattr(enrollment.student, 'address') else '',
+            
+            # Course & Batch Information
+            'Batch Code': enrollment.batch.batch_code if enrollment.batch else '',
+            'Batch Title': enrollment.batch.batch_title if enrollment.batch else '',
+            'Course Type': enrollment.batch.course_type if enrollment.batch else '',
+            'Course Title': enrollment.course_title,
+            'Batch Start Date': enrollment.batch.start_date.strftime('%d-%m-%Y') if enrollment.batch and enrollment.batch.start_date else '',
+            'Batch End Date': enrollment.batch.end_date.strftime('%d-%m-%Y') if enrollment.batch and enrollment.batch.end_date else '',
+            'Class Start Date': enrollment.class_start_date.strftime('%d-%m-%Y') if enrollment.class_start_date else '',
+            'Class End Date': enrollment.class_end_date.strftime('%d-%m-%Y') if enrollment.class_end_date else '',
+            
+            # Enrollment Details
+            'Enrollment Status': enrollment.get_status_display(),
+            'Payment Status': enrollment.get_payment_status_display(),
+            'Payment Schedule': enrollment.payment_schedule,
+            
+            # Financial Information
+            'Total Fees': float(enrollment.total_fees),
+            'Discount': float(enrollment.discount),
+            'Net Fees': float(enrollment.net_fees),
+            'Paid Amount': paid_amount,
+            'Balance Amount': balance_amount,
+            'Payment Progress %': payment_progress,
+            
+            # Payment Details (comma separated)
+            'Payment History': ' | '.join(payment_details) if payment_details else 'No Payments',
+            'Total Payments': enrollment.payments.count(),
+            'Last Payment Date': enrollment.last_payment.payment_date.strftime('%d-%m-%Y') if enrollment.last_payment else '',
+            'Last Payment Amount': float(enrollment.last_payment.amount) if enrollment.last_payment else 0,
+            
+            # Certificate Information
+            'Certificate Number': certificate_info,
+            'Certificate Issued': 'Yes' if hasattr(enrollment, 'certificate') else 'No',
+            'Certificate Issue Date': enrollment.certificate.issue_date.strftime('%d-%m-%Y') if hasattr(enrollment, 'certificate') else '',
+            
+            # Additional Information
+            'Days Since Enrollment': (datetime.now().date() - enrollment.enrollment_date).days,
+            'Is Payment Overdue': 'Yes' if (balance_amount > 0 and enrollment.class_start_date and enrollment.class_start_date <= datetime.now().date()) else 'No',
+            'Created At': enrollment.created_at.strftime('%d-%m-%Y %H:%M:%S') if hasattr(enrollment, 'created_at') else '',
+            'Updated At': enrollment.updated_at.strftime('%d-%m-%Y %H:%M:%S') if hasattr(enrollment, 'updated_at') else '',
+        }
+        
+        data.append(row)
+    
+    # Create DataFrame
+    df = pd.DataFrame(data)
+    
+    # Create Excel file in memory
+    output = BytesIO()
+    
+    # Create Excel writer
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        # Write main data
+        df.to_excel(writer, sheet_name='Enrollments', index=False)
+        
+        # Auto-adjust columns width
+        worksheet = writer.sheets['Enrollments']
+        for column in worksheet.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            worksheet.column_dimensions[column_letter].width = adjusted_width
+        
+        # Create summary sheet
+        summary_data = {
+            'Metric': [
+                'Total Enrollments',
+                'Active Enrollments',
+                'Completed Enrollments',
+                'Total Revenue',
+                'Total Collected',
+                'Total Pending',
+                'Average Fee per Student',
+                'Pending Payments Count'
+            ],
+            'Value': [
+                len(df),
+                len(df[df['Enrollment Status'] == 'Active']),
+                len(df[df['Enrollment Status'] == 'Completed']),
+                df['Total Fees'].sum(),
+                df['Paid Amount'].sum(),
+                df['Balance Amount'].sum(),
+                df['Total Fees'].mean() if len(df) > 0 else 0,
+                len(df[df['Payment Status'].isin(['Pending', 'Partial', 'Overdue'])])
+            ]
+        }
+        
+        summary_df = pd.DataFrame(summary_data)
+        summary_df.to_excel(writer, sheet_name='Summary', index=False)
+        
+        # Auto-adjust summary columns
+        summary_worksheet = writer.sheets['Summary']
+        for column in summary_worksheet.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            summary_worksheet.column_dimensions[column_letter].width = adjusted_width
+        
+        # Create batch-wise summary
+        if 'Batch Code' in df.columns and not df['Batch Code'].isnull().all():
+            batch_summary = df.groupby('Batch Code').agg({
+                'Student Name': 'count',
+                'Total Fees': 'sum',
+                'Paid Amount': 'sum',
+                'Balance Amount': 'sum'
+            }).reset_index()
+            
+            batch_summary.columns = ['Batch Code', 'Total Students', 'Total Fees', 'Amount Collected', 'Amount Pending']
+            batch_summary.to_excel(writer, sheet_name='Batch Summary', index=False)
+            
+            # Auto-adjust batch summary columns
+            batch_worksheet = writer.sheets['Batch Summary']
+            for column in batch_worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = min(max_length + 2, 30)
+                batch_worksheet.column_dimensions[column_letter].width = adjusted_width
+    
+    # Prepare HTTP response
+    output.seek(0)
+    
+    # Create filename with timestamp and filters
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filters = []
+    
+    if search_query:
+        filters.append(f"search_{search_query}")
+    if status_filter:
+        filters.append(f"status_{status_filter}")
+    if batch_filter:
+        filters.append(f"batch_{batch_filter}")
+    if date_from:
+        filters.append(f"from_{date_from}")
+    if date_to:
+        filters.append(f"to_{date_to}")
+    
+    filter_str = '_'.join(filters) if filters else 'all'
+    filename = f"enrollments_export_{filter_str}_{timestamp}.xlsx"
+    
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+
+
+@login_required
+def enrolled_student_list(request):
+    """
+    List all enrollments with filtering, pagination, and statistics
+    Follows the exact pattern of crm_follow_up_list
+    """
+    # Get filter parameters
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    batch_filter = request.GET.get('batch', '')
+    branch_filter = request.GET.get('branch', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    payment_status_filter = request.GET.get('payment_status', '')
+    
+    # Start with all enrollments
+    enrollments = Enrollment.objects.all().select_related(
+        'student', 'batch', 'batch__basic_to_advance_cource', 'batch__advance_to_pro_cource'
+    ).prefetch_related('payments').order_by('-enrollment_date')
+    
+    # Get all batches for filter dropdown
+    batches = Batch.objects.filter(is_active=True).order_by('batch_code')
+    branches = Branch.objects.filter().order_by('branch_name')
+    
+    # Apply filters
+    if search_query:
+        enrollments = enrollments.filter(
+            Q(student__name__icontains=search_query) |
+            Q(student__mobile_number__icontains=search_query) |
+            Q(course_title__icontains=search_query)
+        )
+    
+    if status_filter:
+        enrollments = enrollments.filter(status=status_filter)
+    
+    if batch_filter:
+        enrollments = enrollments.filter(batch_id=batch_filter)
+    
+    if branch_filter:
+        enrollments = enrollments.filter(branch__id=branch_filter)
+
+    if payment_status_filter:
+        enrollments = enrollments.filter(payment_status=payment_status_filter)
+    
+    if date_from:
+        try:
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+            enrollments = enrollments.filter(enrollment_date__gte=date_from_obj)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+            enrollments = enrollments.filter(enrollment_date__lte=date_to_obj)
+        except ValueError:
+            pass
+    
+    # Calculate statistics on ALL filtered data (not just paginated)
     total_enrollments = enrollments.count()
     active_enrollments = enrollments.filter(status='active').count()
     completed_enrollments = enrollments.filter(status='completed').count()
@@ -79,12 +562,16 @@ def enrolled_student_list(request):
     today = date.today()
     today_enrollments = enrollments.filter(enrollment_date=today).count()
     
-    # Calculate payment data for each enrollment efficiently
+    # Pagination - DO THIS BEFORE calculating revenue for each enrollment
+    paginator = Paginator(enrollments, 50)  # Show 10 enrollments per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Calculate payment data for each enrollment in the CURRENT PAGE only
     total_revenue = Decimal('0.00')
     pending_revenue = Decimal('0.00')
-    today = date.today()
     
-    for enrollment in enrollments:
+    for enrollment in page_obj:  # Use page_obj, not enrollments
         # Calculate paid amount from prefetched payments
         paid_amount = sum(payment.amount for payment in enrollment.payments.all())
         enrollment.display_paid = paid_amount
@@ -109,19 +596,22 @@ def enrolled_student_list(request):
         # Generate enrollment ID for display
         enrollment.enrollment_id_display = f"ENR-{str(enrollment.pk).zfill(6)}"
         
-        # Add to totals
+        # Add to totals (for current page only)
         total_revenue += paid_amount
         pending_revenue += enrollment.display_balance
     
-    # Pagination
-    paginator = Paginator(enrollments, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # Calculate overall revenue totals (for all filtered data)
+    overall_total_revenue = Decimal('0.00')
+    overall_pending_revenue = Decimal('0.00')
+    
+    # If you want to calculate overall totals, you need to do a separate query
+    # Or add these calculations in a different way
     
     # Prepare context
     context = {
-        'enrollments': page_obj,
+        'enrollments': page_obj,  # Use page_obj instead of enrollments
         'batches': batches,
+        'branches': branches,
         
         # Statistics
         'total_enrollments': total_enrollments,
@@ -129,25 +619,27 @@ def enrolled_student_list(request):
         'completed_enrollments': completed_enrollments,
         'pending_payments': pending_payments,
         'today_enrollments': today_enrollments,
-        'total_revenue': total_revenue,
-        'pending_revenue': pending_revenue,
+        'total_revenue': total_revenue,  # This is for current page only
+        'pending_revenue': pending_revenue,  # This is for current page only
         
         # Filter values
         'search_query': search_query,
         'status_filter': status_filter,
         'batch_filter': batch_filter,
         'payment_status_filter': payment_status_filter,
+        'branch_filter': branch_filter,
         'date_from': date_from,
         'date_to': date_to,
         
         # Status choices
         'status_choices': Enrollment.STATUS_CHOICES,
         'payment_status_choices': Enrollment.PAYMENT_STATUS_CHOICES,
+        
+        # Pagination context
+        'page_obj': page_obj,
     }
     
     return render(request, 'enrolled_student_list.html', context)
-
-
 
 
 # views.py
@@ -503,9 +995,9 @@ def record_payment(request, enrollment_id):
     return render(request, 'record_payment.html', context)
 
 @login_required
-def update_payment(request, pk):
+def update_payment(request, id):
     """Update existing payment"""
-    payment = get_object_or_404(Payment, pk=pk)
+    payment = get_object_or_404(Payment, id=id)
     enrollment = payment.enrollment
     
     if request.method == 'POST':
@@ -550,24 +1042,20 @@ def update_payment(request, pk):
     return render(request, 'update_payment.html', context)
 
 @login_required
-def delete_payment(request, pk):
+def delete_payment(request, id):
     """Delete payment with confirmation"""
-    payment = get_object_or_404(Payment, pk=pk)
+    payment = get_object_or_404(Payment, id=id)
     
-    if request.method == 'POST':
-        amount = payment.amount
-        student_name = payment.enrollment.student.name
-        payment.delete()
-        
-        # Update enrollment payment status
-        payment.enrollment.update_payment_status()
-        payment.enrollment.save()
-        
-        messages.success(request, f'Payment of ₹{amount} deleted for {student_name}')
-        return redirect('payment_list')
+    amount = payment.amount
+    student_name = payment.enrollment.student.name
+    payment.delete()
     
-    # For GET request, should be handled by JavaScript modal
-    return redirect('payment_list')
+    # Update enrollment payment status
+    payment.enrollment.update_payment_status()
+    payment.enrollment.save()
+    
+    messages.success(request, f'Payment of ₹{amount} deleted for {student_name}')
+    return redirect(request.META.get('HTTP_REFERER', 'payment_list'))    
 
 
 # views.py
@@ -580,6 +1068,10 @@ from .forms import EnrollmentForm
 @login_required
 def create_enrollment(request):
     """Create new enrollment (opens in modal window)"""
+    user=CustomUser.objects.filter(role="is_student")
+    student_list=user.values_list('name','mobile_number')
+    print(student_list)
+
     if request.method == 'POST':
         form = EnrollmentForm(request.POST, request=request)
         
@@ -681,11 +1173,15 @@ def delete_enrollment(request, pk):
 
 
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from datetime import datetime, date
+from decimal import Decimal
+from django.db.models import Q, Sum
 
 @login_required
 def batch_list(request):
     """
-    List all batches with filtering and statistics
+    List all batches with filtering, pagination and statistics
     """
     # Get filter parameters
     search_query = request.GET.get('search', '')
@@ -735,25 +1231,23 @@ def batch_list(request):
         except ValueError:
             pass
     
-    # Calculate statistics
+    # Calculate statistics on ALL filtered data (before pagination)
     total_batches = batches.count()
     active_batches = batches.filter(is_active=True).count()
     upcoming_batches = batches.filter(batch_status='upcoming').count()
     ongoing_batches = batches.filter(batch_status='ongoing').count()
     completed_batches = batches.filter(batch_status='completed').count()
     
-    # Total students across all batches
-    total_students = sum(batch.current_students for batch in batches)
+    # Pagination (10 items per page)
+    paginator = Paginator(batches, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
-    # Total revenue from batches (sum of enrollment fees)
-    total_revenue = Decimal('0.00')
-    for batch in batches:
-        batch_enrollments = batch.enrollments.all()
-        for enrollment in batch_enrollments:
-            total_revenue += enrollment.paid_amount
+    # Add calculated properties to each batch in CURRENT PAGE
+    total_students_current_page = 0
+    total_revenue_current_page = Decimal('0.00')
     
-    # Add calculated properties to each batch for template
-    for batch in batches:
+    for batch in page_obj:
         batch.display_current_students = batch.current_students
         batch.display_available_seats = batch.available_seats
         batch.display_occupancy = batch.occupancy_percentage
@@ -771,11 +1265,21 @@ def batch_list(request):
             batch.display_course_title = batch.advance_to_pro_cource.title
         else:
             batch.display_course_title = "No Course Assigned"
+        
+        # Add to page totals
+        total_students_current_page += batch.current_students
+        
+        # Calculate batch revenue (if you have this method)
+        try:
+            batch_revenue = batch.total_revenue()
+            batch.display_revenue = batch_revenue
+            total_revenue_current_page += batch_revenue
+        except:
+            batch.display_revenue = Decimal('0.00')
     
-    # Pagination (10 items per page)
-    paginator = Paginator(batches, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # For overall totals (all filtered batches), you might want to calculate efficiently
+    # Using aggregate queries
+    overall_total_students = sum(batch.current_students for batch in batches)
     
     # Prepare context
     context = {
@@ -787,8 +1291,8 @@ def batch_list(request):
         'upcoming_batches': upcoming_batches,
         'ongoing_batches': ongoing_batches,
         'completed_batches': completed_batches,
-        'total_students': total_students,
-        'total_revenue': total_revenue,
+        'total_students': overall_total_students,  # All filtered batches
+        'total_revenue': total_revenue_current_page,  # Current page only
         
         # Filter values
         'search_query': search_query,
@@ -810,9 +1314,13 @@ def batch_list(request):
             ('active', 'Active Only'),
             ('inactive', 'Inactive Only'),
         ],
+        
+        # Pagination context
+        'page_obj': page_obj,
     }
     
     return render(request, 'batch_list.html', context)
+
 
 @login_required
 def create_batch(request):
@@ -972,3 +1480,402 @@ def delete_batch(request, pk):
     messages.info(request, 'Nothing to delete.')
     # For GET request, should be handled by JavaScript modal
     return redirect(request.META.get('HTTP_REFERER', '/software/batches/'))
+
+ 
+# For better Excel formatting, you can also create an XLSX version:
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+from openpyxl.utils import get_column_letter
+
+@login_required
+def export_batch_report_excel(request, batch_id):
+    """Export batch report as Excel (XLSX) with advanced formatting"""
+    from django.http import HttpResponse
+    import tempfile
+    import os
+    
+    batch = get_object_or_404(Batch, id=batch_id)
+    
+    # Calculate statistics (same as CSV version)
+    total_students = batch.enrollments.count()
+    active_students = batch.enrollments.filter(status='active').count()
+    payment_completed_students = batch.enrollments.filter(
+        payment_status='completed'
+    ).count()
+    
+    total_collected = batch.enrollments.aggregate(
+        total_collected=Sum('payments__amount')
+    )['total_collected'] or Decimal('0.00')
+    
+    total_pending = Decimal('0.00')
+    for enrollment in batch.enrollments.all():
+        total_pending += enrollment.balance
+    
+    # Create workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Batch Report"
+    
+    # Define styles
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+    
+    title_font = Font(bold=True, size=14, color="1F4E78")
+    subtitle_font = Font(bold=True, size=12, color="2F75B5")
+    
+    border = Border(
+        left=Side(style='thin'),
+        right=Side(style='thin'),
+        top=Side(style='thin'),
+        bottom=Side(style='thin')
+    )
+    
+    # 1. BATCH INFORMATION SECTION
+    ws.merge_cells('A1:E1')
+    ws['A1'] = "BATCH REPORT"
+    ws['A1'].font = Font(bold=True, size=16, color="1F4E78")
+    ws['A1'].alignment = Alignment(horizontal="center")
+    
+    ws['A3'] = "Batch Information"
+    ws['A3'].font = title_font
+    
+    info_rows = [
+        ["Batch Code:", batch.batch_code],
+        ["Batch Title:", batch.batch_title],
+        ["Course Type:", batch.course_type],
+        ["Course:", batch.course.title if batch.course else 'N/A'],
+        ["Start Date:", batch.start_date],
+        ["End Date:", batch.end_date if batch.end_date else 'Ongoing'],
+        ["Batch Status:", batch.batch_status.title()],
+        ["Max Students:", batch.max_students],
+        ["Duration:", f"{batch.duration_days} days" if batch.duration_days else "N/A"],
+    ]
+    
+    for i, (label, value) in enumerate(info_rows, start=4):
+        ws[f'A{i}'] = label
+        ws[f'A{i}'].font = Font(bold=True)
+        ws[f'B{i}'] = value
+    
+    # 2. STATISTICS SECTION
+    stat_row = 14
+    ws[f'A{stat_row}'] = "Batch Statistics"
+    ws[f'A{stat_row}'].font = title_font
+    
+    # Statistics headers
+    stat_headers = ["Metric", "Count", "Percentage"]
+    for col, header in enumerate(stat_headers, start=1):
+        cell = ws.cell(row=stat_row+1, column=col)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
+        cell.border = border
+    
+    # Statistics data
+    stats_data = [
+        ["Total Enrolled Students", total_students, "100%"],
+        ["Active Students", active_students, 
+         f"{(active_students/total_students*100):.1f}%" if total_students > 0 else "0%"],
+        ["Payment Completed Students", payment_completed_students,
+         f"{(payment_completed_students/total_students*100):.1f}%" if total_students > 0 else "0%"],
+        ["Available Seats", max(batch.max_students - total_students, 0),
+         f"Occupancy: {(total_students/batch.max_students*100):.1f}%" if batch.max_students > 0 else "N/A"],
+    ]
+    
+    for i, row_data in enumerate(stats_data, start=stat_row+2):
+        for j, value in enumerate(row_data, start=1):
+            cell = ws.cell(row=i, column=j)
+            cell.value = value
+            cell.border = border
+    
+    # 3. FINANCIAL SUMMARY SECTION
+    financial_row = stat_row + len(stats_data) + 3
+    ws[f'A{financial_row}'] = "Financial Summary"
+    ws[f'A{financial_row}'].font = title_font
+    
+    # Financial headers
+    fin_headers = ["Description", "Amount (₹)"]
+    for col, header in enumerate(fin_headers, start=1):
+        cell = ws.cell(row=financial_row+1, column=col)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = PatternFill(start_color="70AD47", end_color="70AD47", fill_type="solid")
+        cell.alignment = header_alignment
+        cell.border = border
+    
+    # Financial data
+    total_potential_fees = batch.enrollments.aggregate(total=Sum('total_fees'))['total'] or Decimal('0.00')
+    total_discounts = batch.enrollments.aggregate(total=Sum('discount'))['total'] or Decimal('0.00')
+    net_fees_total = batch.enrollments.aggregate(total=Sum('net_fees'))['total'] or Decimal('0.00')
+    collection_percentage = (total_collected / net_fees_total * 100) if net_fees_total > 0 else 0
+    
+    fin_data = [
+        ["Total Potential Fees", f"₹{total_potential_fees:,.2f}"],
+        ["Total Discounts Given", f"₹{total_discounts:,.2f}"],
+        ["Total Net Fees", f"₹{net_fees_total:,.2f}"],
+        ["Total Collected Amount", f"₹{total_collected:,.2f}"],
+        ["Total Pending Amount", f"₹{total_pending:,.2f}"],
+        ["Collection Rate", f"{collection_percentage:.1f}%"],
+    ]
+    
+    for i, row_data in enumerate(fin_data, start=financial_row+2):
+        for j, value in enumerate(row_data, start=1):
+            cell = ws.cell(row=i, column=j)
+            cell.value = value
+            cell.border = border
+    
+    # 4. STUDENT DETAILS SECTION
+    student_row = financial_row + len(fin_data) + 3
+    ws[f'A{student_row}'] = "STUDENT DETAILS"
+    ws[f'A{student_row}'].font = title_font
+    
+    # Student headers
+    student_headers = [
+        "S.No.", "Enrollment ID", "Student Name", "Mobile Number", 
+        "Enrollment Date", "Status", "Payment Status",
+        "Total Fees (₹)", "Discount (₹)", "Net Fees (₹)", 
+        "Paid Amount (₹)", "Balance (₹)", "Payment Progress"
+    ]
+    
+    for col, header in enumerate(student_headers, start=1):
+        cell = ws.cell(row=student_row+1, column=col)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = PatternFill(start_color="FFC000", end_color="FFC000", fill_type="solid")
+        cell.alignment = header_alignment
+        cell.border = border
+    
+    # Student data
+    enrollments = batch.enrollments.select_related('student').all()
+    for i, enrollment in enumerate(enrollments, start=student_row+2):
+        row_data = [
+            i - student_row - 1,
+            enrollment.enrollment_id,
+            enrollment.student.name,
+            enrollment.student.mobile_number,
+            enrollment.enrollment_date.strftime('%d-%b-%Y'),
+            enrollment.status.title(),
+            enrollment.payment_status.title(),
+            enrollment.total_fees,
+            enrollment.discount,
+            enrollment.net_fees,
+            enrollment.paid_amount,
+            enrollment.balance,
+            enrollment.payment_progress
+        ]
+        
+        for j, value in enumerate(row_data, start=1):
+            cell = ws.cell(row=i, column=j)
+            cell.value = value
+            cell.border = border
+    
+    # 5. PAYMENT DETAILS SECTION
+    payment_row = student_row + len(enrollments) + 3
+    ws[f'A{payment_row}'] = "PAYMENT TRANSACTIONS"
+    ws[f'A{payment_row}'].font = title_font
+    
+    # Payment headers
+    payment_headers = [
+        "Student Name", "Payment Date", "Payment ID", "Type", 
+        "Mode", "Amount (₹)", "Reference", "Received By"
+    ]
+    
+    for col, header in enumerate(payment_headers, start=1):
+        cell = ws.cell(row=payment_row+1, column=col)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = PatternFill(start_color="ED7D31", end_color="ED7D31", fill_type="solid")
+        cell.alignment = header_alignment
+        cell.border = border
+    
+    # Payment data
+    payments = Payment.objects.filter(
+        enrollment__batch=batch
+    ).select_related('enrollment__student', 'received_by').order_by('-payment_date')
+    
+    for i, payment in enumerate(payments, start=payment_row+2):
+        row_data = [
+            payment.enrollment.student.name,
+            payment.payment_date.strftime('%d-%b-%Y'),
+            payment.payment_id,
+            payment.get_payment_type_display(),
+            payment.get_payment_mode_display(),
+            payment.amount,
+            payment.reference_number or '-',
+            payment.received_by.name if payment.received_by else '-'
+        ]
+        
+        for j, value in enumerate(row_data, start=1):
+            cell = ws.cell(row=i, column=j)
+            cell.value = value
+            cell.border = border
+    
+    # Adjust column widths
+    for column_cells in ws.columns:
+        length = max(len(str(cell.value)) if cell.value else 0 for cell in column_cells)
+        ws.column_dimensions[get_column_letter(column_cells[0].column)].width = length + 2
+    
+    # Save to temporary file
+    with tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False) as tmp:
+        wb.save(tmp.name)
+        tmp_path = tmp.name
+    
+    # Create response
+    with open(tmp_path, 'rb') as f:
+        response = HttpResponse(
+            f.read(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="batch_report_{batch.batch_code}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+    
+    # Clean up temp file
+    os.unlink(tmp_path)
+    
+    return response
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+# views.py
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.conf import settings
+from decimal import Decimal
+import os
+from datetime import datetime
+
+@login_required
+def print_payment_receipt(request, pk):
+    """Generate printable receipt for a payment"""
+    payment = get_object_or_404(Payment, pk=pk)
+    enrollment = payment.enrollment
+    
+    # Get institute information (you can store these in settings or database)
+    institute_info = {
+        'name': 'VR Training Academy',
+        'address': 'Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109',
+        'email': 'vrtrainingacademy1123@gmail.com',
+        'primary_contact': '+91 99703 60424',
+        'whatsapp_contact': '+91 92702 01760',
+    }
+    
+    # Calculate receipt details
+    receipt_data = {
+        'payment': payment,
+        'enrollment': enrollment,
+        'student': enrollment.student,
+        'batch': enrollment.batch,
+        'institute': institute_info,
+        'receipt_date': timezone.now().date(),
+        'receipt_number': f"RCPT-{payment.payment_id}",
+        
+        # Course details
+        'course_title': enrollment.course_title or "Not specified",
+        'batch_code': enrollment.batch.batch_code if enrollment.batch else "Not assigned",
+        
+        # Payment summary
+        'total_fees': enrollment.total_fees,
+        'discount': enrollment.discount,
+        'net_fees': enrollment.net_fees,
+        'paid_before': enrollment.paid_amount - payment.amount,  # Amount paid before this payment
+        'paid_after': enrollment.paid_amount,  # Total paid including this payment
+        'balance_after': enrollment.balance,  # Balance after this payment
+        'paid_in_words': amount_in_words(payment.amount),
+    }
+    
+    # For PDF download
+    download = request.GET.get('download', False)
+    
+    if download:
+        # Generate PDF (requires reportlab or similar library)
+        # For now, we'll just return HTML that users can print
+        return generate_pdf_receipt(receipt_data)
+    
+    context = {
+        **receipt_data,
+        'download_mode': download,
+    }
+    
+    return render(request, 'print_payment_receipt.html', context)
+
+def amount_in_words(amount):
+    """Convert amount to words (basic implementation)"""
+    try:
+        # Simple implementation - you might want a more robust one
+        num = int(amount)
+        
+        units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"]
+        teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", 
+                "Seventeen", "Eighteen", "Nineteen"]
+        tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+        
+        if num == 0:
+            return "Zero"
+        
+        words = ""
+        
+        # Handle thousands
+        if num >= 1000:
+            thousands = num // 1000
+            if thousands > 0:
+                words += units[thousands] + " Thousand "
+            num %= 1000
+        
+        # Handle hundreds
+        if num >= 100:
+            hundreds = num // 100
+            words += units[hundreds] + " Hundred "
+            num %= 100
+        
+        # Handle tens and units
+        if num >= 20:
+            tens_digit = num // 10
+            words += tens[tens_digit] + " "
+            num %= 10
+        
+        if num >= 10:
+            words += teens[num - 10] + " "
+            num = 0
+        
+        if num > 0:
+            words += units[num] + " "
+        
+        words += "Rupees Only"
+        return words.strip()
+    
+    except:
+        return f"{amount} Rupees Only"
+
+def generate_pdf_receipt(receipt_data):
+    """Generate PDF receipt (optional - implement if you have PDF library)"""
+    # This is a placeholder - you can implement PDF generation using:
+    # 1. ReportLab
+    # 2. WeasyPrint
+    # 3. xhtml2pdf
+    # For now, we'll return HTML that users can print
+    
+    template = get_template('print_payment_receipt.html')
+    html = template.render({'receipt_data': receipt_data, 'download_mode': True})
+    
+    # Create PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Receipt_{receipt_data["receipt_number"]}.pdf"'
+    
+    # Here you would convert HTML to PDF using your preferred library
+    # For example with xhtml2pdf:
+    # from xhtml2pdf import pisa
+    # pisa.CreatePDF(html, dest=response)
+    
+    return response
+
+

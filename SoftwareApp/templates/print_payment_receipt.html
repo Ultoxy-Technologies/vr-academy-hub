@@ -1,0 +1,666 @@
+<!-- templates/print_payment_receipt.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - {{ receipt_number }}</title>
+    <style>
+        /* A4 Page Settings */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333333;
+            width: 210mm;
+            min-height: 287mm; /* Reduced for margins */
+            box-sizing: border-box;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        /* Hide elements during print */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        
+        /* Modern Header */
+        .letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .institute-info {
+            flex: 2;
+        }
+        
+        .institute-logo {
+            flex: 1;
+            text-align: right;
+        }
+        
+        .institute-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a5f7a;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        
+        .institute-tagline {
+            font-size: 10px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 3px;
+        }
+        
+        .contact-info {
+            font-size: 9px;
+            color: #555;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 3px;
+        }
+        
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Receipt Header */
+        .receipt-header {
+            background: linear-gradient(135deg, #1a5f7a 0%, #2c3e50 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .receipt-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .receipt-meta {
+            text-align: right;
+        }
+        
+        .receipt-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffdd40;
+        }
+        
+        /* Compact Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* Info Cards */
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a5f7a;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        /* Compact Tables */
+        .compact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        
+        .compact-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .compact-table .label {
+            font-weight: 600;
+            color: #4a5568;
+            width: 35%;
+            background-color: #f7fafc;
+        }
+        
+        /* Payment Summary */
+        .payment-summary {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .payment-row.total {
+            font-weight: 700;
+            color: #1a5f7a;
+            border-bottom: 2px solid #1a5f7a;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        
+        .payment-row.highlight {
+            background-color: #ebf8ff;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+        
+        /* Amount Display */
+        .amount {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-paid {
+            background-color: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        /* Amount in Words */
+        .amount-words {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border: 1px solid #c6f6d5;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin: 12px 0;
+            font-size: 10px;
+            font-style: italic;
+        }
+        
+        /* Signature Area */
+        .signature-area {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        
+        .signature-box {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #4a5568;
+            margin: 25px 0 5px 0;
+        }
+        
+        .signature-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 8px;
+            color: #718096;
+            padding: 8px 0;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-print {
+            background: #1a5f7a;
+            color: white;
+        }
+        
+        .btn-print:hover {
+            background: #164e63;
+        }
+        
+        .btn-download {
+            background: #2d3748;
+            color: white;
+        }
+        
+        .btn-download:hover {
+            background: #1a202c;
+        }
+        
+        .btn-back {
+            background: #718096;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #4a5568;
+        }
+        
+        /* Watermark */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.03;
+            font-size: 80px;
+            font-weight: 900;
+            color: #000;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        /* Print Optimization */
+        @media print {
+            .info-card {
+                break-inside: avoid;
+            }
+            .grid-container {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Watermark -->
+    <div class="watermark">VR TRAINING ACADEMY</div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons no-print">
+        <button class="btn btn-print" onclick="printReceipt()">
+            <i class="bi bi-printer"></i> Print Receipt
+        </button> 
+    </div>
+    
+    <!-- Letterhead -->
+    <div class="letterhead">
+        <div class="institute-info">
+            <div class="institute-name">VR TRAINING ACADEMY</div>
+            <div class="institute-tagline">Skill Development & Vocational Training</div>
+            <div class="contact-info">
+                <span><i class="bi bi-geo-alt"></i> Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</span>
+                <span><i class="bi bi-envelope"></i> vrtrainingacademy1123@gmail.com</span>
+                <span><i class="bi bi-telephone"></i> +91 99703 60424</span>
+                <span><i class="bi bi-whatsapp"></i> +91 92702 01760</span>
+            </div>
+        </div>
+        <div class="institute-logo">
+            <!-- Add logo here if available -->
+            <!-- <div style="font-size: 10px; color: #666; text-align: right;">
+                GSTIN: ##############
+                <br>PAN: ##########
+            </div> -->
+        </div>
+    </div>
+    
+    <!-- Receipt Header -->
+    <div class="receipt-header">
+        <div class="receipt-title">OFFICIAL PAYMENT RECEIPT</div>
+        <div class="receipt-meta">
+            <div class="receipt-number">Receipt: {{ receipt_number }}</div>
+            <div style="font-size: 10px;">Date: {{ receipt_date|date:"d/m/Y" }}</div>
+        </div>
+    </div>
+    
+    <!-- Main Content Grid -->
+    <div class="grid-container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Student Information -->
+            <div class="info-card">
+                <div class="card-title">Student Information</div>
+                <table class="compact-table">
+                    <tr>
+                        <td class="label">Full Name</td>
+                        <td>{{ student.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Mobile Number</td>
+                        <td>{{ student.mobile_number }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Email Address</td>
+                        <td>{{ student.email|default:"Not provided" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Address</td>
+                        <td>{{ student.dist|default:"" }} {{ student.taluka|default:"" }} {{ student.village|default:"Not provided" }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Course Information -->
+            <div class="info-card">
+                <div class="card-title">Course Details</div>
+                <table class="compact-table">
+                    <tr>
+                        <td class="label">Course Name</td>
+                        <td>{{ course_title }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Batch Code</td>
+                        <td>{{ batch_code }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Enrollment ID</td>
+                        <td>{{ enrollment.enrollment_id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Enrollment Date</td>
+                        <td>{{ enrollment.enrollment_date|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% if batch %}
+                    <tr>
+                        <td class="label">Batch Period</td>
+                        <td>{{ batch.start_date|date:"d/m/Y" }} to {{ batch.end_date|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Payment Information -->
+            <div class="info-card">
+                <div class="card-title">Payment Details</div>
+                <table class="compact-table">
+                    <tr>
+                        <td class="label">Payment ID</td>
+                        <td>{{ payment.payment_id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Payment Date</td>
+                        <td>{{ payment.payment_date|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Payment Mode</td>
+                        <td>{{ payment.get_payment_mode_display }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Payment Type</td>
+                        <td>{{ payment.get_payment_type_display }}</td>
+                    </tr>
+                    {% if payment.installment_number %}
+                    <tr>
+                        <td class="label">Installment No.</td>
+                        <td>#{{ payment.installment_number }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if payment.reference_number %}
+                    <tr>
+                        <td class="label">Reference No.</td>
+                        <td>{{ payment.reference_number }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td class="label">Status</td>
+                        <td><span class="status-badge status-paid">PAID</span></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <div class="card-title">Fee Summary (₹)</div>
+                <div class="payment-row">
+                    <span>Total Course Fees:</span>
+                    <span class="amount">{{ total_fees|floatformat:2 }}</span>
+                </div>
+                <div class="payment-row">
+                    <span>Discount Applied:</span>
+                    <span class="amount">-{{ discount|floatformat:2 }}</span>
+                </div>
+                <div class="payment-row">
+                    <span>Net Fees Payable:</span>
+                    <span class="amount">{{ net_fees|floatformat:2 }}</span>
+                </div>
+                <div class="payment-row">
+                    <span>Previously Paid:</span>
+                    <span class="amount">-{{ paid_before|floatformat:2 }}</span>
+                </div>
+                <div class="payment-row highlight">
+                    <span><strong>This Payment:</strong></span>
+                    <span class="amount"><strong>{{ payment.amount|floatformat:2 }}</strong></span>
+                </div>
+                <div class="payment-row total">
+                    <span>Total Paid Now:</span>
+                    <span class="amount">{{ paid_after|floatformat:2 }}</span>
+                </div>
+                <div class="payment-row total">
+                    <span>Balance Due:</span>
+                    <span class="amount">{{ balance_after|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Amount in Words -->
+    <div class="amount-words">
+        <strong>Amount Received in Words:</strong> {{ paid_in_words }} Only.
+    </div>
+    
+    <!-- Remarks -->
+    {% if payment.remarks %}
+    <div style="margin: 10px 0; padding: 10px; background: #fff7ed; border-left: 3px solid #ed8936; font-size: 10px;">
+        <strong>Remarks:</strong> {{ payment.remarks }}
+    </div>
+    {% endif %}
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div style="margin-bottom: 4px;">
+            <strong>Note:</strong> This receipt is proof of payment. Please retain for your records.
+            For any queries, contact: +91 99703 60424 | vrtrainingacademy1123@gmail.com
+        </div>
+        <div>Software Generated Receipt | Document ID: {{ receipt_number }} | Print Timestamp: {% now "d/m/Y H:i:s" %}</div>
+    </div>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- HTML2PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        // Auto-print if requested
+        if (window.location.search.includes('autoprint=true')) {
+            setTimeout(printReceipt, 500);
+        }
+        
+        // Format currency with Indian numbering system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format all amount elements
+            const formatter = new Intl.NumberFormat('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            document.querySelectorAll('.amount').forEach(el => {
+                const text = el.textContent.trim();
+                if (text && !isNaN(parseFloat(text))) {
+                    const num = parseFloat(text);
+                    if (text.includes('-')) {
+                        el.textContent = '-₹' + formatter.format(Math.abs(num));
+                    } else {
+                        el.textContent = '₹' + formatter.format(num);
+                    }
+                }
+            });
+        });
+        
+        // Print function
+        function printReceipt() {
+            // Hide action buttons before printing
+            document.querySelector('.action-buttons').style.display = 'none';
+            
+            // Print the document
+            window.print();
+            
+            // Show action buttons after printing
+            setTimeout(() => {
+                document.querySelector('.action-buttons').style.display = 'flex';
+            }, 100);
+        }
+        
+        // Download as PDF function
+        function downloadAsPDF() {
+            const element = document.body;
+            const options = {
+                margin: [10, 10, 10, 10],
+                filename: 'Payment-Receipt-{{ receipt_number }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            // Show loading message
+            const downloadBtn = document.querySelector('.btn-download');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generating PDF...';
+            downloadBtn.disabled = true;
+            
+            // Temporarily hide action buttons for PDF generation
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.style.display = 'none';
+            
+            // Generate PDF
+            html2pdf().set(options).from(element).save().then(() => {
+                // Restore button state
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                actionButtons.style.display = 'flex';
+                
+                // Show success message
+                alert('PDF downloaded successfully!');
+            }).catch(err => {
+                console.error('PDF generation error:', err);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                actionButtons.style.display = 'flex';
+                alert('Error generating PDF. Please try again or use Print option.');
+            });
+        }
+        
+        // Go back function with fallback
+        function goBack() {
+            // Try to go back in history
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // If no history, redirect to a default page
+                // You can change this to your actual dashboard URL
+                window.location.href = '/dashboard/';
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl+P for print
+            if (event.ctrlKey && event.key === 'p') {
+                event.preventDefault();
+                printReceipt();
+            }
+            // Ctrl+S for save PDF
+            if (event.ctrlKey && event.key === 's') {
+                event.preventDefault();
+                downloadAsPDF();
+            }
+            // Escape to go back
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>

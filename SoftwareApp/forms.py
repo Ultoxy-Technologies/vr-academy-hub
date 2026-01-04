@@ -200,7 +200,7 @@ class EnrollmentForm(forms.ModelForm):
         fields = [
             'student_mobile', 'student_name', 'batch',
             'total_fees', 'discount', 'status', 'payment_status',
-            'class_start_date', 'class_end_date', 'payment_schedule'
+            'class_start_date', 'class_end_date', 'payment_schedule','branch'
         ]
         widgets = {
             'total_fees': forms.NumberInput(attrs={
@@ -307,12 +307,12 @@ class EnrollmentForm(forms.ModelForm):
         
         return discount or Decimal('0.00')
     
-    def clean_class_start_date(self):
-        """Validate class start date"""
-        start_date = self.cleaned_data.get('class_start_date')
-        if start_date and start_date < timezone.now().date():
-            raise ValidationError("Class start date cannot be in the past")
-        return start_date
+    # def clean_class_start_date(self):
+    #     """Validate class start date"""
+    #     start_date = self.cleaned_data.get('class_start_date')
+    #     if start_date and start_date < timezone.now().date():
+    #         raise ValidationError("Class start date cannot be in the past")
+    #     return start_date
     
     def clean_class_end_date(self):
         """Validate class end date"""
@@ -536,15 +536,7 @@ class BatchForm(forms.ModelForm):
 class PaymentForm(forms.ModelForm):
     """Form for recording payments"""
     
-    # Additional field for manual amount entry
-    custom_amount = forms.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        required=False,
-        label="Custom Amount",
-        help_text="Leave empty to use installment amount"
-    )
-    
+ 
     # Field for selecting installment
     installment_number = forms.IntegerField(
         required=False,
@@ -619,21 +611,11 @@ class PaymentForm(forms.ModelForm):
                     field.widget.attrs = {}
                 field.widget.attrs['class'] = 'form-control'
     
-    def clean_custom_amount(self):
-        """Validate custom amount"""
-        custom_amount = self.cleaned_data.get('custom_amount')
-        if custom_amount is not None and custom_amount <= 0:
-            raise ValidationError("Custom amount must be greater than 0")
-        return custom_amount
+ 
     
     def clean_amount(self):
         """Validate payment amount"""
         amount = self.cleaned_data.get('amount')
-        custom_amount = self.cleaned_data.get('custom_amount')
-        
-        # Use custom amount if provided
-        if custom_amount:
-            amount = custom_amount
         
         if not amount:
             raise ValidationError("Payment amount is required")

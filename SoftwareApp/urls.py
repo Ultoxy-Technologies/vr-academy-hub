@@ -5,6 +5,7 @@ from .enrollment_views import *
 urlpatterns = [
     path('software-welcome-page', software_welcome_page, name='software_welcome_page'),
     path('crm_software_dashboard', crm_software_dashboard, name='crm_software_dashboard'), 
+    path('enrollments/export-filtered/', export_enrollments_filtered, name='export_enrollments_filtered'),
     path('followups/', crm_follow_up_list, name='crm_follow_up_list'),
     path('creat_follow_up/', create_followup, name='crm_create_followup'),
     path('delete_follow_up/<int:id>', delete_follow_up, name='crm_delete_follow_up'),
@@ -30,13 +31,21 @@ urlpatterns = [
     path('enrollments/<int:pk>/update/', update_enrollment, name='update_enrollment'),
     path('enrollments/<int:pk>/delete/', delete_enrollment, name='delete_enrollment'),
 
-    path('enrollments/<int:enrollment_id>/payment/', record_payment, name='record_payment'),
+    path('payment/<int:enrollment_id>/payment/', record_payment, name='record_payment'),
+    path('payment/<int:id>/update_payment/', update_payment, name='payment_update_payment'),
+    path('payment/<int:id>/delete_payment/', delete_payment, name='payment_delete_payment'),
+    path('payments/<int:pk>/receipt/', print_payment_receipt, name='print_payment_receipt'),
+
         # Batch Management URLs
     path('batches/', batch_list, name='enrollment_batch_list'),
     path('batches/create/', create_batch, name='create_batch'),
     path('batches/<int:pk>/update/', update_batch, name='update_batch'),
     path('batches/<int:pk>/delete/', delete_batch, name='delete_batch'),
     path('batches/<int:pk>/details/', batch_detail, name='enroallments_batch_detail'),
+    
+    path('batch/<int:batch_id>/export-excel/', export_batch_report_excel, name='export_batch_excel'),
+    # enroll_student_from_follow_up
+    path('enroll_student_from_follow_up/<int:id>/', enroll_student_from_follow_up, name='enroll_student_from_follow_up'),
 
 
 

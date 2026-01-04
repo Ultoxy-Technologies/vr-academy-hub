@@ -720,28 +720,28 @@ class Batch(models.Model):
             raise ValidationError("Maximum students must be greater than 0.")
         
         # Auto-update batch status based on dates
-        self.update_batch_status()
+        # self.update_batch_status()
     
     def save(self, *args, **kwargs):
         # Auto-update batch status
-        self.update_batch_status()
+        # self.update_batch_status()
         super().save(*args, **kwargs)
     
-    def update_batch_status(self):
-        """Update batch status based on current date"""
-        from django.utils import timezone
+    # def update_batch_status(self):
+    #     """Update batch status based on current date"""
+    #     from django.utils import timezone
         
-        today = timezone.now().date()
+    #     today = timezone.now().date()
         
-        if self.batch_status == 'cancelled':
-            return  # Don't change cancelled batches
+    #     if self.batch_status == 'cancelled':
+    #         return  # Don't change cancelled batches
         
-        if self.start_date > today:
-            self.batch_status = 'upcoming'
-        elif self.end_date and self.end_date < today:
-            self.batch_status = 'completed'
-        elif self.start_date <= today:
-            self.batch_status = 'ongoing'
+    #     if self.start_date > today:
+    #         self.batch_status = 'upcoming'
+    #     elif self.end_date and self.end_date < today:
+    #         self.batch_status = 'completed'
+    #     elif self.start_date <= today:
+    #         self.batch_status = 'ongoing'
     
     @property
     def course(self):
@@ -860,7 +860,14 @@ class Enrollment(models.Model):
     
     # Payment schedule (simple text field for reference)
     payment_schedule = models.TextField(blank=True, help_text="e.g., 5000 on 10th Dec, 5000 on 10th Jan")
-    
+        
+    # ================== Follow-Up Details ==================
+    branch = models.ForeignKey(
+        Branch,
+        on_delete=models.CASCADE,
+        related_name='enrollment_branch',
+        null=True, blank=True
+    )    
     # System fields
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
@@ -911,11 +918,18 @@ class Enrollment(models.Model):
             self.payment_status = 'partial'
         else:
             self.payment_status = 'pending'
-            
-        # Check for overdue payments
+        
+        # Check for overdue payments using date comparison directly
+        from django.utils import timezone
+        today = timezone.now().date()
+        
+        # Find payments with due_date in the past and no payment_date
+        # OR payment_date after due_date
         overdue_payments = self.payments.filter(
-            due_date__lt=timezone.now().date(),
-            is_overdue=True
+            due_date__isnull=False
+        ).filter(
+            models.Q(payment_date__isnull=True, due_date__lt=today) |
+            models.Q(payment_date__isnull=False, payment_date__gt=models.F('due_date'))
         ).exists()
         
         if overdue_payments and self.payment_status != 'completed':
@@ -927,12 +941,13 @@ class Enrollment(models.Model):
     @property
     def paid_amount(self):
         """Total paid amount"""
-        if hasattr(self, '_paid_amount'):
-            return self._paid_amount
-            
-        total = self.payments.aggregate(total=models.Sum('amount'))['total']
-        self._paid_amount = total or Decimal('0.00')
-        return self._paid_amount
+        try:
+            # Aggregate payments for this enrollment
+            result = self.payments.aggregate(total=models.Sum('amount'))
+            total = result['total']
+            return total if total is not None else Decimal('0.00')
+        except Exception:
+            return Decimal('0.00')
     
     @property
     def balance(self):
@@ -947,10 +962,13 @@ class Enrollment(models.Model):
     @property
     def payment_progress(self):
         """Payment progress percentage"""
-        if self.net_fees <= 0:
+        if not self.net_fees or self.net_fees <= 0:
             return 100
-        progress = (self.paid_amount / self.net_fees) * 100
-        return min(progress, 100)
+        try:
+            progress = (self.paid_amount / self.net_fees) * 100
+            return min(progress, 100)
+        except (ZeroDivisionError, TypeError):
+            return 0
     
     @property
     def total_payments(self):
@@ -1039,6 +1057,8 @@ class Payment(models.Model):
     
     def clean(self):
         """Validate payment data"""
+        if not self.amount:
+            raise ValidationError("Payment amount is required.")
         if self.amount <= 0:
             raise ValidationError("Payment amount must be greater than 0.")
         

@@ -591,6 +591,62 @@
                                 onclick="openUpdateModal(this)">
                                     <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit</span>
                                 </a> 
+                                
+                                <!-- <a href="{% url 'enroll_student_from_follow_up' followup.id %}" 
+                                class="btn btn-sm btn-outline-info" onclick="openCreateModal(this)"
+                                title="View Follow-Up">
+                                    <i class="bi bi-person-add"></i> <span class="d-none d-md-inline">Enroll</span>
+                                </a> -->
+                                <a href="javascript:void(0);" 
+                                data-url="{% url 'enroll_student_from_follow_up' followup.id  %}" 
+                                class="btn btn-sm btn-outline-info"  
+                                onclick="openCreateModal(this)">
+                                <i class="bi bi-plus-circle me-1"></i> New Enrollment
+                                </a>
+                                <script>
+                                    // Update Modal Function
+                                    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+                                        const url = element.dataset.url;
+                                        
+                                        // Calculate center position
+                                        const width = customWidth;
+                                        const height = customHeight;
+                                        const left = Math.max(0, (window.screen.width - width) / 2);
+                                        const top = Math.max(0, (window.screen.height - height) / 2);
+                                        
+                                        // Window features
+                                        const features = [
+                                            `width=${width}`,
+                                            `height=${height}`,
+                                            `left=${left}`,
+                                            `top=${top}`,
+                                            'scrollbars=yes',
+                                            'resizable=yes',
+                                            'centerscreen=yes',
+                                            'location=no',
+                                            'menubar=no',
+                                            'toolbar=no',
+                                            'status=no',
+                                            'titlebar=no'
+                                        ].join(',');
+                                        
+                                        // Open centered window
+                                        const newWindow = window.open(url, "updateWindow", features);
+                                        
+                                        if (newWindow) {
+                                            newWindow.focus();
+                                            
+                                            // Check if window is closed to refresh parent
+                                            const checkWindow = setInterval(function() {
+                                                if (newWindow.closed) {
+                                                    clearInterval(checkWindow);
+                                                    window.location.reload();
+                                                }
+                                            }, 500);
+                                        }
+                                        return false;
+                                    }
+                                </script>
                                 <a href="{% url 'crm_delete_follow_up' followup.id %}" 
                                 class="btn btn-sm btn-outline-danger btn-delete" 
                                 title="Delete Follow-Up"

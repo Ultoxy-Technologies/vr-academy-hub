@@ -449,6 +449,18 @@
                 </div>
 
                 <div class="col-md-3">
+                    <label class="form-label">Branch</label>
+                    <select name="branch" class="form-select">
+                        <option value="">All Branches</option>
+                        {% for branch in branches %}
+                        <option value="{{ branch.id }}" {% if branch_filter == branch.id|stringformat:"s" %}selected{% endif %}>
+                            {{ branch.branch_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
                     <label class="form-label">Date From</label>
                     <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
                 </div>
@@ -460,8 +472,8 @@
                 
                 <div class="col-md-3">
                     <label class="form-label">Search</label>
-                    <div class="search-box">
-                        <i class="bi bi-search"></i>
+                    <div class="search-box"> 
+                        
                         <input type="text" name="search" placeholder="Search by name, mobile, or enrollment ID..." 
                                class="form-control border-0" value="{{ search_query }}">
                     </div>
@@ -492,7 +504,7 @@
                             <th>Student</th>
                             <th>Batch & Course</th>
                             <th>Status</th>
-                            <th>Payment</th>
+                            <th>Branch</th>
                             <th>Fees</th>
                             <th>Progress</th>
                             <th>Actions</th>
@@ -537,26 +549,16 @@
                                     <span class="badge badge-status badge-pending">Pending</span>
                                 {% else %}
                                     <span class="badge badge-secondary">{{ enrollment.status|title }}</span>
-                                {% endif %}
-                                {% if enrollment.is_payment_overdue %}
-                                    <br>
-                                    <small class="overdue-warning">
-                                        <i class="bi bi-exclamation-triangle"></i> Payment Overdue
-                                    </small>
-                                {% endif %}
+                                {% endif %} 
                             </td>
                             <td>
-                                {% if enrollment.payment_status == 'completed' %}
-                                    <span class="badge badge-status badge-payment-completed">Paid</span>
-                                {% elif enrollment.payment_status == 'partial' %}
-                                    <span class="badge badge-status badge-payment-partial">Partial</span>
-                                {% elif enrollment.payment_status == 'pending' %}
-                                    <span class="badge badge-status badge-payment-pending">Pending</span>
-                                {% elif enrollment.payment_status == 'overdue' %}
-                                    <span class="badge badge-status badge-payment-overdue">Overdue</span>
-                                {% else %}
-                                    <span class="badge badge-secondary">{{ enrollment.payment_status|title }}</span>
-                                {% endif %}
+                                <small>
+                                    {% if enrollment.branch.branch_name %} 
+                                        <span class="badge badge-status badge-on_hold">{{ enrollment.branch.branch_name }}</span>
+                                    {% else %}
+                                        <span class="badge badge-status badge-discontinued">---</span>
+                                    {% endif %}
+                                </small>
                             </td>
                             <td>
                                 <div class="d-flex flex-column">
@@ -565,6 +567,13 @@
                                         <span class="amount-paid">Paid: ₹{{ enrollment.display_paid|floatformat:0 }}</span>
                                         <br>
                                         <span class="amount-balance">Balance: ₹{{ enrollment.display_balance|floatformat:0 }}</span>
+                                        
+                                        {% if enrollment.is_payment_overdue %}
+                                            <br>
+                                            <small class="overdue-warning">
+                                                <i class="bi bi-exclamation-triangle"></i> Payment Overdue
+                                            </small>
+                                        {% endif %}
                                     </small>
                                 </div>
                             </td>
@@ -584,7 +593,7 @@
                                         <i class="bi bi-eye"></i>
                                         <span class="d-none d-md-inline">View</span>
                                     </a>
-                                    <a href="javascript:void(0);" 
+                                    <!-- <a href="javascript:void(0);" 
                                     class="btn btn-sm btn-outline-warning" 
                                     data-url="" 
                                     onclick="openUpdateModal(this)">
@@ -596,7 +605,7 @@
                                     title="Record Payment">
                                         <i class="bi bi-cash"></i>
                                         <span class="d-none d-md-inline">Payment</span>
-                                    </a>
+                                    </a> -->
                                     <a href="{% url 'delete_enrollment' enrollment.pk %}" 
                                     class="btn btn-sm btn-outline-danger btn-delete" 
                                     title="Delete Enrollment"
@@ -619,6 +628,131 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Add this at the bottom of your enrolled_student_list.html template -->
+{% if enrollments.paginator.num_pages > 1 %}
+<div class="mt-4">
+    <nav aria-label="Enrollments pagination" class="mb-3">
+        <ul class="pagination pagination-modern justify-content-center">
+            <!-- First Page -->
+            {% if enrollments.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   aria-label="First">
+                    <i class="bi bi-chevron-double-left"></i>
+                </a>
+            </li>
+            
+            <!-- Previous Page -->
+            <li class="page-item">
+                <a class="page-link" href="?page={{ enrollments.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   aria-label="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+            </li>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for num in enrollments.paginator.page_range %}
+                {% if num == enrollments.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > enrollments.number|add:'-3' and num < enrollments.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Next Page -->
+            {% if enrollments.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ enrollments.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   aria-label="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            
+            <!-- Last Page -->
+            <li class="page-item">
+                <a class="page-link" href="?page={{ enrollments.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                   aria-label="Last">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <!-- Showing X to Y of Z entries -->
+    <div class="text-center">
+        <p class="text-muted mb-0">
+            Showing {{ enrollments.start_index }} - {{ enrollments.end_index }} of {{ enrollments.paginator.count }} enrollments
+        </p>
+        
+        <!-- Page info and navigation -->
+        <span class="text-muted me-3">Page {{ enrollments.number }} of {{ enrollments.paginator.num_pages }}</span>
+        <div class="d-flex justify-content-center align-items-center mt-2">
+            <br>
+            <!-- Jump to page input -->
+            <form method="get" class="d-inline-flex align-items-center" style="max-width: 200px;">
+ 
+                <label for="jumpPage" class="form-label me-2 mb-0">Go to:</label>
+                <input type="number" 
+                       id="jumpPage" 
+                       name="page" 
+                       class="form-control form-control-sm" 
+                       style="width: 70px;"
+                       min="1" 
+                       max="{{ enrollments.paginator.num_pages }}" 
+                       value="{{ enrollments.number }}">
+                <button type="submit" class="btn btn-sm btn-primary ms-2">Go</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Add this CSS for better pagination styling -->
+<style>
+.pagination-modern .page-item .page-link {
+    border-radius: 0.375rem;
+    margin: 0 3px;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.pagination-modern .page-item.active .page-link {
+    background-color: #1a5f7a;
+    border-color: #1a5f7a;
+    color: white;
+}
+
+.pagination-modern .page-item .page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.pagination-modern .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #f8f9fa;
+}
+</style>
 
             <!-- Delete Confirmation Modal -->
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -646,54 +780,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            {% if enrollments.paginator.num_pages > 1 %}
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination pagination-modern justify-content-center">
-                    {% if enrollments.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            <i class="bi bi-chevron-double-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ enrollments.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in enrollments.paginator.page_range %}
-                        {% if enrollments.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% elif num > enrollments.number|add:'-3' and num < enrollments.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if enrollments.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ enrollments.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ enrollments.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                            <i class="bi bi-chevron-double-right"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <p class="text-center text-muted mt-2">
-                    Showing {{ enrollments.start_index }} - {{ enrollments.end_index }} of {{ enrollments.paginator.count }} entries
-                </p>
-            </nav>
-            {% endif %}
+ 
         </div>
     </div>
 
@@ -745,7 +832,7 @@
         
         // Delete Confirmation
         function confirmDelete(button) {
-            var info = button.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+            var info = button.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
             var deleteUrl = button.getAttribute('href');
             document.getElementById('delete_info').textContent = info;
             document.getElementById('deleteButton').setAttribute('href', deleteUrl);
