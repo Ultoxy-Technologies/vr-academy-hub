@@ -11,8 +11,34 @@ from datetime import date, datetime
 from django.contrib import messages
 from .forms import BranchForm
 # Create your views here.
+from functools import wraps
+
+def has_a_auhtenticated_user(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated and user.role == 'is_crm_manager' or user.role == 'is_crm_and_enrollment':
+            return view_func(request, *args, **kwargs)
+        # if not student → redirect to home 
+        if user.is_authenticated:
+            if user.is_superuser:
+                return redirect('/admin/')
+            elif user.role=="is_crm_manager":
+                return redirect('/software/crm_software_dashboard')
+            elif user.role=="is_enrollment":
+                return redirect('/software/enrollment-dashboard/')
+            elif user.role=="is_crm_and_enrollment":
+                return redirect('/software/software-welcome-page')
+            elif user.role=="is_student":
+                return redirect('/student/dashboard')
+        else:
+            messages.error(request,"Not sutable role found")
+            return redirect('/')   # change 'home' if your url name is different
+    return _wrapped_view
+
 
 @login_required
+@has_a_auhtenticated_user
 def software_welcome_page(request):
     return render(request,'software_welcome.html')
 
@@ -24,6 +50,7 @@ from datetime import timedelta
 from AdminApp.models import CRMFollowup, Enquiry, Branch
 
 @login_required
+@has_a_auhtenticated_user
 def crm_software_dashboard(request):
     # Get current date and time
     now = timezone.now()
@@ -143,7 +170,9 @@ def crm_software_dashboard(request):
     } 
     return render(request, 'crm_software_dashboard.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def crm_follow_up_list(request):
     # Get filter parameters
     search_query = request.GET.get('search', '')
@@ -238,7 +267,9 @@ def crm_follow_up_list(request):
     
     return render(request, 'crm_follow_up_list.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def export_followups(request):
     # Create the HttpResponse object with CSV header
     response = HttpResponse(content_type='text/csv')
@@ -274,7 +305,9 @@ def export_followups(request):
     
     return response
 
+
 @login_required
+@has_a_auhtenticated_user
 def download_template(request):
     # Create template CSV file for import
     response = HttpResponse(content_type='text/csv')
@@ -299,6 +332,7 @@ def download_template(request):
 
 
 @login_required
+@has_a_auhtenticated_user
 def import_followups(request):
     if request.method == 'POST' and request.FILES.get('csv_file'):
         csv_file = request.FILES['csv_file']
@@ -384,7 +418,9 @@ from django.http import JsonResponse
 import json
 from .forms import CRMFollowupUpdateForm
 
+
 @login_required
+@has_a_auhtenticated_user
 def followup_detail(request, pk):
     """View follow-up details"""
     followup = get_object_or_404(CRMFollowup, pk=pk)
@@ -422,6 +458,7 @@ def followup_detail(request, pk):
 
 
 @login_required
+@has_a_auhtenticated_user
 def update_followup(request, id): 
     followup = get_object_or_404(CRMFollowup, id=id)
     
@@ -453,6 +490,7 @@ def update_followup(request, id):
 
 
 @login_required
+@has_a_auhtenticated_user
 def create_followup(request): 
     
     if request.method == 'POST':
@@ -482,6 +520,7 @@ def create_followup(request):
 
 
 @login_required
+@has_a_auhtenticated_user
 def get_detailed_changes(old_record, new_record):
     """Get detailed field changes between records with better formatting"""
     changes = {}
@@ -566,7 +605,9 @@ def get_detailed_changes(old_record, new_record):
     
     return changes
 
+
 @login_required
+@has_a_auhtenticated_user
 def truncate_text(text, max_length):
     """Truncate text for display"""
     if len(text) <= max_length:
@@ -578,6 +619,7 @@ from django.http import HttpResponse
 
 
 @login_required
+@has_a_auhtenticated_user
 def enquiry_list(request):
     # Get filter parameters
     search_query = request.GET.get('search', '')
@@ -626,7 +668,9 @@ def enquiry_list(request):
     }
     return render(request, 'crm_enquiry_list.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def add_to_followup(request, enquiry_id):
     """Add enquiry to CRMFollowup model"""
     enquiry = get_object_or_404(Enquiry, id=enquiry_id)
@@ -666,6 +710,7 @@ def add_to_followup(request, enquiry_id):
 
 
 @login_required
+@has_a_auhtenticated_user
 def export_enquiries(request):
     """Export enquiries to CSV"""
     # Similar filtering logic as enquiry_list
@@ -707,7 +752,9 @@ def export_enquiries(request):
     
     return response
 
+
 @login_required
+@has_a_auhtenticated_user
 def delete_follow_up(request, id):
     # Retrieve the follow-up record by ID or 404 if not found
     rec = get_object_or_404(CRMFollowup, id=id)
@@ -726,7 +773,9 @@ def delete_follow_up(request, id):
 
 from AdminApp.models import CRMFollowup, Enrollment, CRM_Student_Interested_for_options
 from .forms import EnrollmentForm, StudentInterestForm
+
 @login_required
+@has_a_auhtenticated_user
 def enroll_student_from_follow_up(request,id):
     """Create new enrollment (opens in modal window)"""
     followup = get_object_or_404(CRMFollowup, id=id)
@@ -787,7 +836,9 @@ def enroll_student_from_follow_up(request,id):
 
 
 # views.py (add to existing views)
+
 @login_required
+@has_a_auhtenticated_user
 def branch_list(request):
     """List all branches"""
     branches = Branch.objects.all().order_by('branch_name')
@@ -803,7 +854,9 @@ def branch_list(request):
     
     return render(request, 'branch_list.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def create_branch(request):
     """Create new branch (opens in modal window)"""
     if request.method == 'POST':
@@ -841,7 +894,9 @@ def create_branch(request):
     
     return render(request, 'branch_create.html', {'form': form})
 
+
 @login_required
+@has_a_auhtenticated_user
 def update_branch(request, pk):
     """Update existing branch (opens in modal window)"""
     branch = get_object_or_404(Branch, pk=pk)
@@ -882,20 +937,46 @@ def update_branch(request, pk):
     return render(request, 'branch_update.html', {'form': form, 'branch': branch})
 
 @login_required
+@has_a_auhtenticated_user
 def delete_branch(request, pk):
-    """Delete branch with confirmation"""
+    """Delete branch with confirmation - Check if branch is used in records"""
     branch = get_object_or_404(Branch, pk=pk)
-     
+    
+    # Check if branch is referenced in any related models
+    in_use_messages = []
+    
+    # Check CRMFollowup
+    if CRMFollowup.objects.filter(branch=branch).exists():
+        in_use_messages.append("CRM Follow-up records")
+    
+    # Check Enrollment
+    if Enrollment.objects.filter(branch=branch).exists():
+        in_use_messages.append("Enrollment records")
+    
+    # Check if any CustomUser is associated with this branch (if you have branch field in CustomUser)
+    # if CustomUser.objects.filter(branch=branch).exists():
+    #     in_use_messages.append("User records")
+    
+    # If branch is in use, show error message
+    if in_use_messages:
+        messages.error(
+            request, 
+            f'Cannot delete branch "{branch.branch_name}" because it is being used in: {", ".join(in_use_messages)}. '
+            f'Please update or remove these records first.'
+        )
+        return redirect('branch_list')
+    
+    # Proceed with deletion
     branch_name = branch.branch_name
     branch.delete()
     messages.success(request, f'Branch "{branch_name}" deleted successfully')
     return redirect('branch_list')
-     
-
 
 
 # views.py (add to existing views)
+
 @login_required
+@has_a_auhtenticated_user
 def student_interest_list(request):
     """List all student interest options"""
     interests = CRM_Student_Interested_for_options.objects.all().order_by('interest_option')
@@ -911,7 +992,9 @@ def student_interest_list(request):
     
     return render(request, 'student_interest_list.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def create_student_interest(request):
     """Create new student interest option (opens in modal window)"""
     if request.method == 'POST':
@@ -949,7 +1032,9 @@ def create_student_interest(request):
     
     return render(request, 'student_interest_create.html', {'form': form})
 
+
 @login_required
+@has_a_auhtenticated_user
 def update_student_interest(request, pk):
     """Update existing student interest option (opens in modal window)"""
     interest = get_object_or_404(CRM_Student_Interested_for_options, pk=pk)
@@ -989,7 +1074,9 @@ def update_student_interest(request, pk):
     
     return render(request, 'student_interest_update.html', {'form': form, 'interest': interest})
 
+
 @login_required
+@has_a_auhtenticated_user
 def delete_student_interest(request, pk):
     """Delete student interest option with confirmation"""
     interest = get_object_or_404(CRM_Student_Interested_for_options, pk=pk)

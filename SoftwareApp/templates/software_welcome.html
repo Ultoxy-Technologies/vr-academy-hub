@@ -216,18 +216,26 @@
   </style>
 </head>
 <body>
-
+{% load static %}
   <!-- USER PROFILE -->
   <div class="top-bar">
-    <img src="https://i.pravatar.cc/100" alt="User">
+    <img src="{% static "website/img/dashboard_sample_profile.png" %}" alt="User">
     <div class="user-info">
       <strong>{{request.user}}</strong>
-      <span>{{request.user.role}}</span>
+      {% if request.user.role == "is_crm_manager" %}
+          <span>CRM Manager </span>
+      {% elif request.user.role == "is_enrollment" %}
+          <span>Enrollment Executive </span>
+      {% elif request.user.role == "is_crm_and_enrollment" %}
+          <span>CRM & Enrollment Executive </span>
+      {% elif request.user.role == "is_student" %}
+          <span>Student </span>
+      {% endif %}
     </div>
-    <button class="logout" title="Logout">
+    <a href="{% url 'logout' %}" style="text-decoration: none;" class="logout" title="Logout">
       <i class="fas fa-right-from-bracket"></i>
       <span>Logout</span>
-    </button>
+    </a>
   </div>
 
   <!-- HEADER -->
@@ -247,13 +255,13 @@
       <span>Manage student enrollment, course batches, and profiles</span>
     </a>
 
-    <a href="#" class="card">
+    <!-- <a href="#" class="card">
       <div class="icon progress">
         <i class="fas fa-chart-line"></i>
       </div>
       <h3>Student Performance Analytics</h3>
       <span>Track learning progress, assessments, and skill development</span>
-    </a>
+    </a> -->
 
     <a href="{% url 'crm_software_dashboard' %}" class="card">
       <div class="icon crm">

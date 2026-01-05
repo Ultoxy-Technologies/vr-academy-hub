@@ -161,9 +161,9 @@ LOGIN_URL = '/login'
 # Razorpay Configuration
 
 #test api keys
-RAZORPAY_KEY_ID = 'rzp_test_RfELpk3eZdngJZ' 
+RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY' 
 #test api secret keys
-RAZORPAY_KEY_SECRET = 'lWVYlpQE8ftiRcrmfv1M8arF'
+RAZORPAY_KEY_SECRET = 'RLFz6G1j9CgStlwKDFyBIqPK'
 
 
 STATIC_URL = 'static/'

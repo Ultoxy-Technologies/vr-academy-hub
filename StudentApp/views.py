@@ -14,16 +14,18 @@ def is_student(view_func):
         user = request.user
         if user.is_authenticated and user.role == 'is_student':
             return view_func(request, *args, **kwargs)
-        # if not student → redirect to home
+        # if not student → redirect to home 
         if user.is_authenticated:
-            if user.role=="is_student":
-                return redirect('/student/dashboard')
-            elif user.role=="is_staff":
-                return redirect('/software/software-welcome-page')
-            elif user.role=="is_crm_manager":
-                return redirect('/staff/dashboard')
-            elif user.is_superuser:
+            if user.is_superuser:
                 return redirect('/admin/')
+            elif user.role=="is_crm_manager":
+                return redirect('/software/crm_software_dashboard')
+            elif user.role=="is_enrollment":
+                return redirect('/software/enrollment-dashboard/')
+            elif user.role=="is_crm_and_enrollment":
+                return redirect('/software/software-welcome-page')
+            elif user.role=="is_student":
+                return redirect('/student/dashboard')
         else:
             messages.error(request,"Not sutable role found")
             return redirect('/')   # change 'home' if your url name is different
