@@ -16,8 +16,10 @@ DATABASES = {
 }
 
 # Razorpay LIVE keys
-RAZORPAY_KEY_ID = 'rzp_live_xxxxx'
-RAZORPAY_KEY_SECRET = 'live_secret_xxxxx'
+#test api keys
+RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY' 
+#test api secret keys
+RAZORPAY_KEY_SECRET = 'RLFz6G1j9CgStlwKDFyBIqPK'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

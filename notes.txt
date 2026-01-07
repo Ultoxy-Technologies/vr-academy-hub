@@ -1,4 +1,6 @@
- 
+event should be link with batch
+after registration done and payment done that should be enroll in particular batch automatically
 
-delete functionality need to add in followup list
-need to check import export functionality with branch and address field
+event visible/invisible
+
+

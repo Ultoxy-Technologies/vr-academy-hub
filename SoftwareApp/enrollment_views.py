@@ -19,7 +19,35 @@ from datetime import timedelta, datetime
 from decimal import Decimal
 import json
 
+from functools import wraps
+
+def has_a_auhtenticated_user(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated and user.role == 'is_enrollment' or user.role == 'is_crm_and_enrollment':
+            return view_func(request, *args, **kwargs)
+        # if not student → redirect to home 
+        if user.is_authenticated:
+            if user.is_superuser:
+                return redirect('/admin/')
+            elif user.role=="is_crm_manager":
+                return redirect('/software/crm_software_dashboard')
+            elif user.role=="is_enrollment":
+                return redirect('/software/enrollment-dashboard/')
+            elif user.role=="is_crm_and_enrollment":
+                return redirect('/software/software-welcome-page')
+            elif user.role=="is_student":
+                return redirect('/student/dashboard')
+        else:
+            messages.error(request,"Not sutable role found")
+            return redirect('/')   # change 'home' if your url name is different
+    return _wrapped_view
+
+
+
 @login_required
+@has_a_auhtenticated_user
 def enrollment_dashboard(request):
     """
     Modern enrollment dashboard with comprehensive analytics
@@ -239,7 +267,9 @@ from io import BytesIO
 from datetime import datetime, timedelta
 import json
 
+
 @login_required
+@has_a_auhtenticated_user
 def export_enrollments_filtered(request):
     """
     Export filtered enrollments to Excel with proper formatting
@@ -494,7 +524,9 @@ def export_enrollments_filtered(request):
 
 
 
+
 @login_required
+@has_a_auhtenticated_user
 def enrolled_student_list(request):
     """
     List all enrollments with filtering, pagination, and statistics
@@ -650,7 +682,9 @@ from django.utils import timezone
 from decimal import Decimal 
 from django import forms
 
+
 @login_required
+@has_a_auhtenticated_user
 def enrollment_detail(request, pk):
     """View enrollment details with payment history and certificate info"""
     enrollment = get_object_or_404(
@@ -738,7 +772,9 @@ def enrollment_detail(request, pk):
 
 
 
+
 @login_required
+@has_a_auhtenticated_user
 def export_enrollments(request):
     """
     Export enrollments to CSV (following export_followups pattern)
@@ -798,7 +834,9 @@ def export_enrollments(request):
     return response
 
 
+
 @login_required
+@has_a_auhtenticated_user
 def download_enrollment_template(request):
     """
     Download template CSV file for enrollment import
@@ -833,7 +871,9 @@ import csv
 from decimal import Decimal
 from .forms import PaymentForm
 
+
 @login_required
+@has_a_auhtenticated_user
 def import_enrollments(request):
     """
     Import enrollments from CSV (following import_followups pattern)
@@ -923,7 +963,9 @@ def import_enrollments(request):
     return redirect('enrolled_student_list')
 
 
+
 @login_required
+@has_a_auhtenticated_user
 def record_payment(request, enrollment_id):
     """Record a new payment for enrollment"""
     enrollment = get_object_or_404(Enrollment, id=enrollment_id)
@@ -994,7 +1036,9 @@ def record_payment(request, enrollment_id):
     
     return render(request, 'record_payment.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def update_payment(request, id):
     """Update existing payment"""
     payment = get_object_or_404(Payment, id=id)
@@ -1041,7 +1085,9 @@ def update_payment(request, id):
     
     return render(request, 'update_payment.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def delete_payment(request, id):
     """Delete payment with confirmation"""
     payment = get_object_or_404(Payment, id=id)
@@ -1065,7 +1111,9 @@ from django.http import HttpResponse
 from django.contrib import messages
 from .forms import EnrollmentForm
 
+
 @login_required
+@has_a_auhtenticated_user
 def create_enrollment(request):
     """Create new enrollment (opens in modal window)"""
     user=CustomUser.objects.filter(role="is_student")
@@ -1107,7 +1155,9 @@ def create_enrollment(request):
     
     return render(request, 'enrollment_create.html', {'form': form})
 
+
 @login_required
+@has_a_auhtenticated_user
 def update_enrollment(request, pk):
     """Update existing enrollment (opens in modal window)"""
     enrollment = get_object_or_404(Enrollment, pk=pk)
@@ -1147,7 +1197,9 @@ def update_enrollment(request, pk):
     
     return render(request, 'enrollment_update.html', {'form': form, 'enrollment': enrollment})
 
+
 @login_required
+@has_a_auhtenticated_user
 def delete_enrollment(request, pk):
     """Delete enrollment with confirmation"""
     enrollment = get_object_or_404(Enrollment, pk=pk)
@@ -1178,7 +1230,9 @@ from datetime import datetime, date
 from decimal import Decimal
 from django.db.models import Q, Sum
 
+
 @login_required
+@has_a_auhtenticated_user
 def batch_list(request):
     """
     List all batches with filtering, pagination and statistics
@@ -1322,7 +1376,9 @@ def batch_list(request):
     return render(request, 'batch_list.html', context)
 
 
+
 @login_required
+@has_a_auhtenticated_user
 def create_batch(request):
     """Create new batch (opens in modal window)"""
     if request.method == 'POST':
@@ -1360,7 +1416,9 @@ def create_batch(request):
     
     return render(request, 'batch_create.html', {'form': form})
 
+
 @login_required
+@has_a_auhtenticated_user
 def update_batch(request, pk):
     """Update existing batch (opens in modal window)"""
     batch = get_object_or_404(Batch, pk=pk)
@@ -1400,7 +1458,9 @@ def update_batch(request, pk):
     
     return render(request, 'batch_update.html', {'form': form, 'batch': batch})
 
+
 @login_required
+@has_a_auhtenticated_user
 def batch_detail(request, pk):
     """View batch details with enrolled students"""
     batch = get_object_or_404(Batch, pk=pk)
@@ -1461,7 +1521,9 @@ def batch_detail(request, pk):
     
     return render(request, 'batch_details.html', context)
 
+
 @login_required
+@has_a_auhtenticated_user
 def delete_batch(request, pk):
     """Delete batch with confirmation"""
     batch = get_object_or_404(Batch, pk=pk)
@@ -1487,7 +1549,9 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
 from openpyxl.utils import get_column_letter
 
+
 @login_required
+@has_a_auhtenticated_user
 def export_batch_report_excel(request, batch_id):
     """Export batch report as Excel (XLSX) with advanced formatting"""
     from django.http import HttpResponse
@@ -1734,16 +1798,7 @@ def export_batch_report_excel(request, batch_id):
     
     return response
 
- 
-
-
-
-
-
-
-
-
-
+  
 
 
 # views.py
@@ -1754,7 +1809,9 @@ from decimal import Decimal
 import os
 from datetime import datetime
 
+
 @login_required
+@has_a_auhtenticated_user
 def print_payment_receipt(request, pk):
     """Generate printable receipt for a payment"""
     payment = get_object_or_404(Payment, pk=pk)
@@ -1856,6 +1913,9 @@ def amount_in_words(amount):
     except:
         return f"{amount} Rupees Only"
 
+
+@login_required
+@has_a_auhtenticated_user
 def generate_pdf_receipt(receipt_data):
     """Generate PDF receipt (optional - implement if you have PDF library)"""
     # This is a placeholder - you can implement PDF generation using:

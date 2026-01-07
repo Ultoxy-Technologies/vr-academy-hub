@@ -277,6 +277,7 @@ def register_user(request):
     return render(request, 'register.html', {'form': form})
 
 
+
 def login_user(request):
     if request.method == "POST":
         form = CustomUserLoginForm(request.POST)
@@ -284,16 +285,17 @@ def login_user(request):
             user = form.cleaned_data['user']
             login(request, user)
             user = request.user 
-            # if not student → redirect to home
             if user.is_authenticated:
-                if user.role=="is_student":
-                    return redirect('/student/dashboard')
-                elif user.role=="is_staff":
-                    return redirect('/software/software-welcome-page')
-                elif user.role=="is_crm_manager":
-                    return redirect('/staff/dashboard')
-                elif user.is_superuser:
+                if user.is_superuser:
                     return redirect('/admin/')
+                elif user.role=="is_crm_manager":
+                    return redirect('/software/crm_software_dashboard')
+                elif user.role=="is_enrollment":
+                    return redirect('/software/enrollment-dashboard/')
+                elif user.role=="is_crm_and_enrollment":
+                    return redirect('/software/software-welcome-page')
+                elif user.role=="is_student":
+                    return redirect('/student/dashboard')
             else:
                 messages.error(request,"Not sutable role found")
                 return redirect('/')   # change 'home' if your url name is different

@@ -46,6 +46,8 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('is_website_manager', 'Website Manager'),
         ('is_crm_manager', 'CRM Manager'),
+        ('is_enrollment', 'Enrollment Manager'),
+        ('is_crm_and_enrollment', 'CRM & Enrollment Manager'),
         ('is_staff', 'Staff'),
         ('is_student', 'Student'),
     )
@@ -67,7 +69,7 @@ class CustomUser(AbstractUser):
     action = models.TextField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'mobile_number'

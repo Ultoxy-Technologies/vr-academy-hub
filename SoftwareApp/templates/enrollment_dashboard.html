@@ -508,23 +508,22 @@
 </style>
 
 <main id="main" class="main">
-    <div class="dashboard-container">
-        <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1 class="mb-0" style="font-weight: 700; color: #1e293b;">
-                    <i class="bi bi-speedometer2 me-2"></i>Enrollment Dashboard
-                </h1>
-                <p class="text-muted mb-0">Comprehensive analytics and insights</p>
-            </div>
-            <div class="d-flex gap-2">
-                <span class="badge bg-primary px-3 py-2">
-                    <i class="bi bi-calendar me-1"></i>
-                    {{ start_date_obj }} to {{ end_date_obj }}
-                </span>
-            </div>
+                <h1>Enrollment Dashboard</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </nav>
+            </div> 
         </div>
+    </div>
 
+    <div class="dashboard-container"> 
         <!-- Filter Section -->
         <div class="filter-section animate-fade-in">
             <div class="filter-header">

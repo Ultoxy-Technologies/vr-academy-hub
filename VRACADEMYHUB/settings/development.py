@@ -10,9 +10,10 @@ DATABASES = {
     }
 }
 
-# Razorpay TEST keys
-RAZORPAY_KEY_ID = 'rzp_test_RfELpk3eZdngJZ'
-RAZORPAY_KEY_SECRET = 'lWVYlpQE8ftiRcrmfv1M8arF'
+#test api keys
+RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY' 
+#test api secret keys
+RAZORPAY_KEY_SECRET = 'RLFz6G1j9CgStlwKDFyBIqPK'
 
 # Email (optional: console backend for dev)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
