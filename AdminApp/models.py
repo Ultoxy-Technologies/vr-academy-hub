@@ -412,6 +412,7 @@ class Event(models.Model):
         null=True,
         help_text="Enter original registration fee (for strikethrough display)"
     )
+
     registration_offer_fee = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -445,13 +446,7 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def current_price(self):
-        """Get current price in paisa for Razorpay"""
-        if self.is_free:
-            return 0
-        return int(self.registration_offer_fee * 100)  # Convert to paisa
-
+ 
     @property
     def display_price(self):
         """Get display price"""
@@ -466,7 +461,11 @@ class Event(models.Model):
         """
         if self.is_free:
             return 0
-        return int(float(self.registration_offer_fee or 0) * 100)
+        # Ensure we have a valid decimal value
+        fee = self.registration_offer_fee or 0
+        if isinstance(fee, Decimal):
+            return int(fee * 100)
+        return int(float(fee) * 100)
 
 
 
