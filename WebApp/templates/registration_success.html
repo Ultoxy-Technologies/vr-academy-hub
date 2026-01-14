@@ -675,9 +675,9 @@
             <button class="btn-download" onclick="downloadAsImage()">
                 <i class="bi bi-download"></i> Download as Image
             </button>
-            <button class="btn-email" onclick="sendEmailConfirmation()">
-                <i class="bi bi-envelope"></i> Email Me This
-            </button>
+            <a href="{% url 'event_detail' registration.event.id %}" class="btn-email" style="text-decoration: none;">
+                <i class="bi bi-calendar2-event"></i> Back to Event Page
+            </a>
         </div>
     </div>
 
