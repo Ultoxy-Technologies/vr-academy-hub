@@ -129,23 +129,34 @@ LANGUAGES = [
     ('mr', _('Marathi')),
 ]
 
-LANGUAGE_CODE = 'en'   # Default language
+# LANGUAGE_CODE = 'en'   # Default language
 
+# USE_I18N = True
+# USE_L10N = True
+# USE_TZ = True
+
+
+# # LANGUAGE_CODE = 'en-us'
+
+# TIME_ZONE = 'UTC'
+
+# Timezone settings for India
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True
+
+
+LANGUAGE_CODE = 'en-in'  # English for India
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+
+USE_L10N = False 
+
 
 # Location of translation files
 LOCALE_PATHS = [
     BASE_DIR / 'locale',
 ]
 
-
-
-
-# LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
 
 # USE_I18N = True
 

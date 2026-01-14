@@ -1,0 +1,623 @@
+<!-- templates/event_list.html -->
+{% extends "enrollment_software_base.html" %}
+
+{% block title %}Event Management - Events List{% endblock title %}
+
+{% block content %}
+<style>
+    /* Reuse all your existing CSS styles from crm_follow_up_list.html */
+    .card-body{
+        padding:0px!important;
+    }
+    /* Modern Card Design */
+    .card-modern {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+ 
+    /* Status Badges */
+    .badge-status {
+        padding: 0.35em 0.85em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-draft { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
+    .badge-published { background: linear-gradient(135deg, #2ed573, #1dd1a1); color: white; }
+    .badge-cancelled { background: linear-gradient(135deg, #ff6b6b, #ff4757); color: white; }
+    .badge-completed { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+
+    /* Table Styling */
+    .table-modern {
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody td {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f3fa;
+        vertical-align: middle;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #f8f9ff;
+    }
+
+    /* Filter Card */
+    .filter-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 0.5rem;
+    }
+
+    /* Event Card Styling */
+    .event-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .event-subtitle {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .event-date {
+        color: #3498db;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .event-time {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+    }
+
+    /* Price Columns */
+    .price-total {
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .price-collected {
+        color: #27ae60;
+        font-weight: 600;
+    }
+
+    .price-pending {
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    /* Registration Count */
+    .registration-count {
+        background: #e8f4fc;
+        color: #3498db;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .table-modern {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 0.8rem;
+            font-size: 0.9rem;
+        }
+        
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+    }
+
+    /* Free Event Badge */
+    .badge-free {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Event Management</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Events</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="javascript:void(0);" 
+                    data-url="{% url 'enrollment_create_event' %}" 
+                    class="btn btn-primary"  
+                    onclick="openCreateModal(this)">
+                    <i class="bi bi-plus-circle me-1"></i> New Event
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    {% if messages %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="messages-container">
+                {% for msg in messages %}
+                <div class="message-card message-{{ msg.tags }} animate__animated animate__fadeInRight mb-3">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-icon">
+                                {% if msg.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}
+                                <i class="fas fa-times-circle"></i>
+                                {% elif msg.tags == 'warning' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% else %}
+                                <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                            </span>
+                            <span class="message-title">
+                                {% if msg.tags == 'success' %}Success!
+                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}Error!
+                                {% elif msg.tags == 'warning' %}Warning!
+                                {% else %}Info
+                                {% endif %}
+                            </span>
+                            <button type="button" class="btn-close-message" data-bs-dismiss="alert">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="message-body">
+                            {{ msg|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Add Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Stats Summary -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_events }}</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ upcoming_events }}</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_registrations }}</div>
+                <div class="stat-label">Total Registrations</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-number">₹{{ total_revenue|floatformat:0 }}</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card card-modern filter-card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        {% for status_code, status_name in status_choices %}
+                        <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>
+                            {{ status_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}" {% if category_filter == category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Date From</label>
+                    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+                
+                <div class="col-md-3">
+                    <label class="form-label">Date To</label>
+                    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label">Search</label>
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="search" placeholder="Search by title, description, or category..." 
+                               class="form-control border-0" value="{{ search_query }}">
+                    </div>
+                </div>
+
+                <div class="col-md-6 d-flex justify-content-between align-items-end">
+                    <div>
+                        <button type="submit" class="btn btn-action btn-filter me-2">
+                            <i class="bi bi-funnel me-1"></i> Apply Filters
+                        </button>
+                        <a href="{% url 'enrollment_event_list' %}" class="btn btn-light">
+                            <i class="bi bi-x-circle me-1"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Table -->
+    <div class="card card-modern">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-modern">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Price (Total/Collected/Pending)</th>
+                            <th>Registrations</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-start gap-3">
+                                    {% if event.thumbnail %}
+                                    <img src="{{ event.thumbnail.url }}" alt="{{ event.title }}" 
+                                         class="event-thumbnail" style="width: 120px ; border-radius: 10px;">
+                                    {% else %}
+                                    <div class="event-thumbnail bg-light d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-calendar-event text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="event-title">{{ event.title }}</div>
+                                        {% if event.subtitle %}
+                                        <div class="event-subtitle">{{ event.subtitle }}</div>
+                                        {% endif %}
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>
+                                            {{ event.event_start_time|time:"g:i A" }} - {{ event.event_end_time|time:"g:i A" }} {{ event.timezone }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="event-date">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ event.event_date|date:"M d, Y" }}
+                                </div>
+                                <div class="event-time">
+                                    {{ event.event_start_time|time:"g:i A" }} - {{ event.event_end_time|time:"g:i A" }}
+                                </div>
+                                <small class="text-muted">{{ event.timezone }}</small>
+                            </td>
+                            <td>
+                                {% if event.status == 'draft' %}
+                                    <span class="badge badge-status badge-draft">Draft</span>
+                                {% elif event.status == 'published' %}
+                                    <span class="badge badge-status badge-published">Published</span>
+                                {% elif event.status == 'cancelled' %}
+                                    <span class="badge badge-status badge-cancelled">Cancelled</span>
+                                {% elif event.status == 'completed' %}
+                                    <span class="badge badge-status badge-completed">Completed</span>
+                                {% endif %}
+                                
+                                {% if event.is_upcoming %}
+                                <br><small class="text-success mt-1"><i class="bi bi-arrow-up-circle"></i> Upcoming</small>
+                                {% elif event.event_date == today %}
+                                <br><small class="text-warning mt-1"><i class="bi bi-star-fill"></i> Today</small>
+                                {% else %}
+                                <br><small class="text-muted mt-1"><i class="bi bi-arrow-down-circle"></i> Past</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if event.is_free %}
+                                <span class="badge-free">FREE</span>
+                                {% else %}
+                                <div class="d-flex flex-column">
+                                    <!-- Total Price (Potential Revenue if all register) -->
+                                    <div class="price-total mb-1">
+                                        Total: ₹{{ event.total_potential_revenue|default:0|floatformat:0 }}
+                                    </div>
+                                    
+                                    <!-- Collected Price (Actual Revenue) -->
+                                    <div class="price-collected mb-1">
+                                        <i class="bi bi-check-circle"></i>
+                                        Collected: ₹{{ event.event_revenue|default:0|floatformat:0 }}
+                                    </div>
+                                    
+                                    <!-- Pending Price (If any pending payments) -->
+                                    {% if event.pending_revenue %}
+                                    <div class="price-pending">
+                                        <i class="bi bi-clock"></i>
+                                        Pending: ₹{{ event.pending_revenue|default:0|floatformat:0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="registration-count mb-2">
+                                        <i class="bi bi-people me-1"></i>
+                                        {{ event.registrations_count }}
+                                    </span>
+                                    
+                                    {% if event.successful_registrations > 0 %}
+                                    <small class="text-success">
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        Paid: {{ event.successful_registrations }}
+                                    </small>
+                                    {% endif %}
+                                    
+                                    {% if event.pending_registrations > 0 %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Pending: {{ event.pending_registrations }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'enrollment_event_detail' event.id %}" 
+                                    class="btn btn-sm btn-outline-primary" 
+                                    title="View Event">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" 
+                                    class="btn btn-sm btn-outline-warning" 
+                                    data-url="{% url 'enrollment_update_event' event.id %}" 
+                                    onclick="openUpdateModal(this)">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>  
+                                    <a href="{% url 'enrollment_delete_event' event.id %}" 
+                                    class="btn btn-sm btn-outline-danger btn-delete" 
+                                    title="Delete Event"
+                                    onclick="confirmDelete(this); return false;">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-calendar-event display-4 text-muted mb-3"></i>
+                                <h5>No events found</h5>
+                                <p class="text-muted">Try adjusting your filters or create a new event</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete event <strong id="delete_info"></strong>?
+                            <div class="alert alert-warning mt-3">
+                                <i class="bi bi-exclamation-circle me-2"></i> 
+                                This will also delete all associated registrations and cannot be undone.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a id="deleteButton" href="#" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i> Delete Event
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if events.paginator.num_pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination pagination-modern justify-content-center">
+                    {% if events.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ events.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in events.paginator.page_range %}
+                        {% if events.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > events.number|add:'-3' and num < events.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if events.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ events.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ events.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <p class="text-center text-muted mt-2">
+                    Showing {{ events.start_index }} - {{ events.end_index }} of {{ events.paginator.count }} entries
+                </p>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openCreateModal(element) {
+            const url = element.dataset.url;
+            const newWindow = window.open(url, "createWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+            if (newWindow) {
+                newWindow.focus();
+                const checkWindow = setInterval(function() {
+                    if (newWindow.closed) {
+                        clearInterval(checkWindow);
+                        window.location.reload();
+                    }
+                }, 500);
+            }
+            return false;
+        }
+        
+        function openUpdateModal(element) {
+            const url = element.dataset.url;
+            const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+            if (newWindow) {
+                newWindow.focus();
+                const checkWindow = setInterval(function() {
+                    if (newWindow.closed) {
+                        clearInterval(checkWindow);
+                        window.location.reload();
+                    }
+                }, 500);
+            }
+            return false;
+        }
+        
+        // Delete Confirmation
+        function confirmDelete(button) {
+            var info = button.closest('tr').querySelector('.event-title').textContent.trim();
+            var deleteUrl = button.getAttribute('href');
+            document.getElementById('delete_info').textContent = info;
+            document.getElementById('deleteButton').setAttribute('href', deleteUrl);
+            
+            $('#deleteModal').modal('show');
+            return false;
+        }
+    </script>     
+
+</main>
+{% endblock content %}

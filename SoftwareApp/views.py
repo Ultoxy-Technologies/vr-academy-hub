@@ -1046,8 +1046,7 @@ def update_student_interest(request, pk):
             try:
                 interest = form.save(commit=True)
                 messages.success(request, f'Interest option updated to "{interest.interest_option}" successfully')
-                
-                # Return JavaScript to close window
+                # Return JavaScript to close window 
                 return HttpResponse("""
                     <script>
                         if (window.opener && !window.opener.closed) {

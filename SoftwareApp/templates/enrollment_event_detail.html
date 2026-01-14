@@ -1,0 +1,968 @@
+<!-- templates/event_detail.html -->
+{% extends "enrollment_software_base.html" %}
+{% load static %}
+
+{% block title %}Event Details - {{ event.title }}{% endblock title %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #10b981, #059669);
+        --info-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+        --purple-gradient: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        --cyan-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        --dark-gradient: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+
+    /* Modern Card Design with Glassmorphism */
+    .detail-card {
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card-header-glass {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header-glass::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-size: cover;
+        opacity: 0.2;
+    }
+
+    /* Status Badges with Animation */
+    .status-badge {
+        padding: 0.5em 1.2em;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: badgePulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes badgePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .status-draft { background: var(--dark-gradient); color: white; }
+    .status-published { background: var(--success-gradient); color: white; }
+    .status-cancelled { background: var(--danger-gradient); color: white; }
+    .status-completed { background: var(--info-gradient); color: white; }
+
+    /* Price Badges */
+    .price-badge {
+        padding: 0.5em 1.2em;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .price-free { background: var(--success-gradient); color: white; }
+    .price-paid { background: var(--purple-gradient); color: white; }
+
+    /* Action Buttons with Hover Effects */
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-action:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-edit { background: var(--info-gradient); color: white; }
+    .btn-registrations { background: var(--success-gradient); color: white; }
+    .btn-share { background: var(--purple-gradient); color: white; }
+
+    /* Modern Info Cards */
+    .info-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-gradient);
+    }
+
+    .info-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .info-card-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-card-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Event Header */
+    .event-header {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .event-thumbnail-large {
+        width: 150px;
+        height: 150px;
+        border-radius: 20px;
+        object-fit: cover;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .event-thumbnail-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .event-info h2 {
+        margin: 0 0 0.5rem 0;
+        color: white;
+        font-weight: 700;
+        font-size: 2.2rem;
+        line-height: 1.2;
+    }
+
+    .event-info p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1.2rem;
+        max-width: 800px;
+    }
+
+    /* Tags Display */
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .tag-badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+    }
+
+    /* Pricing Section */
+    .pricing-section {
+        background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border-left: 5px solid #667eea;
+    }
+
+    .original-price {
+        font-size: 1.5rem;
+        color: #94a3b8;
+        text-decoration: line-through;
+        margin-right: 1rem;
+    }
+
+    .current-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0.5rem 0;
+    }
+
+    .free-badge {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #10b981;
+    }
+
+    /* Description Section */
+    .description-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .description-section h4 {
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .description-content {
+        color: #374151;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        white-space: pre-line;
+    }
+
+    /* Meeting Details */
+    .meeting-details {
+        background: linear-gradient(145deg, #e0f2fe, #bae6fd);
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border-left: 5px solid #0ea5e9;
+    }
+
+    .meeting-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        color: #0ea5e9;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .meeting-link:hover {
+        background: #0ea5e9;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        border-top: 4px solid #667eea;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    /* Recent Registrations */
+    .registrations-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .registration-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        transition: background 0.3s ease;
+    }
+
+    .registration-item:hover {
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .registration-item:last-child {
+        border-bottom: none;
+    }
+
+    .registration-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .registration-details {
+        flex: 1;
+        margin-left: 1rem;
+    }
+
+    .registration-name {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .registration-meta {
+        color: #6c757d;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .payment-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .payment-success { background: #dcfce7; color: #166534; }
+    .payment-pending { background: #fef3c7; color: #92400e; }
+    .payment-failed { background: #fee2e2; color: #991b1b; }
+
+    /* Mobile Responsive */
+    @media (max-width: 992px) {
+        .info-cards-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        
+        .event-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        
+        .event-thumbnail-large,
+        .event-thumbnail-placeholder {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .event-info h2 {
+            font-size: 1.8rem;
+        }
+        
+        .btn-action-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .info-cards-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .registration-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Event Details</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'event_list' %}">Events</a></li>
+                        <li class="breadcrumb-item active text-truncate" style="max-width: 300px;">{{ event.title }}</li>
+                    </ol>
+                </nav>
+            </div>
+            <div>
+                <a href="#" onclick="window.history.back()" class="btn btn-light btn-action">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card detail-card">
+        <!-- Header with Event Info -->
+        <div class="card-header card-header-glass">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="event-header">
+                    {% if event.thumbnail %}
+                    <img src="{{ event.thumbnail.url }}" alt="{{ event.title }}" class="event-thumbnail-large">
+                    {% else %}
+                    <div class="event-thumbnail-placeholder">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    {% endif %}
+                    <div class="event-info">
+                        <h2>{{ event.title }}</h2>
+                        {% if event.subtitle %}
+                        <p>{{ event.subtitle }}</p>
+                        {% endif %}
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+                            <span class="status-badge status-{{ event.status }}">
+                                <i class="bi bi-flag"></i>
+                                {{ event.get_status_display }}
+                            </span>
+                            {% if event.is_free %}
+                            <span class="price-badge price-free">
+                                <i class="bi bi-ticket-perforated"></i>
+                                Free Event
+                            </span>
+                            {% else %}
+                            <span class="price-badge price-paid">
+                                <i class="bi bi-tag"></i>
+                                ₹{{ event.registration_offer_fee }}
+                            </span>
+                            {% endif %}
+                            {% if event.category %}
+                            <span class="tag-badge">
+                                <i class="bi bi-bookmark"></i>
+                                {{ event.category }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if event.tags and event.tags|length > 0 %}
+                        <div class="tags-container">
+                            {% for tag in event.tags %}
+                            <span class="tag-badge">
+                                <i class="bi bi-hash"></i>
+                                {{ tag }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 btn-action-group">
+                    <a href="javascript:void(0);" 
+                        data-url="{% url 'enrollment_update_event' event.id %}" 
+                        class="btn btn-action btn-edit"  
+                        onclick="openUpdateModal(this)">
+                        <i class="bi bi-pencil-square"></i> Edit Event
+                    </a>
+                    <a href="" 
+                       class="btn btn-action btn-registrations">
+                        <i class="bi bi-people"></i> View Registrations
+                    </a>
+                    <button type="button" class="btn btn-action btn-share" onclick="shareEvent()">
+                        <i class="bi bi-share"></i> Share Event
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_registrations }}</div>
+                    <div class="stat-label">Total Registrations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ successful_registrations }}</div>
+                    <div class="stat-label">Successful Registrations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_registrations }}</div>
+                    <div class="stat-label">Pending Payments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">₹{{ total_revenue|floatformat:0 }}</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+            </div>
+
+            <!-- Info Cards Grid -->
+            <div class="info-cards-grid">
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar"></i> Event Date
+                    </div>
+                    <p class="info-card-value">
+                        {{ event.event_date|date:"F d, Y" }}
+                        <br>
+                        <small class="text-muted">
+                            {% if event.is_upcoming %}
+                            <span class="text-success">
+                                <i class="bi bi-clock"></i> Upcoming
+                            </span>
+                            {% elif event.is_today %}
+                            <span class="text-warning">
+                                <i class="bi bi-clock"></i> Today
+                            </span>
+                            {% else %}
+                            <span class="text-secondary">
+                                <i class="bi bi-clock-history"></i> Past Event
+                            </span>
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-clock-history"></i> Event Time
+                    </div>
+                    <p class="info-card-value">
+                        {{ event.event_start_time|time:"g:i A" }} - {{ event.event_end_time|time:"g:i A" }}
+                        <br>
+                        <small class="text-muted">{{ event.timezone }}</small>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-cash"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-currency-rupee"></i> Pricing
+                    </div>
+                    <p class="info-card-value">
+                        {% if event.is_free %}
+                        <span class="free-badge">FREE</span>
+                        {% else %}
+                        ₹{{ event.registration_offer_fee|floatformat:0 }}
+                        {% if event.registration_strickthrough_fee %}
+                        <br>
+                        <span class="original-price">
+                            ₹{{ event.registration_strickthrough_fee|floatformat:0 }}
+                        </span>
+                        {% endif %}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="bi bi-calendar-plus"></i>
+                    </div>
+                    <div class="info-card-label">
+                        <i class="bi bi-calendar-week"></i> Created On
+                    </div>
+                    <p class="info-card-value">
+                        {{ event.created_at|date:"M d, Y H:i" }}
+                        <br>
+                        <small class="text-muted">
+                            {% if event.published_at %}
+                            Published: {{ event.published_at|date:"M d, Y H:i" }}
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div class="pricing-section">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-gradient); 
+                               display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="bi bi-tag"></i>
+                    </div>
+                    <h4 class="mb-0">Registration Pricing</h4>
+                </div>
+                
+                <div class="d-flex align-items-center gap-4">
+                    {% if event.is_free %}
+                    <div class="free-badge">FREE REGISTRATION</div>
+                    <p class="mb-0 text-muted">No payment required for this event</p>
+                    {% else %}
+                    <div>
+                        <div class="current-price">₹{{ event.registration_offer_fee|floatformat:0 }}</div>
+                        {% if event.registration_strickthrough_fee %}
+                        <div class="original-price">₹{{ event.registration_strickthrough_fee|floatformat:0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="text-success">
+                        <i class="bi bi-percent" style="font-size: 1.5rem;"></i>
+                        <div class="fw-bold">
+                            {% if event.registration_strickthrough_fee %}
+                            {{ event.registration_strickthrough_fee|floatformat:0|add:"0" }}
+                            {% else %}
+                            Special
+                            {% endif %}
+                            Offer
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description Section -->
+            {% if event.description %}
+            <div class="description-section">
+                <h4>
+                    <i class="bi bi-text-paragraph"></i>
+                    Event Description
+                </h4>
+                <div class="description-content">
+                    {{ event.description|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Meeting Details Section -->
+            {% if event.meeting_link %}
+            <div class="meeting-details">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #0ea5e9, #0284c7); 
+                               display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="bi bi-camera-video"></i>
+                    </div>
+                    <h4 class="mb-0">Online Meeting Details</h4>
+                </div>
+                
+                <div class="mb-3">
+                    <a href="{{ event.meeting_link }}" target="_blank" class="meeting-link">
+                        <i class="bi bi-link-45deg"></i>
+                        Join Meeting
+                    </a>
+                </div>
+                
+                {% if event.meeting_id %}
+                <div class="mb-2">
+                    <strong>Meeting ID:</strong> {{ event.meeting_id }}
+                </div>
+                {% endif %}
+                
+                {% if event.meeting_password %}
+                <div>
+                    <strong>Password:</strong> {{ event.meeting_password }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Recent Registrations -->
+            <div class="registrations-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--success-gradient); 
+                                   display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h4 class="mb-0">Recent Registrations</h4>
+                        <span class="badge bg-primary rounded-pill">{{ total_registrations }} total</span>
+                    </div>
+                    <a href=" " class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right"></i> View All
+                    </a>
+                </div>
+                
+                {% if registrations %}
+                <div class="registrations-list">
+                    {% for registration in registrations|slice:":5" %}
+                    <div class="registration-item">
+                        <div class="d-flex align-items-center">
+                            <div class="registration-avatar">
+                                {{ registration.full_name|first|upper }}
+                            </div>
+                            <div class="registration-details">
+                                <div class="registration-name">{{ registration.full_name }}</div>
+                                <div class="registration-meta">
+                                    <span><i class="bi bi-envelope"></i> {{ registration.email }}</span>
+                                    <span><i class="bi bi-phone"></i> {{ registration.mobile_number }}</span>
+                                    <span><i class="bi bi-calendar"></i> {{ registration.created_at|date:"M d" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="payment-badge payment-{{ registration.payment_status }}">
+                                {{ registration.get_payment_status_display }}
+                            </span>
+                            {% if registration.amount_paid > 0 %}
+                            <div class="text-success mt-1">
+                                <i class="bi bi-cash"></i> ₹{{ registration.amount_paid|floatformat:0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-people display-1 text-muted"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No Registrations Yet</h4>
+                    <p class="text-muted">Share this event to get registrations.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Update Modal Function
+    function openUpdateModal(element) {
+        const url = element.dataset.url;
+        const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+    
+    // Share Event Function
+    function shareEvent() {
+        const eventTitle = "{{ event.title }}";
+        const eventDate = "{{ event.event_date|date:'F d, Y' }}";
+        const eventTime = "{{ event.event_start_time|time:'g:i A' }} - {{ event.event_end_time|time:'g:i A' }}";
+        const eventPrice = "{% if event.is_free %}FREE{% else %}₹{{ event.registration_offer_fee }}{% endif %}";
+        const currentUrl = window.location.href;
+        
+        const shareText = `Check out this event: ${eventTitle}\nDate: ${eventDate}\nTime: ${eventTime}\nPrice: ${eventPrice}\n\nMore details: ${currentUrl}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: eventTitle,
+                text: shareText,
+                url: currentUrl
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            navigator.clipboard.writeText(shareText).then(() => {
+                // Create custom toast
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.innerHTML = `
+                    <div class="toast-content">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Event details copied to clipboard!</span>
+                    </div>
+                `;
+                
+                // Style the toast
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+                    border-left: 4px solid #10b981;
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                    display: flex;
+                    align-items: center;
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Add animations
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes fadeOut {
+                        from { opacity: 1; }
+                        to { opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Remove toast after animation
+                setTimeout(() => {
+                    toast.remove();
+                    style.remove();
+                }, 3000);
+            });
+        }
+    }
+    
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+</script>
+
+<!-- Add CSS for payment badges -->
+<style>
+    .payment-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+    
+    .payment-pending {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+    
+    .payment-failed {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+    }
+    
+    .payment-refunded {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: white;
+    }
+</style>
+
+{% endblock content %}

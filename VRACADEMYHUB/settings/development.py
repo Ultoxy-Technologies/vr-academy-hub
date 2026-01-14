@@ -24,3 +24,15 @@ CSRF_COOKIE_SECURE = False
 # Local static & media
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Timezone settings for India
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True
+
+
+LANGUAGE_CODE = 'en-in'  # English for India
+USE_I18N = True
+USE_L10N = True
+
+USE_L10N = False 

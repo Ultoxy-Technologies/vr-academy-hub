@@ -9,9 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from decimal import Decimal
 from AdminApp.models import *
-from .forms import EnrollmentForm, BatchForm
-
-
+from .forms import EnrollmentForm, BatchForm, EventForm, EventRegistrationForm, EventRegistrationBulkForm
 # views.py
 from django.db.models import Count, Sum, Avg, Q
 from django.utils import timezone
@@ -1938,4 +1936,274 @@ def generate_pdf_receipt(receipt_data):
     
     return response
 
+
+
+
+
+
+
+
+
+
+@login_required
+def event_list(request):
+    """
+    List all events with filtering, pagination, and statistics
+    Follows the exact pattern of crm_follow_up_list
+    """
+    # Get filter parameters
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    category_filter = request.GET.get('category', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    
+    # Start with all events
+    events = Event.objects.all().order_by('-event_date', '-created_at')
+    
+    # Apply filters
+    if search_query:
+        events = events.filter(
+            Q(title__icontains=search_query) |
+            Q(subtitle__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(category__icontains=search_query)
+        )
+    
+    if status_filter:
+        events = events.filter(status=status_filter)
+    
+    if category_filter:
+        events = events.filter(category__icontains=category_filter)
+    
+    if date_from:
+        try:
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+            events = events.filter(event_date__gte=date_from_obj)
+        except ValueError:
+            pass
+    
+    if date_to:
+        try:
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+            events = events.filter(event_date__lte=date_to_obj)
+        except ValueError:
+            pass
+    
+    # Calculate statistics
+    total_events = events.count()
+    
+    # Upcoming events (future dates)
+    today = date.today()
+    upcoming_events = events.filter(event_date__gte=today).count()
+    
+    # Total registrations
+    total_registrations = EventRegistration.objects.filter(
+        event__in=events
+    ).count()
+    
+    # Total revenue from paid events
+    total_revenue = EventRegistration.objects.filter(
+        event__in=events,
+        payment_status='success'
+    ).aggregate(total=Sum('amount_paid'))['total'] or Decimal('0.00')
+    
+    # Add calculated properties to each event for template
+    for event in events:
+        # Registrations count
+        event.registrations_count = event.registrations.count()
+        
+        # Successful registrations (paid)
+        event.successful_registrations = event.registrations.filter(
+            payment_status='success'
+        ).count()
+        
+        # Pending registrations
+        event.pending_registrations = event.registrations.filter(
+            payment_status='pending'
+        ).count()
+        
+        # Total revenue for this event
+        event.event_revenue = event.registrations.filter(
+            payment_status='success'
+        ).aggregate(total=Sum('amount_paid'))['total'] or Decimal('0.00')
+        
+        # Pending revenue (if any pending payments)
+        event.pending_revenue = event.registrations.filter(
+            payment_status='pending'
+        ).aggregate(total=Sum('amount_paid'))['total'] or Decimal('0.00')
+        
+        # Total potential revenue (if all registrations were paid)
+        if event.is_free:
+            event.total_potential_revenue = Decimal('0.00')
+        else:
+            # Calculate potential revenue: registration count * event price
+            potential_count = event.registrations_count
+            event.total_potential_revenue = potential_count * event.registration_offer_fee
+        
+        # Check if event is upcoming
+        event.is_upcoming = event.event_date >= today
+        
+        # Check if event is today
+        event.is_today = event.event_date == today
+    
+    # Get unique categories for filter dropdown
+    categories = Event.objects.exclude(category__isnull=True).exclude(category='').values_list(
+        'category', flat=True
+    ).distinct().order_by('category')
+    
+    # Pagination (10 items per page, same as follow-ups)
+    paginator = Paginator(events, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Prepare context (similar to crm_follow_up_list)
+    context = {
+        'events': page_obj,
+        'categories': categories,
+        
+        # Statistics
+        'total_events': total_events,
+        'upcoming_events': upcoming_events,
+        'total_registrations': total_registrations,
+        'total_revenue': total_revenue,
+        
+        # Filter values for form preservation
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'category_filter': category_filter,
+        'date_from': date_from,
+        'date_to': date_to,
+        
+        # Status choices for filter dropdown
+        'status_choices': Event.EVENT_STATUS,
+    }
+    
+    return render(request, 'enrollment_event_list.html', context)
+
+
+
+@login_required
+def event_detail(request, pk):
+    """View event details with registrations"""
+    event = get_object_or_404(Event, pk=pk)
+    
+    # Get registrations for this event
+    registrations = event.registrations.all().order_by('-created_at')
+    
+    # Calculate registration stats
+    total_registrations = registrations.count()
+    successful_registrations = registrations.filter(payment_status='success').count()
+    pending_registrations = registrations.filter(payment_status='pending').count()
+    
+    # Calculate revenue
+    total_revenue = registrations.filter(payment_status='success').aggregate(
+        total=Sum('amount_paid')
+    )['total'] or Decimal('0.00')
+    
+    # Paginate registrations
+    paginator = Paginator(registrations, 10)
+    page_number = request.GET.get('page')
+    registrations_page = paginator.get_page(page_number)
+    
+    context = {
+        'event': event,
+        'registrations': registrations_page,
+        'total_registrations': total_registrations,
+        'successful_registrations': successful_registrations,
+        'pending_registrations': pending_registrations,
+        'total_revenue': total_revenue,
+    }
+    
+    return render(request, 'enrollment_event_detail.html', context)
+
+@login_required
+def create_event(request):
+    """Create new event (opens in modal window)"""
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            try:
+                event = form.save(commit=True)
+                messages.success(request, f'Event "{event.title}" created successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error creating event: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = EventForm()
+    
+    return render(request, 'enrollment_event_create.html', {'form': form})
+
+@login_required
+def update_event(request, pk):
+    """Update existing event (opens in modal window)"""
+    event = get_object_or_404(Event, pk=pk)
+    
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        
+        if form.is_valid():
+            try:
+                event = form.save(commit=True)
+                messages.success(request, f'Event "{event.title}" updated successfully')
+                
+                # Return JavaScript to close window
+                return HttpResponse("""
+                    <script>
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                        window.close();
+                    </script>
+                """)
+            except Exception as e:
+                messages.error(request, f'Error updating event: {str(e)}')
+        else:
+            # Collect all form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    error_messages.append(f"{field_name}: {error}")
+            
+            if error_messages:
+                messages.error(request, '<br>'.join(error_messages))
+    
+    else:
+        form = EventForm(instance=event)
+    
+    return render(request, 'enrollment_event_update.html', {'form': form, 'event': event})
+
+@login_required
+def delete_event(request, pk):
+    """Delete event with confirmation"""
+    event = get_object_or_404(Event, pk=pk)
+    
+    event_title = event.title
+    event.delete()
+    messages.success(request, f'Event "{event_title}" deleted successfully')
+    return redirect(request.META.get('HTTP_REFERER', 'enrollment-events'))    
+     
+     
 

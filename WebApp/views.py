@@ -494,7 +494,9 @@ def event_detail(request, event_id):
     Display the full details of a single event.
     """
     event = get_object_or_404(Event, id=event_id) 
-
+    if event.status != 'published':
+        messages.error(request, "This event no longer available. kindly contact to support.")
+        return redirect('event_list')
     context = {
         'event': event,
          'razorpay_key_id': settings.RAZORPAY_KEY_ID,
@@ -523,7 +525,7 @@ logger = logging.getLogger(__name__)
 
 def event_registration(request, event_id):
     event = get_object_or_404(Event, id=event_id, status='published')
-    
+    print("Event Registration called for event:", event_id)
     if request.method == 'POST':
         form = EventRegistrationForm(request.POST)
         if form.is_valid():
@@ -681,8 +683,7 @@ def event_list(request):
     Display all events
     """
     # Get all events ordered by event date
-    events = Event.objects.all().order_by('event_date')
-    
+    events = Event.objects.filter(status='published').order_by('event_date')
     context = {
         'events': events
     }

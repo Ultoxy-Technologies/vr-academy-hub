@@ -820,3 +820,415 @@ class StudentInterestForm(forms.ModelForm):
             raise ValidationError(f"Interest option '{interest_option}' already exists")
         
         return interest_option_clean
+
+
+
+# forms.py
+from django import forms
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from AdminApp.models import Event, EventRegistration
+import json
+
+class EventForm(forms.ModelForm):
+    """Form for creating and updating events"""
+    
+    # Custom field for tags with better UX
+    tags_input = forms.CharField(
+        required=False,
+        label="Tags",
+        help_text="Enter tags separated by commas (e.g., Technology, Education, Workshop)",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g., Technology, Education, Workshop'
+        })
+    )
+    
+    class Meta:
+        model = Event
+        fields = [
+            'thumbnail', 'title', 'subtitle', 'description',
+            'category', 'tags_input', 'event_date', 'event_start_time',
+            'event_end_time', 'timezone', 'meeting_link', 'meeting_id',
+            'meeting_password', 'is_free', 'registration_strickthrough_fee',
+            'registration_offer_fee', 'status'
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter event title'
+            }),
+            'subtitle': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Optional subtitle'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Detailed description of the event...'
+            }),
+            'category': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Webinar, Workshop, Conference'
+            }),
+            'event_date': forms.DateInput(attrs={
+                'class': 'form-control datetime-picker',
+                'type': 'date'
+            }),
+            'event_start_time': forms.TimeInput(attrs={
+                'class': 'form-control datetime-picker',
+                'type': 'time'
+            }),
+            'event_end_time': forms.TimeInput(attrs={
+                'class': 'form-control datetime-picker',
+                'type': 'time'
+            }),
+            'timezone': forms.Select(attrs={'class': 'form-select'}, choices=[
+                ('IST', 'Indian Standard Time (IST)'),
+                ('UTC', 'Coordinated Universal Time (UTC)'),
+                ('EST', 'Eastern Standard Time (EST)'),
+                ('PST', 'Pacific Standard Time (PST)'),
+                ('CET', 'Central European Time (CET)'),
+            ]),
+            'meeting_link': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://zoom.us/j/1234567890'
+            }),
+            'meeting_id': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 123 456 7890'
+            }),
+            'meeting_password': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter meeting password'
+            }),
+            'registration_strickthrough_fee': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 1000.00',
+                'step': '0.01'
+            }),
+            'registration_offer_fee': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 799.00',
+                'step': '0.01'
+            }),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'is_free': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+        help_texts = {
+            'thumbnail': 'Recommended size: 800x600 pixels',
+            'registration_strickthrough_fee': 'Original price (for strikethrough display)',
+            'registration_offer_fee': 'Discounted or current price',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # If updating, convert tags JSON to comma-separated string
+        if self.instance and self.instance.pk and self.instance.tags:
+            tags_list = self.instance.tags
+            if isinstance(tags_list, list):
+                self.fields['tags_input'].initial = ', '.join(tags_list)
+        
+        # Add CSS classes to all fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['is_free', 'status', 'timezone']:
+                if not hasattr(field.widget, 'attrs'):
+                    field.widget.attrs = {}
+                if field_name != 'tags_input':
+                    field.widget.attrs['class'] = 'form-control'
+    
+    def clean_tags_input(self):
+        """Convert comma-separated tags to JSON list"""
+        tags_input = self.cleaned_data.get('tags_input', '')
+        if tags_input:
+            # Split by comma, strip whitespace, filter empty strings
+            tags_list = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
+            return tags_list
+        return []
+    
+    def clean_event_date(self):
+        """Validate event date"""
+        event_date = self.cleaned_data.get('event_date')
+        if event_date and event_date < timezone.now().date():
+            raise ValidationError("Event date cannot be in the past")
+        return event_date
+    
+    # def clean_event_start_time(self):
+    #     """Validate event start time"""
+    #     event_date = self.cleaned_data.get('event_date')
+    #     event_start_time = self.cleaned_data.get('event_start_time')
+        
+    #     # If event is today, start time should be in future
+    #     if event_date == timezone.now().date() and event_start_time:
+    #         current_time = timezone.now().time()
+    #         if event_start_time < current_time:
+    #             raise ValidationError("Event start time cannot be in the past for today's event")
+        
+    #     return event_start_time
+    
+    def clean_event_end_time(self):
+        """Validate event end time"""
+        event_start_time = self.cleaned_data.get('event_start_time')
+        event_end_time = self.cleaned_data.get('event_end_time')
+        
+        if event_start_time and event_end_time and event_end_time <= event_start_time:
+            raise ValidationError("Event end time must be after start time")
+        
+        return event_end_time
+    
+    def clean_registration_offer_fee(self):
+        """Validate registration offer fee"""
+        is_free = self.cleaned_data.get('is_free')
+        offer_fee = self.cleaned_data.get('registration_offer_fee')
+        
+        if is_free and offer_fee and offer_fee > 0:
+            raise ValidationError("Offer fee must be 0 for free events")
+        
+        return offer_fee or 0.00
+    
+    def clean_registration_strickthrough_fee(self):
+        """Validate strickthrough fee"""
+        strickthrough_fee = self.cleaned_data.get('registration_strickthrough_fee')
+        offer_fee = self.cleaned_data.get('registration_offer_fee')
+        
+        if strickthrough_fee and offer_fee and strickthrough_fee < offer_fee:
+            raise ValidationError("Strickthrough fee cannot be less than offer fee")
+        
+        return strickthrough_fee
+    
+    def save(self, commit=True):
+        """Save event with tags conversion"""
+        # Convert tags_input to tags JSON field
+        tags_list = self.cleaned_data.get('tags_input', [])
+        self.instance.tags = tags_list
+        
+        # Set published_at if status changed to published
+        if self.instance.pk:
+            original = Event.objects.get(pk=self.instance.pk)
+            if original.status != 'published' and self.instance.status == 'published':
+                self.instance.published_at = timezone.now()
+        elif self.instance.status == 'published':
+            self.instance.published_at = timezone.now()
+        
+        return super().save(commit)
+    
+
+
+
+
+import re
+
+class EventRegistrationForm(forms.ModelForm):
+    """Form for creating and updating event registrations"""
+    
+    # Event selection with enhanced display
+    event = forms.ModelChoiceField(
+        queryset=Event.objects.filter(status='published'),
+        required=True,
+        label="Select Event",
+        help_text="Choose a published event",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    
+    class Meta:
+        model = EventRegistration
+        fields = [
+            'event', 'full_name', 'email', 'mobile_number', 'address',
+            'payment_status', 'amount_paid', 'special_requirements'
+        ]
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter full name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'example@email.com'
+            }),
+            'mobile_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '9876543210'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Full address with city, state, and pincode'
+            }),
+            'payment_status': forms.Select(attrs={'class': 'form-select'}),
+            'amount_paid': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., 799.00',
+                'step': '0.01'
+            }),
+            'special_requirements': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Any special requirements or notes...'
+            }),
+        }
+        help_texts = {
+            'mobile_number': 'Enter 10-digit mobile number',
+            'amount_paid': 'Amount actually paid by the registrant',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        self.event_instance = kwargs.pop('event_instance', None)
+        self.is_update = kwargs.pop('is_update', False)
+        
+        super().__init__(*args, **kwargs)
+        
+        # If specific event is provided (e.g., registering for a specific event)
+        if self.event_instance:
+            self.fields['event'].initial = self.event_instance
+            self.fields['event'].disabled = True  # Can't change event for specific event registration
+        
+        # If updating, set initial amount from event if not set
+        if self.instance and self.instance.pk:
+            if not self.instance.amount_paid and self.instance.event and not self.instance.event.is_free:
+                self.fields['amount_paid'].initial = self.instance.event.registration_offer_fee
+        
+        # Customize queryset for event field
+        self.fields['event'].queryset = Event.objects.filter(status='published')
+        
+        # Add CSS classes to all fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['event', 'payment_status']:
+                if not hasattr(field.widget, 'attrs'):
+                    field.widget.attrs = {}
+                field.widget.attrs['class'] = 'form-control'
+    
+    def clean_mobile_number(self):
+        """Validate mobile number"""
+        mobile_number = self.cleaned_data.get('mobile_number')
+        
+        if not mobile_number:
+            raise ValidationError("Mobile number is required")
+        
+        # Remove any spaces, dashes, or other characters
+        mobile_number = re.sub(r'\D', '', mobile_number)
+        
+        # Validate mobile number format
+        if len(mobile_number) != 10:
+            raise ValidationError("Mobile number must be 10 digits")
+        
+        if not mobile_number.isdigit():
+            raise ValidationError("Mobile number should contain only digits")
+        
+        # Check if this mobile is already registered for the same event
+        event = self.cleaned_data.get('event')
+        if event:
+            existing_reg = EventRegistration.objects.filter(
+                event=event,
+                mobile_number=mobile_number
+            )
+            
+            # If updating, exclude current instance
+            if self.instance and self.instance.pk:
+                existing_reg = existing_reg.exclude(pk=self.instance.pk)
+            
+            if existing_reg.exists():
+                raise ValidationError(
+                    f"This mobile number is already registered for event '{event.title}'"
+                )
+        
+        return mobile_number
+    
+    def clean_email(self):
+        """Validate email"""
+        email = self.cleaned_data.get('email')
+        
+        if not email:
+            raise ValidationError("Email is required")
+        
+        # Basic email validation
+        if '@' not in email or '.' not in email:
+            raise ValidationError("Please enter a valid email address")
+        
+        return email.lower()
+    
+    def clean_amount_paid(self):
+        """Validate amount paid"""
+        amount_paid = self.cleaned_data.get('amount_paid')
+        event = self.cleaned_data.get('event')
+        payment_status = self.cleaned_data.get('payment_status')
+        
+        if event:
+            if event.is_free:
+                if amount_paid and amount_paid > 0:
+                    raise ValidationError("Amount paid must be 0 for free events")
+                return Decimal('0.00')
+            else:
+                if payment_status == 'success':
+                    if not amount_paid or amount_paid <= 0:
+                        raise ValidationError("Amount paid is required for successful payments")
+                    if amount_paid > event.registration_offer_fee:
+                        raise ValidationError(
+                            f"Amount paid cannot exceed event price (₹{event.registration_offer_fee})"
+                        )
+                elif payment_status == 'pending':
+                    if amount_paid and amount_paid > 0:
+                        raise ValidationError(
+                            "Amount should be 0 for pending payments. "
+                            "Set payment status to 'success' if payment is received."
+                        )
+        
+        return amount_paid or Decimal('0.00')
+    
+    def clean(self):
+        """Main validation"""
+        cleaned_data = super().clean()
+        
+        if self.errors:
+            return cleaned_data
+        
+        event = cleaned_data.get('event')
+        payment_status = cleaned_data.get('payment_status')
+        amount_paid = cleaned_data.get('amount_paid')
+        
+        # Validate payment status and amount consistency
+        if payment_status == 'success' and (not amount_paid or amount_paid <= 0):
+            self.add_error('payment_status', 
+                "Payment status cannot be 'success' without a payment amount")
+        
+        # For free events, force payment status to success
+        if event and event.is_free:
+            cleaned_data['payment_status'] = 'success'
+            cleaned_data['amount_paid'] = Decimal('0.00')
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        """Save registration with auto-generated registration ID"""
+        # Generate registration ID if not set
+        if not self.instance.registration_id:
+            import uuid
+            self.instance.registration_id = f"REG{str(uuid.uuid4())[:8].upper()}"
+        
+        # Set amount paid from event if not provided for paid events
+        if not self.instance.amount_paid and self.instance.event and not self.instance.event.is_free:
+            self.instance.amount_paid = self.instance.event.registration_offer_fee
+        
+        return super().save(commit)
+    
+
+
+
+class EventRegistrationBulkForm(forms.Form):
+    """Form for bulk registration import"""
+    event = forms.ModelChoiceField(
+        queryset=Event.objects.filter(status='published'),
+        required=True,
+        label="Select Event",
+        help_text="Choose event for bulk registration",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    
+    csv_file = forms.FileField(
+        required=True,
+        label="CSV File",
+        help_text="Upload CSV file with registrations (columns: full_name, email, mobile_number, address)",
+        widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.csv'})
+    )
