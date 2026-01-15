@@ -1,6 +1,4 @@
 event should be link with batch
 after registration done and payment done that should be enroll in particular batch automatically
-
 event visible/invisible
-
 

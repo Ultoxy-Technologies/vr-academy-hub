@@ -58,4 +58,13 @@ urlpatterns = [
     path('student-interests/<int:pk>/update/', update_student_interest, name='update_student_interest'),
     path('student-interests/<int:pk>/delete/', delete_student_interest, name='delete_student_interest'),
 
+    # Event Management URLs
+    path('enrollment-events/', event_list, name='enrollment_event_list'),
+    path('enrollment-events/create/', create_event, name='enrollment_create_event'),
+    path('enrollment-events/<int:pk>/', event_detail, name='enrollment_event_detail'),
+    path('enrollment-events/<int:pk>/update/', update_event, name='enrollment_update_event'),
+    path('enrollment-events/<int:pk>/delete/', delete_event, name='enrollment_delete_event'),
+
+
+
 ]

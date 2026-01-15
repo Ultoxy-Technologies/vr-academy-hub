@@ -494,7 +494,9 @@ def event_detail(request, event_id):
     Display the full details of a single event.
     """
     event = get_object_or_404(Event, id=event_id) 
-
+    if event.status != 'published':
+        messages.error(request, "This event no longer available. kindly contact to support.")
+        return redirect('event_list')
     context = {
         'event': event,
          'razorpay_key_id': settings.RAZORPAY_KEY_ID,
@@ -523,7 +525,7 @@ logger = logging.getLogger(__name__)
 
 def event_registration(request, event_id):
     event = get_object_or_404(Event, id=event_id, status='published')
-    
+    print("Event Registration called for event:", event_id)
     if request.method == 'POST':
         form = EventRegistrationForm(request.POST)
         if form.is_valid():
@@ -592,17 +594,39 @@ def event_registration(request, event_id):
     }
     return render(request, 'event_registration.html', context)
 
+
 @csrf_exempt
 def payment_verification(request):
-    print(request.method)
-    if request.method == "POST" or request.method=="GET":
+    """Handle Razorpay payment verification callback"""
+    print(f"Payment verification called. Method: {request.method}")
+    
+    # Log all incoming data for debugging
+    print(f"POST data: {dict(request.POST)}")
+    print(f"GET data: {dict(request.GET)}")
+    
+    if request.method == "POST":
         try:
-            # Get payment details from request
+            # Get payment details from POST
             razorpay_payment_id = request.POST.get('razorpay_payment_id')
             razorpay_order_id = request.POST.get('razorpay_order_id')
             razorpay_signature = request.POST.get('razorpay_signature')
             
-            logger.info(f"Payment verification started for order: {razorpay_order_id}")
+            print(f"Received - Payment ID: {razorpay_payment_id}, Order ID: {razorpay_order_id}")
+            
+            # Validate required parameters
+            if not razorpay_payment_id or not razorpay_order_id or not razorpay_signature:
+                error_msg = "Missing payment parameters"
+                print(error_msg)
+                return JsonResponse({'status': 'error', 'message': error_msg})
+            
+            # Get the registration
+            try:
+                registration = EventRegistration.objects.get(razorpay_order_id=razorpay_order_id)
+                print(f"Found registration: {registration.registration_id}")
+            except EventRegistration.DoesNotExist:
+                error_msg = f"Registration not found for order: {razorpay_order_id}"
+                print(error_msg)
+                return JsonResponse({'status': 'error', 'message': error_msg})
             
             # Verify payment signature
             params_dict = {
@@ -611,32 +635,40 @@ def payment_verification(request):
                 'razorpay_signature': razorpay_signature
             }
             
-            # Verify signature
+            print("Verifying signature...")
             client.utility.verify_payment_signature(params_dict)
+            print("Signature verified successfully!")
             
-            # Signature verification successful
-            registration = EventRegistration.objects.get(razorpay_order_id=razorpay_order_id)
+            # Update registration with payment details
             registration.razorpay_payment_id = razorpay_payment_id
             registration.razorpay_signature = razorpay_signature
             registration.payment_status = 'success'
             registration.save()
             
-            logger.info(f"Payment successful for registration: {registration.registration_id}")
+            print(f"Payment successful for registration: {registration.registration_id}")
             
+            # Redirect to success page
             return redirect('registration_success', registration_id=registration.registration_id)
             
-        except EventRegistration.DoesNotExist:
-            logger.error(f"Registration not found for order: {razorpay_order_id}")
-            return JsonResponse({'status': 'error', 'message': 'Registration not found'})
         except razorpay.errors.SignatureVerificationError as e:
-            logger.error(f"Invalid payment signature for order: {razorpay_order_id} - {str(e)}")
+            error_msg = f"Invalid payment signature: {str(e)}"
+            print(error_msg)
             return JsonResponse({'status': 'error', 'message': 'Invalid payment signature'})
         except Exception as e:
-            logger.error(f"Payment verification error: {str(e)}")
+            error_msg = f"Payment verification error: {str(e)}"
+            print(error_msg)
+            import traceback
+            traceback.print_exc()
             return JsonResponse({'status': 'error', 'message': str(e)})
     
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    # If not POST, return error
+    print(f"Invalid request method: {request.method}")
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method. Only POST allowed.'})
 
+
+
+
+ 
 
 
 def create_razorpay_order(request, event_id):
@@ -665,6 +697,7 @@ def create_razorpay_order(request, event_id):
             logger.error(f"Razorpay order creation failed via API: {str(e)}")
             return JsonResponse({'error': str(e)}, status=400)
 
+
 def registration_success(request, registration_id):
     registration = get_object_or_404(EventRegistration, registration_id=registration_id)
     
@@ -681,8 +714,7 @@ def event_list(request):
     Display all events
     """
     # Get all events ordered by event date
-    events = Event.objects.all().order_by('event_date')
-    
+    events = Event.objects.filter(status='published').order_by('event_date')
     context = {
         'events': events
     }

@@ -26,7 +26,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'vrtrainingacademy@gmail.com'
-EMAIL_HOST_PASSWORD = 'APP_PASSWORD'
+EMAIL_HOST_PASSWORD = 'lawo tafh hxwd bqok'
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -39,3 +39,15 @@ MEDIA_URL = '/media/'
 # Production filesystem paths
 STATIC_ROOT = '/var/www/vracademyhub_static'
 MEDIA_ROOT = '/var/www/vracademyhub_media'
+
+
+# Timezone settings for India
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True
+
+
+LANGUAGE_CODE = 'en-in'  # English for India
+USE_I18N = True
+USE_L10N = True
+
+USE_L10N = False 
