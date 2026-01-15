@@ -15,6 +15,13 @@ DATABASES = {
     }
 }
 
+# Production api keys
+RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY' 
+#Production api secret keys
+RAZORPAY_KEY_SECRET = 'RLFz6G1j9CgStlwKDFyBIqPK'
+
+
+
 # Razorpay LIVE keys
 # #test api keys
 # RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY' 
