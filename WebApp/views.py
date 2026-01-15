@@ -206,7 +206,8 @@ def web_videos_gallary(request):
 
 # Awards & Recognition
 def certificates(request):
-    certificates = Certificate.objects.filter(is_active=True).order_by('-issue_date')
+    certificates = Certificate.objects.all().order_by('-issue_date')
+    print("Certificates fetched:", certificates)    
     return render(request, 'certificates.html', {'certificates': certificates})
 
 
