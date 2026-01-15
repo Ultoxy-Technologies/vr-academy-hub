@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmation - VR Training Academy</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- html2canvas library for screenshot -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        /* A4 Print Styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                color: black !important;
+                font-size: 12pt;
+                line-height: 1.4;
+            }
+            
+            .container {
+                width: 210mm;
+                max-width: 100%;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-only {
+                display: block !important;
+            }
+            
+            .card {
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                margin-bottom: 10mm !important;
+                page-break-inside: avoid;
+            }
+            
+            .card-header {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                border-bottom: 2px solid #000 !important;
+                padding: 8mm 0 !important;
+            }
+            
+            .text-primary {
+                color: #000 !important;
+            }
+            
+            .text-success {
+                color: #000 !important;
+            }
+            
+            .badge {
+                border: 1px solid #000 !important;
+                background: white !important;
+                color: black !important;
+            }
+            
+            .btn, .action-buttons, .social-share, .whats-next {
+                display: none !important;
+            }
+            
+            .header-section {
+                border-bottom: 2px solid #000 !important;
+                margin-bottom: 15mm !important;
+            }
+            
+            .footer-section {
+                border-top: 1px solid #ccc !important;
+                margin-top: 15mm !important;
+                padding-top: 5mm !important;
+            }
+            
+            a {
+                color: black !important;
+                text-decoration: none !important;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+            }
+            
+            table, figure, .card {
+                page-break-inside: avoid;
+            }
+            
+            .watermark {
+                position: fixed;
+                opacity: 0.1;
+                font-size: 100pt;
+                transform: rotate(-45deg);
+                left: 10%;
+                top: 40%;
+                color: #000;
+                z-index: 9999;
+            }
+        }
+        
+        /* Screen Styles */
+        @media screen {
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            
+            .container {
+                max-width: 210mm;
+                background: white;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                margin: 20px auto;
+                padding: 30px;
+            }
+            
+            .watermark {
+                display: none;
+            }
+            
+            .print-only {
+                display: none;
+            }
+        }
+        
+        /* Common Styles */
+        .container {
+            min-height: 297mm;
+        }
+        
+        .header-section {
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .company-logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .company-tagline {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .company-info {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .company-info i {
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+        }
+        
+        .certificate-title {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 3px double #2c3e50;
+            border-bottom: 3px double #2c3e50;
+        }
+        
+        .certificate-title h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .certificate-title .subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .success-badge {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            transform: rotate(15deg);
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .registration-id {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            letter-spacing: 2px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .info-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+        }
+        
+        .info-card h5 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            width: 200px;
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            color: #34495e;
+        }
+        
+        .footer-section {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            font-size: 11px;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        
+        .signature-area {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px dashed #ccc;
+        }
+        
+        .signature-line {
+            width: 200px;
+            border-top: 1px solid #000;
+            margin: 0 auto;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-print {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-print:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-download {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-download:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-email {
+            background: #9b59b6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-email:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .important-notes {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .important-notes h6 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .important-notes ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        .important-notes li {
+            margin-bottom: 8px;
+        }
+        
+        .whats-next {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .whats-next h6 {
+            color: #0c5460;
+            margin-bottom: 15px;
+        }
+        
+        .payment-details {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .stamp {
+            position: absolute;
+            right: 50px;
+            bottom: 50px;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        .stamp-inner {
+            text-align: center;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .stamp-inner div:first-child {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .stamp-inner div:last-child {
+            font-size: 18px;
+        }
+        
+        /* Loading overlay for screenshot */
+        .screenshot-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay (hidden by default) -->
+    <div id="loadingOverlay" class="screenshot-loading" style="display: none;">
+        <div class="spinner"></div>
+        <div>Generating Image...</div>
+        <div class="mt-2" style="font-size: 14px;">Please wait while we capture your registration</div>
+    </div>
+    
+    <!-- Watermark for print -->
+    <div class="watermark print-only">
+        VR TRAINING ACADEMY
+    </div>
+    
+    <!-- Main content container -->
+    <div id="contentToCapture" class="container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="row">
+                <div class="col-8">
+                    <div class="company-logo">VR Training Academy</div>
+                    <div class="company-tagline">Empowering Skills, Transforming Careers</div>
+                    <div class="company-info">
+                        <div><i class="bi bi-geo-alt"></i> Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</div>
+                        <div><i class="bi bi-envelope"></i> vrtrainingacademy1123@gmail.com</div>
+                        <div><i class="bi bi-telephone"></i> General Enquiries: +91 99703 60424</div>
+                        <div><i class="bi bi-whatsapp"></i> Primary Contact/WhatsApp: +91 92702 01760</div>
+                        <div><i class="bi bi-telephone-plus"></i> Alternate Contact: +91 92702 01760</div>
+                    </div>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="text-muted small">
+                        <div>Document ID: REG{{ registration.registration_id }}</div>
+                        <div>Generated: {% now "F d, Y H:i" %}</div>
+                        <div>Reference: {{ registration.id }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificate Title -->
+        <div class="certificate-title">
+            <h1>REGISTRATION CONFIRMATION</h1>
+            <div class="subtitle">Certificate of Enrollment</div>
+        </div>
+        
+        <!-- Success Badge -->
+        <div class="success-badge no-print">
+            <i class="bi bi-check-circle"></i> SUCCESS
+        </div>
+        
+        <!-- Registration ID -->
+        <div class="text-center mb-4">
+            <div class="registration-id">
+                REGISTRATION ID: {{ registration.registration_id }}
+            </div>
+            <div class="text-muted mt-2">
+                Registration Date: {{ registration.created_at|date:"F d, Y" }} | Status: 
+                <span class="badge bg-success">{{ registration.get_payment_status_display|upper }}</span>
+            </div>
+        </div>
+        
+        <!-- Event Details -->
+        <div class="info-card">
+            <h5><i class="bi bi-calendar-event me-2"></i> EVENT DETAILS</h5>
+            <div class="info-row">
+                <div class="info-label">Event Title:</div>
+                <div class="info-value"><strong>{{ event.title }}</strong></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Event Date & Time:</div>
+                <div class="info-value">
+                    {{ event.event_date|date:"F d, Y" }} | 
+                    {{ event.event_start_time|time:"g:i A" }} - {{ event.event_end_time|time:"g:i A" }} ({{ event.timezone }})
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Category:</div>
+                <div class="info-value">{{ event.category|default:"General Training" }}</div>
+            </div>
+            {% if event.description %}
+            <div class="info-row">
+                <div class="info-label">Description:</div>
+                <div class="info-value">{{ event.description|truncatewords:30 }}</div>
+            </div>
+            {% endif %}
+            {% if event.meeting_link %}
+            <div class="info-row">
+                <div class="info-label">Meeting Link:</div>
+                <div class="info-value">
+                    <a href="{{ event.meeting_link }}" target="_blank" class="no-print">{{ event.meeting_link|truncatechars:40 }}</a>
+                    <span class="print-only">{{ event.meeting_link }}</span>
+                </div>
+            </div>
+            {% endif %}
+            {% if event.meeting_id %}
+            <div class="info-row">
+                <div class="info-label">Meeting ID:</div>
+                <div class="info-value">{{ event.meeting_id }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Attendee Details -->
+        <div class="info-card">
+            <h5><i class="bi bi-person-circle me-2"></i> ATTENDEE INFORMATION</h5>
+            <div class="info-row">
+                <div class="info-label">Full Name:</div>
+                <div class="info-value"><strong>{{ registration.full_name }}</strong></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email Address:</div>
+                <div class="info-value">{{ registration.email }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Mobile Number:</div>
+                <div class="info-value">{{ registration.mobile_number }}</div>
+            </div>
+            {% if registration.address %}
+            <div class="info-row">
+                <div class="info-label">Address:</div>
+                <div class="info-value">{{ registration.address }}</div>
+            </div>
+            {% endif %}
+            {% if registration.special_requirements %}
+            <div class="info-row">
+                <div class="info-label">Special Requirements:</div>
+                <div class="info-value">{{ registration.special_requirements }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Payment Details (if paid event) -->
+        {% if not event.is_free %}
+        <div class="payment-details">
+            <h5><i class="bi bi-credit-card me-2"></i> PAYMENT INFORMATION</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-row">
+                        <div class="info-label">Amount Paid:</div>
+                        <div class="info-value"><strong>₹{{ registration.amount_paid }}</strong></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Payment Status:</div>
+                        <div class="info-value">
+                            <span class="badge bg-success">{{ registration.get_payment_status_display|upper }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {% if registration.razorpay_order_id %}
+                    <div class="info-row">
+                        <div class="info-label">Transaction ID:</div>
+                        <div class="info-value">{{ registration.razorpay_order_id }}</div>
+                    </div>
+                    {% endif %}
+                    {% if registration.razorpay_payment_id %}
+                    <div class="info-row">
+                        <div class="info-label">Payment ID:</div>
+                        <div class="info-value">{{ registration.razorpay_payment_id }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Important Notes -->
+        <div class="important-notes">
+            <h6><i class="bi bi-exclamation-triangle me-2"></i> IMPORTANT NOTES</h6>
+            <ul>
+                <li>Please keep this confirmation safe for future reference.</li>
+                <li>Join the meeting 10 minutes before the scheduled time.</li>
+                <li>Carry a valid ID proof for verification if required.</li>
+                <li>For any queries, contact our support team at +91 99703 60424.</li>
+                <li>Event link and credentials will be shared 24 hours before the event.</li>
+            </ul>
+        </div>
+        
+        <!-- What's Next -->
+        <div class="whats-next no-print">
+            <h6><i class="bi bi-info-circle me-2"></i> WHAT'S NEXT?</h6>
+            <ul>
+                <li>You will receive event reminders via email and SMS.</li>
+                <li>Join our WhatsApp group for updates (link will be shared).</li>
+                <li>Download study materials from our portal before the event.</li>
+                <li>Complete the pre-event survey (if applicable).</li>
+            </ul>
+        </div>
+        
+        <!-- Signature Area -->
+        <div class="signature-area">
+            <div class="row">
+                <div class="col-6">
+                    <div class="signature-line">
+                        Participant's Signature
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="signature-line">
+                        Authorized Signatory<br>
+                        VR Training Academy
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Official Stamp -->
+        <div class="stamp no-print">
+            <div class="stamp-inner">
+                <div>OFFICIAL</div>
+                <div>STAMP</div>
+                <div style="font-size: 10px; margin-top: 5px;">VRTA</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer-section">
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>VR Training Academy</strong> | Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</p>
+                    <p>Email: vrtrainingacademy1123@gmail.com | Phone: +91 99703 60424, +91 92702 01760</p>
+                    <p class="small">This is a computer-generated document. No physical signature is required.</p>
+                    <p class="small print-only">Printed on: {% now "F d, Y H:i:s" %} | Page 1 of 1</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons (Screen Only) -->
+        <div class="action-buttons no-print">
+            <button class="btn-print" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print Confirmation
+            </button>
+            <button class="btn-download" onclick="downloadAsImage()">
+                <i class="bi bi-download"></i> Download as Image
+            </button>
+            <a href="{% url 'event_detail' registration.event.id %}" class="btn-email" style="text-decoration: none;">
+                <i class="bi bi-calendar2-event"></i> Back to Event Page
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript for image capture and download -->
+    <script>
+        // Function to download the page as an image
+        async function downloadAsImage() {
+            try {
+                // Show loading overlay
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.style.display = 'flex';
+                
+                // Temporarily hide action buttons for cleaner screenshot
+                const actionButtons = document.querySelector('.action-buttons');
+                const originalDisplay = actionButtons.style.display;
+                actionButtons.style.display = 'none';
+                
+                // Hide the loading overlay from screenshot
+                loadingOverlay.style.opacity = '0';
+                
+                // Capture the content
+                const element = document.getElementById('contentToCapture');
+                
+                // Configure html2canvas options
+                const canvas = await html2canvas(element, {
+                    scale: 2, // Higher quality
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    onclone: function(clonedDoc) {
+                        // Ensure cloned document has proper styles
+                        const clonedElement = clonedDoc.getElementById('contentToCapture');
+                        clonedElement.style.boxShadow = 'none';
+                        clonedElement.style.margin = '0 auto';
+                    }
+                });
+                
+                // Restore action buttons
+                actionButtons.style.display = originalDisplay;
+                
+                // Hide loading overlay
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.style.opacity = '1';
+                
+                // Convert canvas to image
+                const image = canvas.toDataURL('image/png', 1.0);
+                
+                // Create download link
+                const link = document.createElement('a');
+                const fileName = `VRTA_Registration_${getCurrentDateTime()}.png`;
+                
+                link.download = fileName;
+                link.href = image;
+                link.click();
+                
+                // Show success message
+                showToast('Image downloaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error capturing image:', error);
+                
+                // Hide loading overlay on error
+                document.getElementById('loadingOverlay').style.display = 'none';
+                
+                // Restore action buttons
+                const actionButtons = document.querySelector('.action-buttons');
+                actionButtons.style.display = '';
+                
+                showToast('Failed to generate image. Please try again.', 'error');
+            }
+        }
+        
+        // Function to get current date time for filename
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+        }
+        
+        // Function to show toast messages
+        function showToast(message, type = 'info') {
+            // Remove existing toast if any
+            const existingToast = document.querySelector('.custom-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `custom-toast alert alert-${type === 'success' ? 'success' : 'danger'}`;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                min-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border-radius: 8px;
+                padding: 15px 20px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-2"></i>
+                    <div>${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add CSS animations for toast
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Email confirmation function
+        function sendEmailConfirmation() {
+            const email = '{{ registration.email }}';
+            showToast(`A confirmation email will be sent to ${email}`, 'info');
+        }
+        
+        // Add copy registration ID functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const regIdElement = document.querySelector('.registration-id');
+            if (regIdElement) {
+                regIdElement.style.cursor = 'pointer';
+                regIdElement.title = 'Click to copy Registration ID';
+                regIdElement.addEventListener('click', function() {
+                    const textToCopy = '{{ registration.registration_id }}';
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showToast('Registration ID copied to clipboard!', 'success');
+                    });
+                });
+            }
+            
+            // Add auto-download option after 2 seconds (optional)
+            // setTimeout(() => {
+            //     if (confirm('Do you want to download your registration as an image?')) {
+            //         downloadAsImage();
+            //     }
+            // }, 2000);
+        });
+        
+        // Print optimization
+        window.onbeforeprint = function() {
+            // Hide non-printable elements
+            document.querySelectorAll('.no-print').forEach(el => {
+                el.style.display = 'none';
+            });
+        };
+        
+        window.onafterprint = function() {
+            // Restore elements after print
+            document.querySelectorAll('.no-print').forEach(el => {
+                el.style.display = '';
+            });
+        };
+    </script>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
