@@ -133,186 +133,186 @@ from .models import CustomUser
 
 
 
-# @admin.register(CustomUser)
-# class CustomUserAdmin(UserAdmin):
-#     change_password_form = AdminPasswordChangeForm
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    change_password_form = AdminPasswordChangeForm
 
-#     list_display = (
-#         'id',
-#         'name',
-#         'mobile_number',
-#         'email_link',
-#         'location_info',
-#         'dob_display',
-#         'role',
-#         'is_active_colored',
-#         'is_active',
-#         'date_joined_display',
-#     )
+    list_display = (
+        'id',
+        'name',
+        'mobile_number',
+        'email_link',
+        'location_info',
+        'dob_display',
+        'role',
+        'is_active_colored',
+        'is_active',
+        'date_joined_display',
+    )
 
-#     list_display_links = ('id', 'name')
-#     ordering = ('-date_joined',)
-#     list_per_page = 20
-#     search_fields = ('name', 'mobile_number', 'email', 'dist', 'village', 'taluka')
-#     list_filter = ('role', 'is_active', 'dist', 'taluka', 'village', 'date_joined')
-#     list_editable = ('is_active',)
-#     readonly_fields = ('last_login', 'date_joined')
+    list_display_links = ('id', 'name')
+    ordering = ('-date_joined',)
+    list_per_page = 20
+    search_fields = ('name', 'mobile_number', 'email', 'dist', 'village', 'taluka')
+    list_filter = ('role', 'is_active', 'dist', 'taluka', 'village', 'date_joined')
+    list_editable = ('is_active',)
+    readonly_fields = ('last_login', 'date_joined')
 
-#     fieldsets = (
-#         ('👤 Personal Information', {
-#             'fields': ('name', 'dob', 'mobile_number', 'email', 'password')
-#         }),
-#         ('🏡 Location Details', {
-#             'fields': ('dist', 'taluka', 'village'),
-#         }),
-#         ('📝 Additional Info', {
-#             'fields': ('action',),
-#         }),
-#         ('🔒 Permissions & Status', {
-#             'fields': ('role', 'is_active', 'is_staff'),
-#         }),
-#         ('📅 Important Dates', {
-#             'classes': ('collapse',),
-#             'fields': ('last_login', 'date_joined'),
-#         }),
-#     )
+    fieldsets = (
+        ('👤 Personal Information', {
+            'fields': ('name', 'dob', 'mobile_number', 'email', 'password')
+        }),
+        ('🏡 Location Details', {
+            'fields': ('dist', 'taluka', 'village'),
+        }),
+        ('📝 Additional Info', {
+            'fields': ('action',),
+        }),
+        ('🔒 Permissions & Status', {
+            'fields': ('role', 'is_active', 'is_staff'),
+        }),
+        ('📅 Important Dates', {
+            'classes': ('collapse',),
+            'fields': ('last_login', 'date_joined'),
+        }),
+    )
 
-#     add_fieldsets = (
-#         ('👤 Basic Info', {
-#             'classes': ('wide',),
-#             'fields': (
-#                 'mobile_number',
-#                 'name',
-#                 'email',
-#                 'password1',
-#                 'password2',
-#                 'role',
-#                 'dist',
-#                 'taluka',
-#                 'village',
-#                 'dob',
-#                 'action',
-#                 'is_active',
-#                 'is_staff'
-#             ),
-#         }),
-#     )
+    add_fieldsets = (
+        ('👤 Basic Info', {
+            'classes': ('wide',),
+            'fields': (
+                'mobile_number',
+                'name',
+                'email',
+                'password1',
+                'password2',
+                'role',
+                'dist',
+                'taluka',
+                'village',
+                'dob',
+                'action',
+                'is_active',
+                'is_staff'
+            ),
+        }),
+    )
 
-    # def email_link(self, obj):
-    #     if obj.email:
-    #         return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
-    #     return format_html('<span style="color:gray;">—</span>')
-    # email_link.short_description = "Email"
+    def email_link(self, obj):
+        if obj.email:
+            return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
+        return format_html('<span style="color:gray;">—</span>')
+    email_link.short_description = "Email"
 
-    # def location_info(self, obj):
-    #     if obj.village or obj.taluka or obj.dist:
-    #         return f"{obj.village}, {obj.taluka}, {obj.dist}"
-    #     return "—"
-    # location_info.short_description = "Location"
+    def location_info(self, obj):
+        if obj.village or obj.taluka or obj.dist:
+            return f"{obj.village}, {obj.taluka}, {obj.dist}"
+        return "—"
+    location_info.short_description = "Location"
 
-    # def dob_display(self, obj):
-    #     return obj.dob.strftime('%d %b %Y') if obj.dob else "—"
-    # dob_display.short_description = "DOB"
+    def dob_display(self, obj):
+        return obj.dob.strftime('%d %b %Y') if obj.dob else "—"
+    dob_display.short_description = "DOB"
 
-    # def date_joined_display(self, obj):
-    #     return localtime(obj.date_joined).strftime('%d %b %Y, %I:%M %p')
-    # date_joined_display.short_description = "Joined On"
+    def date_joined_display(self, obj):
+        return localtime(obj.date_joined).strftime('%d %b %Y, %I:%M %p')
+    date_joined_display.short_description = "Joined On"
 
-    # def is_active_colored(self, obj):
-    #     color = "green" if obj.is_active else "red"
-    #     text = "🟢 Active" if obj.is_active else "🔴 Inactive"
-    #     return format_html(
-    #         '<span style="color:{}; font-weight:bold;">{}</span>',
-    #         color,
-    #         text
-    #     )
-    # is_active_colored.short_description = "Status"
-    # is_active_colored.admin_order_field = 'is_active'
+    def is_active_colored(self, obj):
+        color = "green" if obj.is_active else "red"
+        text = "🟢 Active" if obj.is_active else "🔴 Inactive"
+        return format_html(
+            '<span style="color:{}; font-weight:bold;">{}</span>',
+            color,
+            text
+        )
+    is_active_colored.short_description = "Status"
+    is_active_colored.admin_order_field = 'is_active'
 
-    # actions = ['activate_users', 'deactivate_users', 'export_selected_users']
+    actions = ['activate_users', 'deactivate_users', 'export_selected_users']
 
-    # def activate_users(self, request, queryset):
-    #     count = queryset.update(is_active=True)
-    #     self.message_user(request, f"{count} user(s) activated successfully.")
-    # activate_users.short_description = "✅ Activate selected users"
+    def activate_users(self, request, queryset):
+        count = queryset.update(is_active=True)
+        self.message_user(request, f"{count} user(s) activated successfully.")
+    activate_users.short_description = "✅ Activate selected users"
 
-    # def deactivate_users(self, request, queryset):
-    #     count = queryset.update(is_active=False)
-    #     self.message_user(request, f"{count} user(s) deactivated successfully.")
-    # deactivate_users.short_description = "🚫 Deactivate selected users"
+    def deactivate_users(self, request, queryset):
+        count = queryset.update(is_active=False)
+        self.message_user(request, f"{count} user(s) deactivated successfully.")
+    deactivate_users.short_description = "🚫 Deactivate selected users"
 
-    # def export_selected_users(self, request, queryset):
-    #     import csv
-    #     from django.http import HttpResponse
+    def export_selected_users(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
 
-    #     response = HttpResponse(content_type='text/csv')
-    #     response['Content-Disposition'] = 'attachment; filename="users.csv"'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="users.csv"'
 
-    #     writer = csv.writer(response)
-    #     writer.writerow([
-    #         'Name', 'Mobile', 'Email', 'Role', 'District',
-    #         'Taluka', 'Village', 'DOB', 'Action',
-    #         'Active', 'Date Joined'
-    #     ])
+        writer = csv.writer(response)
+        writer.writerow([
+            'Name', 'Mobile', 'Email', 'Role', 'District',
+            'Taluka', 'Village', 'DOB', 'Action',
+            'Active', 'Date Joined'
+        ])
 
-    #     for obj in queryset:
-    #         writer.writerow([
-    #             obj.name,
-    #             obj.mobile_number,
-    #             obj.email or '',
-    #             obj.get_role_display(),
-    #             obj.dist,
-    #             obj.taluka,
-    #             obj.village,
-    #             obj.dob.strftime('%Y-%m-%d') if obj.dob else '',
-    #             obj.action or '',
-    #             'Yes' if obj.is_active else 'No',
-    #             obj.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
-    #         ])
-    #     return response
-    # export_selected_users.short_description = "⬇️ Export selected users to CSV"
+        for obj in queryset:
+            writer.writerow([
+                obj.name,
+                obj.mobile_number,
+                obj.email or '',
+                obj.get_role_display(),
+                obj.dist,
+                obj.taluka,
+                obj.village,
+                obj.dob.strftime('%Y-%m-%d') if obj.dob else '',
+                obj.action or '',
+                'Yes' if obj.is_active else 'No',
+                obj.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
+            ])
+        return response
+    export_selected_users.short_description = "⬇️ Export selected users to CSV"
 
-    # def get_urls(self):
-    #     urls = super().get_urls()
-    #     custom_urls = [
-    #         path(
-    #             '<id>/change-password/',
-    #             self.admin_site.admin_view(self.change_user_password),
-    #             name='customuser_change_password',
-    #         ),
-    #     ]
-    #     return custom_urls + urls
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                '<id>/change-password/',
+                self.admin_site.admin_view(self.change_user_password),
+                name='customuser_change_password',
+            ),
+        ]
+        return custom_urls + urls
 
-    # def change_user_password(self, request, id, form_url=''):
-    #     user = self.get_object(request, id)
-    #     if not user:
-    #         messages.error(request, "User not found.")
-    #         return redirect('..')
+    def change_user_password(self, request, id, form_url=''):
+        user = self.get_object(request, id)
+        if not user:
+            messages.error(request, "User not found.")
+            return redirect('..')
 
-    #     if request.method == 'POST':
-    #         form = self.change_password_form(user, request.POST)
-    #         if form.is_valid():
-    #             form.save()
-    #             messages.success(
-    #                 request,
-    #                 f"Password for {user.name or user.mobile_number} changed successfully!"
-    #             )
-    #             return redirect('..')
-    #     else:
-    #         form = self.change_password_form(user)
+        if request.method == 'POST':
+            form = self.change_password_form(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(
+                    request,
+                    f"Password for {user.name or user.mobile_number} changed successfully!"
+                )
+                return redirect('..')
+        else:
+            form = self.change_password_form(user)
 
-    #     context = {
-    #         **self.admin_site.each_context(request),
-    #         'title': f'Change password: {user.name or user.mobile_number}',
-    #         'form': form,
-    #         'opts': self.model._meta,
-    #         'original': user,
-    #     }
-    #     return TemplateResponse(
-    #         request,
-    #         'admin/auth/user/change_password.html',
-    #         context
-    #     )
+        context = {
+            **self.admin_site.each_context(request),
+            'title': f'Change password: {user.name or user.mobile_number}',
+            'form': form,
+            'opts': self.model._meta,
+            'original': user,
+        }
+        return TemplateResponse(
+            request,
+            'admin/auth/user/change_password.html',
+            context
+        )
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
