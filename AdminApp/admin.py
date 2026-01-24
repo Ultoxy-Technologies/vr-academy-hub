@@ -532,8 +532,6 @@ class FreeCourseProgressAdmin(admin.ModelAdmin):
 
 from django.contrib import admin
 from django.utils.html import format_html
- from django.contrib import admin
-from django.utils.html import format_html
 from .models import Basic_to_Advance_Cource, Advance_to_Pro_Cource
 
 
@@ -556,7 +554,7 @@ class CourseBaseAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'duration', 'rating')
     search_fields = ('title', 'event_date', 'duration', 'offer_price')
     list_editable = ('is_active',)
-    readonly_fields = ('thumbnail_display',)  # Changed from thumbnail_preview
+    readonly_fields = ('thumbnail_preview',)
     ordering = ('-event_date',)
     list_per_page = 25
 
@@ -568,7 +566,7 @@ class CourseBaseAdmin(admin.ModelAdmin):
             'fields': ('offer_price', 'original_price')
         }),
         ('Media', {
-            'fields': ('thumbnail', 'thumbnail_display')  # Changed from thumbnail_preview
+            'fields': ('thumbnail', 'thumbnail_preview')
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -576,19 +574,14 @@ class CourseBaseAdmin(admin.ModelAdmin):
     )
 
     def thumbnail_preview(self, obj):
-        """Display image preview in list view."""
+        """Display image preview in admin."""
         if obj.thumbnail:
             return format_html(
                 '<img src="{}" style="height:70px; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,0.3);"/>',
                 obj.thumbnail.url
             )
-        return format_html('<span style="color:{};">{}</span>', 'gray', 'No Image')
+        return format_html('<span style="color:gray;">No Image</span>')
     thumbnail_preview.short_description = "Thumbnail"
-
-    def thumbnail_display(self, obj):
-        """Display image preview in edit view (different name to avoid conflict)."""
-        return self.thumbnail_preview(obj)
-    thumbnail_display.short_description = "Thumbnail Preview"
 
     def get_queryset(self, request):
         """Enhance query performance."""
@@ -622,7 +615,8 @@ class AdvanceToProCourseAdmin(CourseBaseAdmin):
     list_filter = CourseBaseAdmin.list_filter + ('event_date',)
     search_fields = CourseBaseAdmin.search_fields + ('event_date',)
 
-    
+
+
 # ----------------------------
 # Certificate ADMIN
 # ----------------------------
