@@ -177,6 +177,43 @@ RAZORPAY_KEY_ID = 'rzp_live_S0GtEF2P4Jr7SY'
 RAZORPAY_KEY_SECRET = 'RLFz6G1j9CgStlwKDFyBIqPK'
 
 
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'ERROR',   # log only ERROR and CRITICAL
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'info.log'),
+            'formatter': 'verbose',
+        },
+    },
+
+    'loggers': {
+        # Django internal errors
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+
+        # Catch errors from your apps
+        '': {  # root logger
+            'handlers': ['file'],
+            'level': 'ERROR',
+        },
+    },
+}
 
 
 # #test api keys
