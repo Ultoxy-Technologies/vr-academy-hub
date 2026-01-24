@@ -7,6 +7,7 @@ from django.core.mail import EmailMessage
 
 # Create your views here.
 def index(request):
+    print("Index page accessed")
     return render(request, 'index.html')
 
 def about_us(request):
