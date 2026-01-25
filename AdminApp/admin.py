@@ -5,108 +5,40 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
-
-
-from django.contrib import admin
-from .models import Enquiry
-from django.utils.html import format_html
-from django.utils.timezone import localtime
-
-
-# -----------------------------
-# Enquiry ADMIN
-# ----------------------------- 
+ 
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
-    # 🧩 List view customization
-    list_display = (
-        'id',
-        'full_name',
-        'phone',
-        'email_link',
-        'short_message',
-        'submitted_time',
-        'remark_status',
-    )
-    list_display_links = ('id', 'full_name')
+    # Simple list view
+    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark']
+    list_display_links = ['id', 'full_name']
     list_per_page = 20
-    ordering = ('-submitted_at',)
-    search_fields = ('full_name', 'email', 'phone', 'message')
-    list_filter = ('submitted_at',)
+    ordering = ['-submitted_at']
+    search_fields = ['full_name', 'email', 'phone']
+    list_filter = ['submitted_at']
 
-    # 🧠 Field organization
-    fieldsets = (
-        ('🧍 Enquiry Details', {
-            'fields': ('full_name', 'phone', 'email')
+    # Simple fields organization
+    fieldsets = [
+        ('Enquiry Details', {
+            'fields': ['full_name', 'phone', 'email', 'message']
         }),
-        ('💬 Message', {
-            'fields': ('message',)
+        ('Admin Notes', {
+            'fields': ['remark'],
+            'classes': ['collapse']
         }),
-        ('🕓 Admin Use Only', {
-            'classes': ('collapse',),
-            'fields': ('remark',)
-        }),
-    )
+    ]
 
-    # 🪶 Read-only fields
-    readonly_fields = ('submitted_at',)
+    # Read-only field
+    readonly_fields = ['submitted_at']
 
-    # 🎨 Custom admin UI tweaks
-    def email_link(self, obj):
-        """Clickable email link"""
-        return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
-    email_link.short_description = "Email"
-
-    def short_message(self, obj):
-        """Short preview of message"""
-        return (obj.message[:50] + '...') if len(obj.message) > 50 else obj.message
-    short_message.short_description = "Message Preview"
-
-    def submitted_time(self, obj):
-        """Formatted datetime"""
-        return localtime(obj.submitted_at).strftime('%d %b %Y, %I:%M %p')
-    submitted_time.short_description = "Submitted On"
-
-    def remark_status(self, obj):
-        """Status badge for remark"""
+    # Simple custom methods
+    def has_remark(self, obj):
         if obj.remark:
-            return format_html('<span style="color: green; font-weight: bold;">✔ Remark Added</span>')
-        return format_html('<span style="color: gray;">— Pending —</span>')
-    remark_status.short_description = "Remark Status"
+            return format_html('<span style="color: green;">✓</span>')
+        return format_html('<span style="color: gray;">—</span>')
+    has_remark.short_description = 'Remark'
 
-    # 💡 Advanced features
-    actions = ['mark_as_reviewed', 'export_selected_to_csv']
-
-    def mark_as_reviewed(self, request, queryset):
-        """Mark enquiries as reviewed"""
-        count = queryset.update(remark='Reviewed')
-        self.message_user(request, f'{count} enquiries marked as reviewed.')
-    mark_as_reviewed.short_description = "✅ Mark selected enquiries as reviewed"
-
-    def export_selected_to_csv(self, request, queryset):
-        """Export enquiries to CSV"""
-        import csv
-        from django.http import HttpResponse
-
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="enquiries.csv"'
-
-        writer = csv.writer(response)
-        writer.writerow(['Full Name', 'Phone', 'Email', 'Message', 'Submitted At', 'Remark'])
-        for obj in queryset:
-            writer.writerow([
-                obj.full_name,
-                obj.phone,
-                obj.email,
-                obj.message,
-                obj.submitted_at.strftime('%Y-%m-%d %H:%M:%S'),
-                obj.remark or ''
-            ])
-        return response
-    export_selected_to_csv.short_description = "⬇️ Export selected enquiries to CSV"
-
-
-
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('-submitted_at')
 
 
 
