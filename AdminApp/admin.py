@@ -510,32 +510,22 @@ class FreeCourseAdmin(admin.ModelAdmin):
 # ----------------------------
 # FreeCourseProgress Admin
 # ----------------------------
-@admin.register(FreeCourseProgress)
-class FreeCourseProgressAdmin(admin.ModelAdmin):
-    list_display = ('student', 'course', 'watched_duration', 'completed', 'completed_at', 'certificate_ready_display')
-    list_filter = ('completed', 'course')
-    search_fields = ('student__name', 'course__title')
-    actions = ['mark_completed_action']
+class FreeCourseProgressInline(admin.TabularInline):
+    model = FreeCourseProgress
+    extra = 0
+    can_delete = False
+    verbose_name = "Student Progress"
+    verbose_name_plural = "Students Progress"
+    max_num = 0  # Prevent adding new records in admin
     
-    # DON'T put certificate_ready_display in readonly_fields
-    # Instead, use get_readonly_fields method
+    # Use get_fields to define fields
+    def get_fields(self, request, obj=None):
+        return ('student', 'watched_duration', 'completed', 'completed_at')
+    
+    # Use get_readonly_fields to make all fields read-only
     def get_readonly_fields(self, request, obj=None):
-        return ('watched_duration', 'completed_at')
+        return ('student', 'watched_duration', 'completed', 'completed_at')
     
-    def certificate_ready_display(self, obj):
-        if obj.certificate_ready:
-            return format_html('<span style="color:green;">✔ Ready</span>')
-        return format_html('<span style="color:red;">✖ Not Ready</span>')
-    certificate_ready_display.short_description = "Certificate Status"
-
-    def mark_completed_action(self, request, queryset):
-        updated = 0
-        for progress in queryset:
-            if not progress.completed:
-                progress.mark_completed()
-                updated += 1
-        self.message_user(request, f"{updated} progress records marked as completed.")
-    mark_completed_action.short_description = "Mark selected as Completed"
 
 
 # ----------------------------
