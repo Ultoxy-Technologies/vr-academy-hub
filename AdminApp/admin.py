@@ -34,15 +34,7 @@ class EnquiryAdmin(admin.ModelAdmin):
 
     # Read-only fields
     readonly_fields = ['submitted_at']
-
-    # Custom method for list display - use a different name
-    def has_remark_display(self, obj):
-        if obj.remark:
-            return format_html('<span style="color: green;">✓</span>')
-        return format_html('<span style="color: gray;">—</span>')
-    has_remark_display.short_description = 'Remark'
-    has_remark_display.admin_order_field = 'remark'  # This allows sorting
-
+ 
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('-submitted_at')
 
