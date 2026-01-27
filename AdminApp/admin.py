@@ -5,8 +5,6 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
- 
-@admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
     # Simple list view
     list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark']
@@ -14,7 +12,9 @@ class EnquiryAdmin(admin.ModelAdmin):
     list_per_page = 20
     ordering = ['-submitted_at']
     search_fields = ['full_name', 'email', 'phone']
-    list_filter = ['submitted_at']
+    
+    # Try without list_filter first to isolate the issue
+    # list_filter = ['submitted_at']  # Comment out temporarily
 
     # Simple fields organization
     fieldsets = [
@@ -25,9 +25,13 @@ class EnquiryAdmin(admin.ModelAdmin):
             'fields': ['remark'],
             'classes': ['collapse']
         }),
+        ('System Information', {
+            'fields': ['submitted_at', 'is_added_in_CRMFollowup_model'],
+            'classes': ['collapse']
+        }),
     ]
 
-    # Read-only field
+    # Read-only fields
     readonly_fields = ['submitted_at']
 
     # Simple custom methods
@@ -40,6 +44,9 @@ class EnquiryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('-submitted_at')
 
+
+# Register the model
+admin.site.register(Enquiry, EnquiryAdmin)
 
 
 
