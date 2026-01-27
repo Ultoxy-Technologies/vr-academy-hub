@@ -66,15 +66,16 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     change_password_form = AdminPasswordChangeForm
 
+    # Use safe method names - avoid using names that might conflict
     list_display = (
         'id',
         'name',
         'mobile_number',
-        'email_link',
+        'email_display',  # Changed from 'email_link' to 'email_display'
         'location_info',
         'dob_display',
         'role',
-        'is_active_colored',
+        'status_display',  # Changed from 'is_active_colored' to 'status_display'
         'is_active',
         'date_joined_display',
     )
@@ -127,11 +128,15 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    def email_link(self, obj):
+    filter_horizontal = ('groups', 'user_permissions',)
+
+    # Custom display methods
+    def email_display(self, obj):
         if obj.email:
             return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
         return format_html('<span style="color:gray;">—</span>')
-    email_link.short_description = "Email"
+    email_display.short_description = "Email"
+    email_display.admin_order_field = 'email'
 
     def location_info(self, obj):
         if obj.village or obj.taluka or obj.dist:
@@ -142,12 +147,14 @@ class CustomUserAdmin(UserAdmin):
     def dob_display(self, obj):
         return obj.dob.strftime('%d %b %Y') if obj.dob else "—"
     dob_display.short_description = "DOB"
+    dob_display.admin_order_field = 'dob'
 
     def date_joined_display(self, obj):
         return localtime(obj.date_joined).strftime('%d %b %Y, %I:%M %p')
     date_joined_display.short_description = "Joined On"
+    date_joined_display.admin_order_field = 'date_joined'
 
-    def is_active_colored(self, obj):
+    def status_display(self, obj):
         color = "green" if obj.is_active else "red"
         text = "🟢 Active" if obj.is_active else "🔴 Inactive"
         return format_html(
@@ -155,9 +162,10 @@ class CustomUserAdmin(UserAdmin):
             color,
             text
         )
-    is_active_colored.short_description = "Status"
-    is_active_colored.admin_order_field = 'is_active'
+    status_display.short_description = "Status"
+    status_display.admin_order_field = 'is_active'
 
+    # Custom actions
     actions = ['activate_users', 'deactivate_users', 'export_selected_users']
 
     def activate_users(self, request, queryset):
@@ -201,7 +209,9 @@ class CustomUserAdmin(UserAdmin):
         return response
     export_selected_users.short_description = "⬇️ Export selected users to CSV"
 
+    # Password change functionality
     def get_urls(self):
+        from django.urls import path
         urls = super().get_urls()
         custom_urls = [
             path(
@@ -213,6 +223,10 @@ class CustomUserAdmin(UserAdmin):
         return custom_urls + urls
 
     def change_user_password(self, request, id, form_url=''):
+        from django.shortcuts import redirect
+        from django.template.response import TemplateResponse
+        from django.contrib import messages
+
         user = self.get_object(request, id)
         if not user:
             messages.error(request, "User not found.")
@@ -242,6 +256,14 @@ class CustomUserAdmin(UserAdmin):
             'admin/auth/user/change_password.html',
             context
         )
+
+    # Fix for get_form to work with CustomUser
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        # Customize form if needed
+        return form
+    
+    
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
