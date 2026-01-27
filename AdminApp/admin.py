@@ -385,8 +385,25 @@ class VideoGalleryAdmin(admin.ModelAdmin):
     thumbnail_preview.short_description = "Thumbnail"
 
 
- # ----------------------------
-# BEST SOLUTION: Use a different approach entirely
+# ----------------------------
+# FreeCourseProgress Admin
+# ----------------------------
+@admin.register(FreeCourseProgress)
+class FreeCourseProgressAdmin(admin.ModelAdmin):
+    list_display = ('student', 'course', 'completed', 'completed_at', 'certificate_status_display')
+    list_filter = ('completed', 'course')
+    search_fields = ('student__name', 'student__mobile_number', 'course__title')
+    readonly_fields = ('student', 'course', 'watched_duration', 'completed', 'completed_at')
+    
+    def certificate_status_display(self, obj):
+        if obj.certificate_ready:
+            return format_html('<span style="color:green; font-weight:bold;">✔ READY</span>')
+        return format_html('<span style="color:#ff6b6b;">✖ Not Available</span>')
+    certificate_status_display.short_description = "Certificate Status"
+
+
+# ----------------------------
+# FreeCourseProgress Inline
 # ----------------------------
 class FreeCourseProgressInline(admin.TabularInline):
     model = FreeCourseProgress
@@ -394,33 +411,59 @@ class FreeCourseProgressInline(admin.TabularInline):
     can_delete = False
     verbose_name = "Student Progress"
     verbose_name_plural = "Students Progress"
-    max_num = 0  # Optional: prevent adding new records in admin
+    max_num = 0
     
-    # Don't define fields in readonly_fields, let Django handle it
-    def get_fields(self, request, obj=None):
-        return ('student', 'watched_duration', 'completed', 'completed_at', 'certificate_status')
+    # Define fields explicitly (only model fields, not custom methods)
+    fields = ('student', 'watched_duration_display', 'completed_display', 'completed_at', 'certificate_status_display')
+    readonly_fields = ('student', 'watched_duration_display', 'completed_display', 'completed_at', 'certificate_status_display')
     
-    def get_readonly_fields(self, request, obj=None):
-        return ('student', 'watched_duration', 'completed', 'completed_at', 'certificate_status')
+    # Display methods for the inline
+    def watched_duration_display(self, obj):
+        if obj.watched_duration:
+            # Convert seconds to minutes:seconds format
+            minutes = obj.watched_duration // 60
+            seconds = obj.watched_duration % 60
+            return f"{minutes}m {seconds}s"
+        return "0s"
+    watched_duration_display.short_description = "Watched"
     
-    def certificate_status(self, obj):
+    def completed_display(self, obj):
+        if obj.completed:
+            return format_html('<span style="color:green;">✓ Completed</span>')
+        return format_html('<span style="color:orange;">In Progress</span>')
+    completed_display.short_description = "Status"
+    
+    def certificate_status_display(self, obj):
         if obj.certificate_ready:
             return format_html('<span style="color:green; font-weight:bold;">✔ READY</span>')
         return format_html('<span style="color:#ff6b6b;">✖ Not Available</span>')
-    certificate_status.short_description = "Certificate"
+    certificate_status_display.short_description = "Certificate"
 
 
-    
 # ----------------------------
 # FreeCourse Admin
 # ----------------------------
 @admin.register(FreeCourse)
 class FreeCourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_at', 'video_file_link', 'certificate_file_link')
+    list_display = ('title', 'duration', 'created_at', 'video_file_link', 'certificate_file_link', 'is_active')
     search_fields = ('title', 'description')
+    list_filter = ('is_active', 'created_at')
     readonly_fields = ('created_at',)
     inlines = [FreeCourseProgressInline]
-    list_filter = ('created_at',)
+    
+    fieldsets = [
+        ('Course Information', {
+            'fields': ['title', 'duration', 'description', 'is_active']
+        }),
+        ('Media Files', {
+            'fields': ['video', 'thumbnail', 'certificate_template'],
+            'classes': ['collapse']
+        }),
+        ('System Information', {
+            'fields': ['created_at'],
+            'classes': ['collapse']
+        }),
+    ]
 
     # Show video file as clickable link
     def video_file_link(self, obj):
@@ -435,27 +478,6 @@ class FreeCourseAdmin(admin.ModelAdmin):
             return format_html('<a href="{}" target="_blank">View Certificate</a>', obj.certificate_template.url)
         return "-"
     certificate_file_link.short_description = "Certificate"
-
-# ----------------------------
-# FreeCourseProgress Admin
-# ----------------------------
-class FreeCourseProgressInline(admin.TabularInline):
-    model = FreeCourseProgress
-    extra = 0
-    can_delete = False
-    verbose_name = "Student Progress"
-    verbose_name_plural = "Students Progress"
-    max_num = 0  # Prevent adding new records in admin
-    
-    # Use get_fields to define fields
-    def get_fields(self, request, obj=None):
-        return ('student', 'watched_duration', 'completed', 'completed_at')
-    
-    # Use get_readonly_fields to make all fields read-only
-    def get_readonly_fields(self, request, obj=None):
-        return ('student', 'watched_duration', 'completed', 'completed_at')
-    
-
 
 # ----------------------------
 # Shared Admin Base Class
