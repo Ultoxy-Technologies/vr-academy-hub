@@ -6,39 +6,39 @@ from django.utils.html import format_html
 from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
  
-# @admin.register(Enquiry)
-# class EnquiryAdmin(admin.ModelAdmin):
-#     # Simple list view
-#     list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark']
-#     list_display_links = ['id', 'full_name']
-#     list_per_page = 20
-#     ordering = ['-submitted_at']
-#     search_fields = ['full_name', 'email', 'phone']
-#     list_filter = ['submitted_at']
+@admin.register(Enquiry)
+class EnquiryAdmin(admin.ModelAdmin):
+    # Simple list view
+    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark']
+    list_display_links = ['id', 'full_name']
+    list_per_page = 20
+    ordering = ['-submitted_at']
+    search_fields = ['full_name', 'email', 'phone']
+    list_filter = ['submitted_at']
 
-#     # Simple fields organization
-#     fieldsets = [
-#         ('Enquiry Details', {
-#             'fields': ['full_name', 'phone', 'email', 'message']
-#         }),
-#         ('Admin Notes', {
-#             'fields': ['remark'],
-#             'classes': ['collapse']
-#         }),
-#     ]
+    # Simple fields organization
+    fieldsets = [
+        ('Enquiry Details', {
+            'fields': ['full_name', 'phone', 'email', 'message']
+        }),
+        ('Admin Notes', {
+            'fields': ['remark'],
+            'classes': ['collapse']
+        }),
+    ]
 
-#     # Read-only field
-#     readonly_fields = ['submitted_at']
+    # Read-only field
+    readonly_fields = ['submitted_at']
 
-#     # Simple custom methods
-#     def has_remark(self, obj):
-#         if obj.remark:
-#             return format_html('<span style="color: green;">✓</span>')
-#         return format_html('<span style="color: gray;">—</span>')
-#     has_remark.short_description = 'Remark'
+    # Simple custom methods
+    def has_remark(self, obj):
+        if obj.remark:
+            return format_html('<span style="color: green;">✓</span>')
+        return format_html('<span style="color: gray;">—</span>')
+    has_remark.short_description = 'Remark'
 
-#     def get_queryset(self, request):
-#         return super().get_queryset(request).order_by('-submitted_at')
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('-submitted_at')
 
 
 
