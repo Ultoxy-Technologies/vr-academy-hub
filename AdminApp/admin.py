@@ -5,16 +5,17 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
+@admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
-    # Simple list view
-    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark']
+    # Simple list view - Remove 'has_remark' from list_display
+    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark_display']
     list_display_links = ['id', 'full_name']
     list_per_page = 20
     ordering = ['-submitted_at']
     search_fields = ['full_name', 'email', 'phone']
     
-    # Try without list_filter first to isolate the issue
-    # list_filter = ['submitted_at']  # Comment out temporarily
+    # Add list_filter if needed (commented out for now to debug)
+    # list_filter = ['submitted_at']
 
     # Simple fields organization
     fieldsets = [
@@ -34,19 +35,16 @@ class EnquiryAdmin(admin.ModelAdmin):
     # Read-only fields
     readonly_fields = ['submitted_at']
 
-    # Simple custom methods
-    def has_remark(self, obj):
+    # Custom method for list display - use a different name
+    def has_remark_display(self, obj):
         if obj.remark:
             return format_html('<span style="color: green;">✓</span>')
         return format_html('<span style="color: gray;">—</span>')
-    has_remark.short_description = 'Remark'
+    has_remark_display.short_description = 'Remark'
+    has_remark_display.admin_order_field = 'remark'  # This allows sorting
 
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('-submitted_at')
-
-
-# Register the model
-admin.site.register(Enquiry, EnquiryAdmin)
 
 
 
