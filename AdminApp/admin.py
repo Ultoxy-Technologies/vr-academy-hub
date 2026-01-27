@@ -386,24 +386,7 @@ class VideoGalleryAdmin(admin.ModelAdmin):
 
 
 # ----------------------------
-# FreeCourseProgress Admin
-# ----------------------------
-@admin.register(FreeCourseProgress)
-class FreeCourseProgressAdmin(admin.ModelAdmin):
-    list_display = ('student', 'course', 'completed', 'completed_at', 'certificate_status_display')
-    list_filter = ('completed', 'course')
-    search_fields = ('student__name', 'student__mobile_number', 'course__title')
-    readonly_fields = ('student', 'course', 'watched_duration', 'completed', 'completed_at')
-    
-    def certificate_status_display(self, obj):
-        if obj.certificate_ready:
-            return format_html('<span style="color:green; font-weight:bold;">✔ READY</span>')
-        return format_html('<span style="color:#ff6b6b;">✖ Not Available</span>')
-    certificate_status_display.short_description = "Certificate Status"
-
-
-# ----------------------------
-# FreeCourseProgress Inline
+# FreeCourseProgress Inline (SIMPLIFIED - No custom fields)
 # ----------------------------
 class FreeCourseProgressInline(admin.TabularInline):
     model = FreeCourseProgress
@@ -413,31 +396,9 @@ class FreeCourseProgressInline(admin.TabularInline):
     verbose_name_plural = "Students Progress"
     max_num = 0
     
-    # Define fields explicitly (only model fields, not custom methods)
-    fields = ('student', 'watched_duration_display', 'completed_display', 'completed_at', 'certificate_status_display')
-    readonly_fields = ('student', 'watched_duration_display', 'completed_display', 'completed_at', 'certificate_status_display')
-    
-    # Display methods for the inline
-    def watched_duration_display(self, obj):
-        if obj.watched_duration:
-            # Convert seconds to minutes:seconds format
-            minutes = obj.watched_duration // 60
-            seconds = obj.watched_duration % 60
-            return f"{minutes}m {seconds}s"
-        return "0s"
-    watched_duration_display.short_description = "Watched"
-    
-    def completed_display(self, obj):
-        if obj.completed:
-            return format_html('<span style="color:green;">✓ Completed</span>')
-        return format_html('<span style="color:orange;">In Progress</span>')
-    completed_display.short_description = "Status"
-    
-    def certificate_status_display(self, obj):
-        if obj.certificate_ready:
-            return format_html('<span style="color:green; font-weight:bold;">✔ READY</span>')
-        return format_html('<span style="color:#ff6b6b;">✖ Not Available</span>')
-    certificate_status_display.short_description = "Certificate"
+    # Only use actual model fields (no custom methods)
+    fields = ('student', 'watched_duration', 'completed', 'completed_at')
+    readonly_fields = ('student', 'watched_duration', 'completed', 'completed_at')
 
 
 # ----------------------------
@@ -445,7 +406,7 @@ class FreeCourseProgressInline(admin.TabularInline):
 # ----------------------------
 @admin.register(FreeCourse)
 class FreeCourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'duration', 'created_at', 'video_file_link', 'certificate_file_link', 'is_active')
+    list_display = ('title', 'duration', 'created_at', 'video_link', 'certificate_link', 'is_active')
     search_fields = ('title', 'description')
     list_filter = ('is_active', 'created_at')
     readonly_fields = ('created_at',)
@@ -459,25 +420,90 @@ class FreeCourseAdmin(admin.ModelAdmin):
             'fields': ['video', 'thumbnail', 'certificate_template'],
             'classes': ['collapse']
         }),
-        ('System Information', {
-            'fields': ['created_at'],
-            'classes': ['collapse']
+    ]
+
+    def video_link(self, obj):
+        if obj.video:
+            return format_html(
+                '<a href="{}" target="_blank" style="display:inline-block; padding:5px 10px; background:#007bff; color:white; border-radius:3px; text-decoration:none;">'
+                '📺 View Video'
+                '</a>',
+                obj.video.url
+            )
+        return "-"
+    video_link.short_description = "Video"
+
+    def certificate_link(self, obj):
+        if obj.certificate_template:
+            return format_html(
+                '<a href="{}" target="_blank" style="display:inline-block; padding:5px 10px; background:#28a745; color:white; border-radius:3px; text-decoration:none;">'
+                '📄 Certificate'
+                '</a>',
+                obj.certificate_template.url
+            )
+        return "-"
+    certificate_link.short_description = "Certificate"
+
+
+# ----------------------------
+# FreeCourseProgress Admin (Separate page with formatted displays)
+# ----------------------------
+@admin.register(FreeCourseProgress)
+class FreeCourseProgressAdmin(admin.ModelAdmin):
+    list_display = ('student', 'course', 'formatted_duration', 'completion_status', 'completion_date', 'certificate_status')
+    list_filter = ('completed', 'course', 'completed_at')
+    search_fields = ('student__name', 'student__mobile_number', 'course__title')
+    readonly_fields = ('student', 'course', 'watched_duration', 'completed', 'completed_at')
+    
+    fieldsets = [
+        ('Student Information', {
+            'fields': ['student', 'course']
+        }),
+        ('Progress Details', {
+            'fields': ['watched_duration', 'completed', 'completed_at']
         }),
     ]
 
-    # Show video file as clickable link
-    def video_file_link(self, obj):
-        if obj.video:
-            return format_html('<a href="{}" target="_blank">View Video</a>', obj.video.url)
-        return "-"
-    video_file_link.short_description = "Video"
+    def formatted_duration(self, obj):
+        """Format seconds into minutes:seconds"""
+        if obj.watched_duration:
+            minutes = obj.watched_duration // 60
+            seconds = obj.watched_duration % 60
+            return f"{minutes}m {seconds}s"
+        return "0s"
+    formatted_duration.short_description = "Watched Duration"
+    formatted_duration.admin_order_field = 'watched_duration'
 
-    # Show certificate file as clickable link
-    def certificate_file_link(self, obj):
-        if obj.certificate_template:
-            return format_html('<a href="{}" target="_blank">View Certificate</a>', obj.certificate_template.url)
+    def completion_status(self, obj):
+        """Display completion status with colors"""
+        if obj.completed:
+            return format_html(
+                '<span style="color: green; font-weight: bold;">✓ Completed</span>'
+            )
+        return format_html(
+            '<span style="color: orange;">In Progress</span>'
+        )
+    completion_status.short_description = "Status"
+    completion_status.admin_order_field = 'completed'
+
+    def completion_date(self, obj):
+        """Format completion date"""
+        if obj.completed_at:
+            return obj.completed_at.strftime("%Y-%m-%d %H:%M")
         return "-"
-    certificate_file_link.short_description = "Certificate"
+    completion_date.short_description = "Completed At"
+    completion_date.admin_order_field = 'completed_at'
+
+    def certificate_status(self, obj):
+        """Show certificate availability"""
+        if obj.certificate_ready:
+            return format_html(
+                '<span style="color: green; font-weight: bold;">✓ Available</span>'
+            )
+        return format_html(
+            '<span style="color: #666;">Not Available</span>'
+        )
+    certificate_status.short_description = "Certificate"
 
 # ----------------------------
 # Shared Admin Base Class
