@@ -71,7 +71,7 @@ class CustomUserAdmin(UserAdmin):
         'id',
         'name',
         'mobile_number',
-        'email_display',  # Changed from 'email_link' to 'email_display'
+        'email',  
         'location_info',
         'dob_display',
         'role',
@@ -129,14 +129,6 @@ class CustomUserAdmin(UserAdmin):
     )
 
     filter_horizontal = ('groups', 'user_permissions',)
-
-    # Custom display methods
-    def email_display(self, obj):
-        if obj.email:
-            return format_html('<a href="mailto:{}">{}</a>', obj.email, obj.email)
-        return format_html('<span style="color:gray;">—</span>')
-    email_display.short_description = "Email"
-    email_display.admin_order_field = 'email'
 
     def location_info(self, obj):
         if obj.village or obj.taluka or obj.dist:
@@ -263,7 +255,7 @@ class CustomUserAdmin(UserAdmin):
         # Customize form if needed
         return form
     
-    
+
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
