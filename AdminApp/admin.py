@@ -785,15 +785,15 @@ from .models import CRM_Student_Interested_for_options, CRMFollowup
 
 # Register your models here.
 
-class CRM_Student_Interested_for_optionsAdmin(admin.ModelAdmin):
-    list_display = ('interest_option',)
-    search_fields = ('interest_option',)
-    ordering = ('interest_option',)
+# class CRM_Student_Interested_for_optionsAdmin(admin.ModelAdmin):
+#     list_display = ('interest_option',)
+#     search_fields = ('interest_option',)
+#     ordering = ('interest_option',)
     
-    # Simple configuration since this is just a lookup table
-    list_per_page = 20
+#     # Simple configuration since this is just a lookup table
+#     list_per_page = 20
 
-admin.site.register(CRM_Student_Interested_for_options, CRM_Student_Interested_for_optionsAdmin)
+admin.site.register(CRM_Student_Interested_for_options)
 
 
 # class CRMFollowupAdmin(admin.ModelAdmin):
@@ -964,21 +964,21 @@ from .models import  Branch
  
 
 # Register the Branch model
-class BranchAdmin(admin.ModelAdmin):
-    list_display = ('id', 'branch_name')  # Customize which fields are displayed in the list view
-    search_fields = ('branch_name',)  # Add search functionality for the 'branch_name'
-    list_filter = ('branch_name',)  # Add filter options for the 'branch_name' field
-    ordering = ('id',)  # Sort by 'id' by default
-    fieldsets = (
-        (None, {
-            'fields': ('branch_name',)  # Define fields to display on the model detail page
-        }),
-    )
+# class BranchAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'branch_name')  # Customize which fields are displayed in the list view
+#     search_fields = ('branch_name',)  # Add search functionality for the 'branch_name'
+#     list_filter = ('branch_name',)  # Add filter options for the 'branch_name' field
+#     ordering = ('id',)  # Sort by 'id' by default
+#     fieldsets = (
+#         (None, {
+#             'fields': ('branch_name',)  # Define fields to display on the model detail page
+#         }),
+#     )
 
 
 
 admin.site.register(CRMFollowup)
-admin.site.register(Branch, BranchAdmin)
+# admin.site.register(Branch, BranchAdmin)
 
 
 
