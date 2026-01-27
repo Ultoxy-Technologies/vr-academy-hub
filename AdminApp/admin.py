@@ -796,168 +796,168 @@ class CRM_Student_Interested_for_optionsAdmin(admin.ModelAdmin):
 admin.site.register(CRM_Student_Interested_for_options, CRM_Student_Interested_for_optionsAdmin)
 
 
-class CRMFollowupAdmin(admin.ModelAdmin):
-    # ================== Display Configuration ==================
-    list_display = (
-        'name', 
-        'mobile_number', 
-        'status_badge', 
-        'priority_badge', 
-        'follow_up_by_display',
-        'next_followup_reminder',
-        'student_interested_for',
-        'source'
-    )
+# class CRMFollowupAdmin(admin.ModelAdmin):
+#     # ================== Display Configuration ==================
+#     list_display = (
+#         'name', 
+#         'mobile_number', 
+#         'status_badge', 
+#         'priority_badge', 
+#         'follow_up_by_display',
+#         'next_followup_reminder',
+#         'student_interested_for',
+#         'source'
+#     )
     
-    list_display_links = ('name', 'mobile_number')
+#     list_display_links = ('name', 'mobile_number')
     
-    # ================== Filters & Search ==================
-    list_filter = (
-        'status',
-        'priority',
-        'source',
-        'call_response',
-        'student_interested_for',
-        'follow_up_by',
-        'follow_up_date',
-    )
+#     # ================== Filters & Search ==================
+#     list_filter = (
+#         'status',
+#         'priority',
+#         'source',
+#         'call_response',
+#         'student_interested_for',
+#         'follow_up_by',
+#         'follow_up_date',
+#     )
     
-    search_fields = (
-        'name',
-        'mobile_number',
-        'follow_up_notes',
-    )
+#     search_fields = (
+#         'name',
+#         'mobile_number',
+#         'follow_up_notes',
+#     )
     
-    # ================== Layout & Ordering ==================
-    list_per_page = 25
-    ordering = ('-follow_up_date', '-created_at')
-    date_hierarchy = 'follow_up_date'
+#     # ================== Layout & Ordering ==================
+#     list_per_page = 25
+#     ordering = ('-follow_up_date', '-created_at')
+#     date_hierarchy = 'follow_up_date'
     
-    # ================== Custom Fieldsets for Form View ==================
-    fieldsets = (
-        ('Student Information', {
-            'fields': (
-                'name',
-                'mobile_number',
-                'student_interested_for',
-                'source'
-            ),
-            'classes': ('collapse',)
-        }),
-        ('Lead Status', {
-            'fields': (
-                'status',
-                'priority',
-            )
-        }),
-        ('Follow-up Details', {
-            'fields': (
-                'follow_up_by',
-                'call_response',
-                'follow_up_date',
-                'next_followup_reminder',
-                'follow_up_notes',
-            )
-        }),
-        ('Class Information', {
-            'fields': (
-                'class_start_date',
-            ),
-            'classes': ('collapse',)
-        }),
-        ('System Information', {
-            'fields': (
-                'created_at',
-            ),
-            'classes': ('collapse',)
-        }),
-    )
+#     # ================== Custom Fieldsets for Form View ==================
+#     fieldsets = (
+#         ('Student Information', {
+#             'fields': (
+#                 'name',
+#                 'mobile_number',
+#                 'student_interested_for',
+#                 'source'
+#             ),
+#             'classes': ('collapse',)
+#         }),
+#         ('Lead Status', {
+#             'fields': (
+#                 'status',
+#                 'priority',
+#             )
+#         }),
+#         ('Follow-up Details', {
+#             'fields': (
+#                 'follow_up_by',
+#                 'call_response',
+#                 'follow_up_date',
+#                 'next_followup_reminder',
+#                 'follow_up_notes',
+#             )
+#         }),
+#         ('Class Information', {
+#             'fields': (
+#                 'class_start_date',
+#             ),
+#             'classes': ('collapse',)
+#         }),
+#         ('System Information', {
+#             'fields': (
+#                 'created_at',
+#             ),
+#             'classes': ('collapse',)
+#         }),
+#     )
     
-    # ================== Readonly Fields ==================
-    readonly_fields = ('created_at',)
+#     # ================== Readonly Fields ==================
+#     readonly_fields = ('created_at',)
     
-    # ================== Custom Methods for Display ==================
-    def status_badge(self, obj):
-        if not obj.status:
-            return format_html('<span class="badge badge-secondary">Not Set</span>')
+#     # ================== Custom Methods for Display ==================
+#     def status_badge(self, obj):
+#         if not obj.status:
+#             return format_html('<span class="badge badge-secondary">Not Set</span>')
         
-        status_colors = {
-            'interested': 'info',
-            'planning': 'primary',
-            'under_review': 'warning',
-            'on_hold': 'secondary',
-            'class_joined': 'success',
-            'class_completed': 'success',
-            'not_interested': 'danger',
-        }
-        color = status_colors.get(obj.status, 'secondary')
-        return format_html(
-            '<span class="badge badge-{}">{}</span>',
-            color,
-            obj.get_status_display()
-        )
-    status_badge.short_description = 'Status'
+#         status_colors = {
+#             'interested': 'info',
+#             'planning': 'primary',
+#             'under_review': 'warning',
+#             'on_hold': 'secondary',
+#             'class_joined': 'success',
+#             'class_completed': 'success',
+#             'not_interested': 'danger',
+#         }
+#         color = status_colors.get(obj.status, 'secondary')
+#         return format_html(
+#             '<span class="badge badge-{}">{}</span>',
+#             color,
+#             obj.get_status_display()
+#         )
+#     status_badge.short_description = 'Status'
     
-    def priority_badge(self, obj):
-        if not obj.priority:
-            return format_html('<span class="badge badge-secondary">Not Set</span>')
+#     def priority_badge(self, obj):
+#         if not obj.priority:
+#             return format_html('<span class="badge badge-secondary">Not Set</span>')
         
-        priority_colors = {
-            'high': 'danger',
-            'medium': 'warning',
-            'low': 'info',
-        }
-        color = priority_colors.get(obj.priority, 'secondary')
-        return format_html(
-            '<span class="badge badge-{}">{}</span>',
-            color,
-            obj.get_priority_display()
-        )
-    priority_badge.short_description = 'Priority'
+#         priority_colors = {
+#             'high': 'danger',
+#             'medium': 'warning',
+#             'low': 'info',
+#         }
+#         color = priority_colors.get(obj.priority, 'secondary')
+#         return format_html(
+#             '<span class="badge badge-{}">{}</span>',
+#             color,
+#             obj.get_priority_display()
+#         )
+#     priority_badge.short_description = 'Priority'
     
-    def follow_up_by_display(self, obj):
-        if obj.follow_up_by:
-            if hasattr(obj.follow_up_by, 'get_full_name') and obj.follow_up_by.get_full_name():
-                return obj.follow_up_by.get_full_name()
-            return str(obj.follow_up_by)
-        return "Not Assigned"
-    follow_up_by_display.short_description = 'Follow-up By'
+#     def follow_up_by_display(self, obj):
+#         if obj.follow_up_by:
+#             if hasattr(obj.follow_up_by, 'get_full_name') and obj.follow_up_by.get_full_name():
+#                 return obj.follow_up_by.get_full_name()
+#             return str(obj.follow_up_by)
+#         return "Not Assigned"
+#     follow_up_by_display.short_description = 'Follow-up By'
     
-    # ================== Action Configuration ==================
-    actions = ['mark_as_high_priority', 'mark_as_completed', 'mark_as_not_interested']
+#     # ================== Action Configuration ==================
+#     actions = ['mark_as_high_priority', 'mark_as_completed', 'mark_as_not_interested']
     
-    def mark_as_high_priority(self, request, queryset):
-        updated = queryset.update(priority='high')
-        self.message_user(request, f'{updated} follow-up(s) marked as High Priority.')
-    mark_as_high_priority.short_description = "Mark selected as High Priority"
+#     def mark_as_high_priority(self, request, queryset):
+#         updated = queryset.update(priority='high')
+#         self.message_user(request, f'{updated} follow-up(s) marked as High Priority.')
+#     mark_as_high_priority.short_description = "Mark selected as High Priority"
     
-    def mark_as_completed(self, request, queryset):
-        updated = queryset.update(status='class_completed')
-        self.message_user(request, f'{updated} follow-up(s) marked as Class Completed.')
-    mark_as_completed.short_description = "Mark selected as Class Completed"
+#     def mark_as_completed(self, request, queryset):
+#         updated = queryset.update(status='class_completed')
+#         self.message_user(request, f'{updated} follow-up(s) marked as Class Completed.')
+#     mark_as_completed.short_description = "Mark selected as Class Completed"
     
-    def mark_as_not_interested(self, request, queryset):
-        updated = queryset.update(status='not_interested')
-        self.message_user(request, f'{updated} follow-up(s) marked as Not Interested.')
-    mark_as_not_interested.short_description = "Mark selected as Not Interested"
+#     def mark_as_not_interested(self, request, queryset):
+#         updated = queryset.update(status='not_interested')
+#         self.message_user(request, f'{updated} follow-up(s) marked as Not Interested.')
+#     mark_as_not_interested.short_description = "Mark selected as Not Interested"
     
-    # ================== Form Customization ==================
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        # Make some fields not required in admin if needed
-        return form
+#     # ================== Form Customization ==================
+#     def get_form(self, request, obj=None, **kwargs):
+#         form = super().get_form(request, obj, **kwargs)
+#         # Make some fields not required in admin if needed
+#         return form
     
-    # ================== Save Method Customization ==================
-    def save_model(self, request, obj, form, change):
-        # You can add custom save logic here
-        super().save_model(request, obj, form, change)
+#     # ================== Save Method Customization ==================
+#     def save_model(self, request, obj, form, change):
+#         # You can add custom save logic here
+#         super().save_model(request, obj, form, change)
     
-    # ================== Change List View Customization ==================
-    def changelist_view(self, request, extra_context=None):
-        # Add custom context if needed
-        extra_context = extra_context or {}
-        extra_context['title'] = 'CRM Follow-ups Management'
-        return super().changelist_view(request, extra_context=extra_context)
+#     # ================== Change List View Customization ==================
+#     def changelist_view(self, request, extra_context=None):
+#         # Add custom context if needed
+#         extra_context = extra_context or {}
+#         extra_context['title'] = 'CRM Follow-ups Management'
+#         return super().changelist_view(request, extra_context=extra_context)
 
 
 from .models import  Branch
