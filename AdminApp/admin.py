@@ -793,7 +793,7 @@ from .models import CRM_Student_Interested_for_options, CRMFollowup
 #     # Simple configuration since this is just a lookup table
 #     list_per_page = 20
 
-admin.site.register(CRM_Student_Interested_for_options)
+# admin.site.register(CRM_Student_Interested_for_options)
 
 
 # class CRMFollowupAdmin(admin.ModelAdmin):
@@ -977,7 +977,7 @@ from .models import  Branch
 
 
 
-admin.site.register(CRMFollowup)
+# admin.site.register(CRMFollowup)
 # admin.site.register(Branch, BranchAdmin)
 
 
