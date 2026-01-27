@@ -8,7 +8,7 @@ from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUs
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
     # Simple list view - Remove 'has_remark' from list_display
-    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at', 'has_remark_display']
+    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at']
     list_display_links = ['id', 'full_name']
     list_per_page = 20
     ordering = ['-submitted_at']
