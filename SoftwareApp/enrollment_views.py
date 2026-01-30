@@ -2205,5 +2205,105 @@ def delete_event(request, pk):
     messages.success(request, f'Event "{event_title}" deleted successfully')
     return redirect(request.META.get('HTTP_REFERER', 'enrollment-events'))    
      
-     
+ 
+ 
+from decimal import Decimal
+import num2words
+# views.py
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, Http404
+from django.template.loader import render_to_string
+import num2words
+import logging
 
+logger = logging.getLogger(__name__)
+
+def print_event_receipt(request, registration_id):
+    """
+    View to print event registration receipt
+    """
+    try:
+        # Try to find by registration_id field first
+        registration = EventRegistration.objects.get(registration_id=registration_id)
+    except EventRegistration.DoesNotExist:
+        try:
+            # If not found, try by primary key (id)
+            registration = EventRegistration.objects.get(id=registration_id)
+        except (EventRegistration.DoesNotExist, ValueError):
+            # Log the error for debugging
+            logger.error(f"Registration not found: {registration_id}")
+            raise Http404(f"No registration found with ID: {registration_id}")
+    
+    event = registration.event
+    
+    # Convert amount to words
+    try:
+        if event.is_free:
+            amount_in_words = "Free"
+        else:
+            amount_paid = float(registration.amount_paid or 0)
+            amount_in_words = num2words.num2words(
+                amount_paid,
+                lang='en_IN'
+            ).title() + " Rupees"
+    except Exception as e:
+        logger.error(f"Error converting amount to words: {e}")
+        amount_in_words = "Zero Rupees"
+    
+    context = {
+        'registration': registration,
+        'event': event,
+        'amount_in_words': amount_in_words,
+    }
+    
+    # Check if autoprint is requested
+    if request.GET.get('autoprint', 'false') == 'true':
+        context['autoprint'] = True
+    
+    return render(request, 'print_event_registration_receipt.html', context)
+
+def download_event_receipt(request, registration_id):
+    """
+    Download HTML receipt file
+    """
+    try:
+        registration = EventRegistration.objects.get(registration_id=registration_id)
+    except EventRegistration.DoesNotExist:
+        registration = get_object_or_404(EventRegistration, id=registration_id)
+    
+    event = registration.event
+    
+    # Convert amount to words
+    if event.is_free:
+        amount_in_words = "Free"
+    else:
+        amount_paid = float(registration.amount_paid or 0)
+        amount_in_words = num2words.num2words(
+            amount_paid,
+            lang='en_IN'
+        ).title() + " Rupees"
+    
+    context = {
+        'registration': registration,
+        'event': event,
+        'amount_in_words': amount_in_words,
+    }
+    
+    # Render HTML
+    html_string = render_to_string('print_event_receipt.html', context)
+    
+    # Return as downloadable HTML file
+    response = HttpResponse(html_string, content_type='text/html')
+    response['Content-Disposition'] = f'attachment; filename="Receipt_{registration.registration_id}.html"'
+    return response
+
+def event_registration_list(request):
+    """
+    List all registrations for debugging/management
+    """
+    registrations = EventRegistration.objects.select_related('event').all()
+    
+    context = {
+        'registrations': registrations
+    }
+    return render(request, 'registration_list.html', context)

@@ -813,7 +813,7 @@
                                 {{ registration.full_name|first|upper }}
                             </div>
                             <div class="registration-details">
-                                <div class="registration-name">{{ registration.full_name }}</div>
+                                <div class="registration-name">{{ registration.full_name }} </div>
                                 <div class="registration-meta">
                                     <span><i class="bi bi-envelope"></i> {{ registration.email }}</span>
                                     <span><i class="bi bi-phone"></i> {{ registration.mobile_number }}</span>
@@ -824,6 +824,11 @@
                         <div>
                             <span class="payment-badge payment-{{ registration.payment_status }}">
                                 {{ registration.get_payment_status_display }}
+                            </span>
+                            
+                            <span><a href="{% url 'print_event_receipt' registration.id %}" class="payment-badge payment-{{ registration.payment_status }} m-2" style="background: #0284c7;">
+                                <i class="bi bi-eye"></i> Print
+                            </a>
                             </span>
                             {% if registration.amount_paid > 0 %}
                             <div class="text-success mt-1">

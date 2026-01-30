@@ -64,7 +64,13 @@ urlpatterns = [
     path('enrollment-events/<int:pk>/', event_detail, name='enrollment_event_detail'),
     path('enrollment-events/<int:pk>/update/', update_event, name='enrollment_update_event'),
     path('enrollment-events/<int:pk>/delete/', delete_event, name='enrollment_delete_event'),
-
-
+    path('print-receipt/<str:registration_id>/', 
+         print_event_receipt, 
+         name='print_event_receipt'),
+    
+    path('download-receipt/<str:registration_id>/', 
+         generate_pdf_receipt, 
+         name='download_event_receipt'),
+     
 
 ]

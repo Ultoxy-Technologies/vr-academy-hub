@@ -1,0 +1,596 @@
+<!-- templates/print_event_receipt.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Receipt - {{ registration.registration_id }}</title>
+    <style>
+        /* A4 Single Page Print Optimized */
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #2c3e50;
+            width: 210mm;
+            min-height: 287mm;
+            box-sizing: border-box;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { padding: 0; margin: 0; }
+            .print-btn { display: none; }
+        }
+        
+        /* Modern Header */
+        .letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            margin-bottom: 5px;
+            border-bottom: 3px solid #1a5f7a;
+        }
+        
+        .institute-info { flex: 2; }
+        .institute-logo { flex: 1; text-align: right; }
+        
+        .institute-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1a5f7a;
+            margin: 0 0 2px 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .institute-tagline {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin: 0 0 3px 0;
+        }
+        
+        .contact-info {
+            font-size: 10px;
+            color: #555;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        /* Receipt Header */
+        .receipt-header {
+            background: linear-gradient(135deg, #1a5f7a 0%, #2c3e50 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .receipt-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .receipt-meta {
+            text-align: right;
+            font-size: 11px;
+        }
+        
+        .receipt-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f1c40f;
+            background: rgba(0,0,0,0.2);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        /* Event Information Section */
+        .event-header {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a5f7a;
+            margin: 0 0 5px 0;
+            line-height: 1.2;
+        }
+        
+        .event-subtitle {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin: 0 0 8px 0;
+        }
+        
+        .event-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .detail-item {
+            font-size: 11px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        /* Data Grid */
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a5f7a;
+            margin: 0 0 6px 0;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #dee2e6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Compact Table */
+        .compact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        
+        .compact-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .compact-table .label {
+            font-weight: 600;
+            color: #34495e;
+            width: 40%;
+            background: #f1f8ff;
+        }
+        
+        /* Payment Summary */
+        .payment-summary {
+            background: #ffffff;
+            border: 2px solid #1a5f7a;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .payment-row.total {
+            font-weight: 800;
+            color: #1a5f7a;
+            border-bottom: 2px solid #1a5f7a;
+            padding: 6px 0;
+            margin-top: 4px;
+            background: #e3f2fd;
+        }
+        
+        .amount {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        /* Amount in Words */
+        .amount-words {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 1px solid #bbdefb;
+            border-left: 4px solid #2196f3;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 10px 0;
+            font-size: 11px;
+            font-style: italic;
+        }
+        
+        /* Signature Area */
+        .signature-area {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .signature-box {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            margin: 20px 0 5px 0;
+        }
+        
+        .signature-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 9px;
+            color: #7f8c8d;
+            padding: 6px 0;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+        
+        /* Print Button */
+        .print-btn {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .btn-print {
+            background: #1a5f7a;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .btn-print:hover {
+            background: #164e63;
+        }
+        
+        /* Watermark */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            opacity: 0.03;
+            font-size: 70px;
+            font-weight: 900;
+            color: #000;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        /* Price Strikethrough for Original Price */
+        .original-price {
+            text-decoration: line-through;
+            color: #e74c3c;
+            font-size: 10px;
+        }
+        
+        .current-price {
+            color: #27ae60;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        /* Print Optimization */
+        @media print {
+            .info-card { break-inside: avoid; }
+            .data-grid { break-inside: avoid; }
+            .event-header { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Watermark -->
+    <div class="watermark">VR TRAINING ACADEMY</div>
+    
+    <!-- Print Button -->
+    <div class="print-btn no-print">
+        <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+    
+    <!-- Letterhead -->
+    <div class="letterhead">
+        <div class="institute-info">
+            <div class="institute-name">VR TRAINING ACADEMY</div>
+            <div class="institute-tagline">Skill Development & Vocational Training</div>
+            <div class="contact-info">
+                <span>📍 Airport Rd, near Kimaya Garden, Shirdi, Maharashtra 423109</span>
+                <span>📧 vrtrainingacademy1123@gmail.com</span>
+                <span>📞 +91 99703 60424</span>
+                <span>📱 +91 92702 01760</span>
+            </div>
+        </div>
+        <div class="institute-logo">
+            <span class="status-badge status-success">{{ registration.get_payment_status_display|upper }}</span>
+        </div>
+    </div>
+    
+    <!-- Receipt Header -->
+    <div class="receipt-header">
+        <div class="receipt-title">EVENT REGISTRATION RECEIPT</div>
+        <div class="receipt-meta">
+            <div class="receipt-number">#{{ registration.registration_id }}</div>
+            <div>Date: {{ registration.created_at|date:"d/m/Y" }}</div>
+        </div>
+    </div>
+    
+    <!-- Event Information -->
+    <div class="event-header">
+        <div class="event-title">{{ event.title }}</div>
+        {% if event.subtitle %}
+        <div class="event-subtitle">{{ event.subtitle }}</div>
+        {% endif %}
+        
+        <div class="event-details">
+            <div class="detail-item">
+                <span class="detail-label">Event Date:</span> {{ event.event_date|date:"d F Y" }}
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Time:</span> {{ event.event_start_time|time:"H:i" }} - {{ event.event_end_time|time:"H:i" }} {{ event.timezone }}
+            </div>
+            {% if event.category %}
+            <div class="detail-item">
+                <span class="detail-label">Category:</span> {{ event.category }}
+            </div>
+            {% endif %}
+            {% if event.meeting_link %}
+            <div class="detail-item">
+                <span class="detail-label">Meeting Link:</span> <a href="{{ event.meeting_link }}">Join Meeting</a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Pricing Information -->
+        <div style="margin-top: 10px; text-align: center;">
+            {% if event.is_free %}
+                <span class="current-price">FREE ENTRY</span>
+            {% else %}
+                {% if event.registration_strickthrough_fee %}
+                    <span class="original-price">₹{{ event.registration_strickthrough_fee }}</span>
+                {% endif %}
+                <span class="current-price">₹{{ event.registration_offer_fee }}</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Main Content Grid -->
+    <div class="data-grid">
+        <!-- Participant Information -->
+        <div class="info-card">
+            <div class="card-title">Participant Information</div>
+            <table class="compact-table">
+                <tr>
+                    <td class="label">Full Name</td>
+                    <td><strong>{{ registration.full_name }} </strong></td>
+                </tr>
+                <tr>
+                    <td class="label">Email Address</td>
+                    <td>{{ registration.email }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Mobile Number</td>
+                    <td>{{ registration.mobile_number }}</td>
+                </tr>
+                {% if registration.address %}
+                <tr>
+                    <td class="label">Address</td>
+                    <td>{{ registration.address|linebreaksbr }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        
+        <!-- Registration & Payment Details -->
+        <div class="info-card">
+            <div class="card-title">Registration & Payment Details</div>
+            <table class="compact-table">
+                <tr>
+                    <td class="label">Registration ID</td>
+                    <td><strong>{{ registration.registration_id }}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label">Registration Date</td>
+                    <td>{{ registration.created_at|date:"d F Y, H:i" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Payment Status</td>
+                    <td>
+                        <span class="status-badge {% if registration.payment_status == 'success' %}status-success{% else %}status-pending{% endif %}">
+                            {{ registration.get_payment_status_display|upper }}
+                        </span>
+                    </td>
+                </tr>
+                {% if registration.razorpay_payment_id %}
+                <tr>
+                    <td class="label">Payment ID</td>
+                    <td>{{ registration.razorpay_payment_id }}</td>
+                </tr>
+                {% endif %}
+            </table>
+            
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <div class="payment-row">
+                    <span>Event Fee:</span>
+                    <span class="amount">
+                        {% if event.is_free %}
+                            FREE
+                        {% else %}
+                            ₹{{ event.registration_offer_fee }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="payment-row highlight">
+                    <span>Amount Paid:</span>
+                    <span class="amount">
+                        {% if event.is_free %}
+                            FREE
+                        {% else %}
+                            ₹{{ registration.amount_paid }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="payment-row total">
+                    <span>Payment Status:</span>
+                    <span>
+                        <span class="status-badge {% if registration.payment_status == 'success' %}status-success{% else %}status-pending{% endif %}">
+                            {{ registration.get_payment_status_display|upper }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Amount in Words -->
+    {% if not event.is_free %}
+    <div class="amount-words">
+        <strong>Amount Paid in Words:</strong> {{ amount_in_words }} Only.
+    </div>
+    {% endif %}
+    
+    {% if registration.special_requirements %}
+    <div class="info-card">
+        <div class="card-title">Special Requirements</div>
+        <p>{{ registration.special_requirements }}</p>
+    </div>
+    {% endif %}
+    
+    <!-- Signatures -->
+    <div class="signature-area">
+        <div class="signature-grid">
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <div class="signature-label">Participant Signature</div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <div class="signature-label">Authorized Signatory<br>VR Training Academy</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div style="margin-bottom: 3px;">
+            <strong>Note:</strong> This is an official registration confirmation. Please keep this receipt for your records.
+            {% if event.meeting_link %}
+            <br>Meeting Link: <a href="{{ event.meeting_link }}">{{ event.meeting_link }}</a>
+            {% endif %}
+            {% if event.meeting_id %}
+            <br>Meeting ID: {{ event.meeting_id }}
+            {% endif %}
+            {% if event.meeting_password %}
+            <br>Password: {{ event.meeting_password }}
+            {% endif %}
+        </div>
+        <div>
+            For queries: +91 99703 60424 | vrtrainingacademy1123@gmail.com
+            | Receipt ID: {{ registration.registration_id }} | Generated: {% now "d/m/Y H:i" %}
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format currency
+            const formatter = new Intl.NumberFormat('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            // Format all amount elements
+            document.querySelectorAll('.amount').forEach(el => {
+                const text = el.textContent.trim().replace('₹', '').replace('FREE', '');
+                if (text && !isNaN(parseFloat(text))) {
+                    el.textContent = '₹' + formatter.format(parseFloat(text));
+                }
+            });
+            
+            // Auto-print if URL parameter exists
+            if (window.location.search.includes('autoprint=true')) {
+                window.print();
+            }
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
