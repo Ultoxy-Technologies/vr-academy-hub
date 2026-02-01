@@ -21,7 +21,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3a6287 0%, #764ba2 100%);
             min-height: 100vh;
             line-height: 1.6;
         }
@@ -29,7 +29,7 @@
         .event-container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background:  linear-gradient(135deg, #ffffff 0%, #ebd8ff 60%, #fffab5 100%);
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
@@ -52,7 +52,7 @@
         .event-header {
             position: relative;
             width: 100%;
-            height: 500px;
+            /* height: 500px; */
             overflow: hidden;
         }
 
@@ -305,6 +305,7 @@
             margin-bottom: 25px;
             font-weight: 700;
             position: relative;
+            color: rgb(255, 234, 0);
         }
 
         .price-comparison {
@@ -618,7 +619,7 @@
             color: white;
             line-height: 1.1;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
         }
 
         .event-subtitle-display {
@@ -667,7 +668,7 @@
     <div class="event-content">
         
         <div class="text-center mb-5">
-            <h1 class="event-title-display text-primary">{{ event.title }}</h1>
+            <h1 class="event-title-display " style="color: #468be5;">{{ event.title }}</h1>
             {% if event.subtitle %}
                 <h2 class="event-subtitle-display text-secondary">{{ event.subtitle }}</h2>
             {% endif %}
@@ -783,7 +784,7 @@
         <div class="action-section">
             <div class="btn-group">
             <!-- Replace the existing Register Now button with this -->
-            <a href="{% url 'event_registration' event.id %}" class="btn btn-primary">
+            <a href="{% url 'event_registration' event.id %}" class="btn btn-success">
                 <i class="bi bi-rocket-takeoff"></i>
                 Register Now 
                 <span class="blink-price">
