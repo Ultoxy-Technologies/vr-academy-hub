@@ -32,15 +32,15 @@ urlpatterns = [
 
 # 🌍 Add language-based URL patterns (this allows URLs like /en/, /hi/, /mr/)
 urlpatterns += i18n_patterns(
-    path('admin/', admin.site.urls),
-    path('', include(web_urls)),
-    path('student/', include(student_urls)),
-    path('software/', include(software_urls)),
+    # path('admin/', admin.site.urls),
+    # path('', include(web_urls)),
+    # path('student/', include(student_urls)),
+    # path('software/', include(software_urls)),
 
-    # Your custom auth routes preserved
-    path('register/', web_urls.register_user, name='register_user'),
-    path('login/', web_urls.login_user, name='login'),
-    path('logout/', web_urls.logout, name='logout'),
+    # # Your custom auth routes preserved
+    # path('register/', web_urls.register_user, name='register_user'),
+    # path('login/', web_urls.login_user, name='login'),
+    # path('logout/', web_urls.logout, name='logout'),
 )
 
 # 📁 Serve media files in development
