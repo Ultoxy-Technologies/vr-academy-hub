@@ -2307,3 +2307,6 @@ def event_registration_list(request):
         'registrations': registrations
     }
     return render(request, 'registration_list.html', context)
+
+def issue_certificate(request, enrollment_id):
+    pass

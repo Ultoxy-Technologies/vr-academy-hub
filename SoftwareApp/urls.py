@@ -67,7 +67,12 @@ urlpatterns = [
     path('print-receipt/<str:registration_id>/', 
          print_event_receipt, 
          name='print_event_receipt'),
-    
+    path(
+        'issue-certificate/<int:enrollment_id>/',
+        views.issue_certificate,
+        name='issue_certificate'
+    ),
+
     path('download-receipt/<str:registration_id>/', 
          generate_pdf_receipt, 
          name='download_event_receipt'),
