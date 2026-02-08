@@ -69,7 +69,7 @@ urlpatterns = [
          name='print_event_receipt'),
     path(
         'issue-certificate/<int:enrollment_id>/',
-        views.issue_certificate,
+        issue_certificate,
         name='issue_certificate'
     ),
 
