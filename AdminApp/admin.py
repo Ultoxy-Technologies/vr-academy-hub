@@ -63,138 +63,32 @@ from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    change_password_form = AdminPasswordChangeForm
-    
-    # Minimal list_display - removed all custom methods first
-    list_display = (
-        'id',
-        'name',
-        'mobile_number',
-        'email',
-        'role',
-        'is_active',
-    )
-
-    list_display_links = ('id', 'name')
+    # Ultra-minimal configuration
+    list_display = ('id', 'name', 'mobile_number', 'email', 'is_active')
+    list_filter = ('is_active',)  # Only one simple filter
+    search_fields = ('name', 'mobile_number')
     ordering = ('-date_joined',)
-    list_per_page = 20
     
-    # Simplified search_fields
-    search_fields = ('name', 'mobile_number', 'email')
-    
-    # Simplified list_filter - removed complex filters
-    list_filter = ('is_active', 'role')  # Only use simple model fields
-    
-    # Remove list_editable completely
-    list_editable = ()
-    
-    # Basic readonly fields
-    readonly_fields = ('last_login', 'date_joined')
-
-    # Simplified fieldsets
     fieldsets = (
-        ('Personal Information', {
-            'fields': ('name', 'mobile_number', 'email', 'password')
+        (None, {
+            'fields': ('mobile_number', 'name', 'email', 'password')
         }),
-        ('Status', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'role'),
+        ('Permissions', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
-        ('Important Dates', {
+        ('Important dates', {
             'fields': ('last_login', 'date_joined'),
         }),
     )
-
-    # Simplified add_fieldsets
+    
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile_number', 'name', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
+            'fields': ('mobile_number', 'name', 'email', 'password1', 'password2'),
         }),
     )
-
-    # Remove filter_horizontal
-    filter_horizontal = ()
-
-    # Keep only essential actions
-    actions = ['activate_users', 'deactivate_users']
-
-    def activate_users(self, request, queryset):
-        updated = queryset.update(is_active=True)
-        self.message_user(request, f'{updated} users were activated.')
-    activate_users.short_description = "Activate selected users"
-
-    def deactivate_users(self, request, queryset):
-        updated = queryset.update(is_active=False)
-        self.message_user(request, f'{updated} users were deactivated.')
-    deactivate_users.short_description = "Deactivate selected users"
-
-    # Password change functionality
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path(
-                '<int:object_id>/password/',
-                self.admin_site.admin_view(self.user_change_password),
-                name='customuser_password_change',
-            ),
-        ]
-        return custom_urls + urls
-
-    def user_change_password(self, request, object_id, form_url=''):
-        user = self.get_object(request, object_id)
-        
-        if not user:
-            messages.error(request, "User not found.")
-            return redirect('..')
-        
-        if request.method == 'POST':
-            form = AdminPasswordChangeForm(user, request.POST)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Password changed successfully.")
-                return redirect('..')
-        else:
-            form = AdminPasswordChangeForm(user)
-        
-        context = {
-            **self.admin_site.each_context(request),
-            'title': f'Change password: {user}',
-            'form': form,
-            'opts': self.model._meta,
-            'original': user,
-            'object_id': object_id,
-            'is_popup': False,
-            'add': False,
-            'change': True,
-            'has_change_permission': self.has_change_permission(request, user),
-        }
-        
-        return TemplateResponse(
-            request,
-            'admin/auth/user/change_password.html',
-            context
-        )
-
-    # Override get_queryset with error handling
-    def get_queryset(self, request):
-        try:
-            return super().get_queryset(request)
-        except Exception as e:
-            print(f"Error in get_queryset: {e}")
-            return self.model.objects.none()
-
-    # Override changelist_view with error handling
-    def changelist_view(self, request, extra_context=None):
-        try:
-            return super().changelist_view(request, extra_context)
-        except Exception as e:
-            print(f"Error in changelist_view: {e}")
-            # Return a basic response instead of crashing
-            from django.shortcuts import render
-            return render(request, 'admin/app_index.html', {
-                'title': 'User Management',
-                'app_label': self.model._meta.app_label,
-            })
+    
+    filter_horizontal = ('groups', 'user_permissions',)
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
