@@ -65,297 +65,136 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     change_password_form = AdminPasswordChangeForm
     
-    # Fix 1: Remove list_editable that might cause issues
+    # Minimal list_display - removed all custom methods first
     list_display = (
         'id',
         'name',
         'mobile_number',
-        'email',  
-        'location_info',
-        'dob_display',
+        'email',
         'role',
-        'status_display',
-        'date_joined_display',
+        'is_active',
     )
 
     list_display_links = ('id', 'name')
     ordering = ('-date_joined',)
     list_per_page = 20
-    search_fields = ('name', 'mobile_number', 'email', 'dist', 'village', 'taluka')
-    list_filter = ('role', 'is_active', 'dist', 'taluka', 'village', 'date_joined')
     
-    # Fix 2: Remove 'is_active' from list_editable (was causing issues)
-    list_editable = ()  # Empty tuple instead of ('is_active',)
+    # Simplified search_fields
+    search_fields = ('name', 'mobile_number', 'email')
     
+    # Simplified list_filter - removed complex filters
+    list_filter = ('is_active', 'role')  # Only use simple model fields
+    
+    # Remove list_editable completely
+    list_editable = ()
+    
+    # Basic readonly fields
     readonly_fields = ('last_login', 'date_joined')
 
-    # Fix 3: Simplify fieldsets to avoid permission issues
+    # Simplified fieldsets
     fieldsets = (
-        ('👤 Personal Information', {
-            'fields': ('name', 'dob', 'mobile_number', 'email', 'password')
+        ('Personal Information', {
+            'fields': ('name', 'mobile_number', 'email', 'password')
         }),
-        ('🏡 Location Details', {
-            'fields': ('dist', 'taluka', 'village'),
+        ('Status', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'role'),
         }),
-        ('📝 Additional Info', {
-            'fields': ('action',),
-        }),
-        ('🔒 Permissions & Status', {
-            'fields': ('role', 'is_active', 'is_staff', 'is_superuser'),
-        }),
-        ('📅 Important Dates', {
-            'classes': ('collapse',),
+        ('Important Dates', {
             'fields': ('last_login', 'date_joined'),
         }),
     )
 
-    # Fix 4: Remove groups and permissions from add_fieldsets temporarily
+    # Simplified add_fieldsets
     add_fieldsets = (
-        ('👤 Basic Info', {
+        (None, {
             'classes': ('wide',),
-            'fields': (
-                'mobile_number',
-                'name',
-                'email',
-                'password1',
-                'password2',
-                'role',
-                'dist',
-                'taluka',
-                'village',
-                'dob',
-                'action',
-                'is_active',
-                'is_staff'
-            ),
+            'fields': ('mobile_number', 'name', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
         }),
     )
 
-    # Fix 5: Remove filter_horizontal if not needed
+    # Remove filter_horizontal
     filter_horizontal = ()
 
-    def location_info(self, obj):
-        """Display location information with safe handling"""
-        try:
-            if obj.village or obj.taluka or obj.dist:
-                parts = []
-                if obj.village:
-                    parts.append(str(obj.village))
-                if obj.taluka:
-                    parts.append(str(obj.taluka))
-                if obj.dist:
-                    parts.append(str(obj.dist))
-                return ", ".join(parts)
-            return "—"
-        except (AttributeError, TypeError):
-            return "—"
-    location_info.short_description = "Location"
-
-    def dob_display(self, obj):
-        """Display formatted date of birth with error handling"""
-        try:
-            if obj.dob:
-                return obj.dob.strftime('%d %b %Y')
-            return "—"
-        except (AttributeError, ValueError, TypeError):
-            return "—"
-    dob_display.short_description = "DOB"
-    dob_display.admin_order_field = 'dob'
-
-    def date_joined_display(self, obj):
-        """Display formatted join date with error handling"""
-        try:
-            if obj.date_joined:
-                return localtime(obj.date_joined).strftime('%d %b %Y, %I:%M %p')
-            return "—"
-        except (AttributeError, ValueError, TypeError):
-            return "—"
-    date_joined_display.short_description = "Joined On"
-    date_joined_display.admin_order_field = 'date_joined'
-
-    def status_display(self, obj):
-        """Display colored status indicator with safe handling"""
-        try:
-            if obj.is_active:
-                return format_html(
-                    '<span style="color: #28a745; font-weight: bold;">🟢 Active</span>'
-                )
-            return format_html(
-                '<span style="color: #dc3545; font-weight: bold;">🔴 Inactive</span>'
-            )
-        except (AttributeError, TypeError):
-            return format_html(
-                '<span style="color: #6c757d; font-weight: bold;">⚪ Unknown</span>'
-            )
-    status_display.short_description = "Status"
-    status_display.admin_order_field = 'is_active'
-
-    # Custom actions
-    actions = ['activate_users', 'deactivate_users', 'export_selected_users']
+    # Keep only essential actions
+    actions = ['activate_users', 'deactivate_users']
 
     def activate_users(self, request, queryset):
-        """Activate selected users"""
-        try:
-            count = queryset.update(is_active=True)
-            self.message_user(request, f"{count} user(s) activated successfully.")
-        except Exception as e:
-            self.message_user(request, f"Error activating users: {str(e)}", level='ERROR')
-    activate_users.short_description = "✅ Activate selected users"
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'{updated} users were activated.')
+    activate_users.short_description = "Activate selected users"
 
     def deactivate_users(self, request, queryset):
-        """Deactivate selected users"""
-        try:
-            count = queryset.update(is_active=False)
-            self.message_user(request, f"{count} user(s) deactivated successfully.")
-        except Exception as e:
-            self.message_user(request, f"Error deactivating users: {str(e)}", level='ERROR')
-    deactivate_users.short_description = "🚫 Deactivate selected users"
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'{updated} users were deactivated.')
+    deactivate_users.short_description = "Deactivate selected users"
 
-    def export_selected_users(self, request, queryset):
-        """Export selected users to CSV with error handling"""
-        from django.http import HttpResponse
-        import csv
-        try:
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="users.csv"'
-
-            writer = csv.writer(response)
-            writer.writerow([
-                'Name', 'Mobile', 'Email', 'Role', 'District',
-                'Taluka', 'Village', 'DOB', 'Action',
-                'Active', 'Date Joined'
-            ])
-
-            for obj in queryset:
-                try:
-                    # Safely get each field with fallback values
-                    name = obj.name or ''
-                    mobile = obj.mobile_number or ''
-                    email = obj.email or ''
-                    role_display = obj.get_role_display() if hasattr(obj, 'get_role_display') and obj.role else ''
-                    dist = obj.dist or ''
-                    taluka = obj.taluka or ''
-                    village = obj.village or ''
-                    
-                    # Safely format date fields
-                    dob = ''
-                    if obj.dob:
-                        try:
-                            dob = obj.dob.strftime('%Y-%m-%d')
-                        except (AttributeError, ValueError):
-                            dob = str(obj.dob)
-                    
-                    action = obj.action or ''
-                    active = 'Yes' if obj.is_active else 'No'
-                    
-                    # Safely format date_joined
-                    date_joined = ''
-                    if obj.date_joined:
-                        try:
-                            date_joined = timezone.localtime(obj.date_joined).strftime('%Y-%m-%d %H:%M:%S')
-                        except (AttributeError, ValueError):
-                            date_joined = str(obj.date_joined)
-                    
-                    writer.writerow([
-                        name, mobile, email, role_display, dist,
-                        taluka, village, dob, action, active, date_joined
-                    ])
-                except Exception as e:
-                    # Log error but continue with next user
-                    print(f"Error exporting user {obj.id}: {str(e)}")
-                    continue
-                    
-            return response
-        except Exception as e:
-            self.message_user(request, f"Error exporting users: {str(e)}", level='ERROR')
-            return redirect('..')
-    export_selected_users.short_description = "⬇️ Export selected users to CSV"
-
-    # Password change functionality - Fix 6: Updated URL pattern
+    # Password change functionality
     def get_urls(self):
-        from django.urls import path
         urls = super().get_urls()
         custom_urls = [
             path(
-                '<int:object_id>/change-password/',  # Changed from <id> to <int:object_id>
-                self.admin_site.admin_view(self.change_user_password),
-                name='customuser_change_password',
+                '<int:object_id>/password/',
+                self.admin_site.admin_view(self.user_change_password),
+                name='customuser_password_change',
             ),
         ]
         return custom_urls + urls
 
-    def change_user_password(self, request, object_id, form_url=''):
-        """Handle password change for user with better error handling"""
-        try:
-            user = self.get_object(request, object_id)
-            
-            if not user:
-                messages.error(request, "User not found.")
-                return redirect('..')
-
-            if request.method == 'POST':
-                form = self.change_password_form(user, request.POST)
-                if form.is_valid():
-                    form.save()
-                    messages.success(
-                        request,
-                        f"Password for {user.name or user.mobile_number} changed successfully!"
-                    )
-                    return redirect('..')
-            else:
-                form = self.change_password_form(user)
-
-            # Fix 7: Add required context variables
-            context = {
-                **self.admin_site.each_context(request),
-                'title': f'Change password: {user.name or user.mobile_number}',
-                'form': form,
-                'opts': self.model._meta,
-                'original': user,
-                'object_id': object_id,
-                'media': self.media,
-                'is_popup': False,
-                'add': False,
-                'change': True,
-                'has_view_permission': self.has_view_permission(request, user),
-                'has_add_permission': self.has_add_permission(request),
-                'has_change_permission': self.has_change_permission(request, user),
-                'has_delete_permission': self.has_delete_permission(request, user),
-                'has_module_permission': self.has_module_permission(request),
-            }
-            
-            return TemplateResponse(
-                request,
-                'admin/auth/user/change_password.html',
-                context
-            )
-        except Exception as e:
-            messages.error(request, f"Error changing password: {str(e)}")
+    def user_change_password(self, request, object_id, form_url=''):
+        user = self.get_object(request, object_id)
+        
+        if not user:
+            messages.error(request, "User not found.")
             return redirect('..')
+        
+        if request.method == 'POST':
+            form = AdminPasswordChangeForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Password changed successfully.")
+                return redirect('..')
+        else:
+            form = AdminPasswordChangeForm(user)
+        
+        context = {
+            **self.admin_site.each_context(request),
+            'title': f'Change password: {user}',
+            'form': form,
+            'opts': self.model._meta,
+            'original': user,
+            'object_id': object_id,
+            'is_popup': False,
+            'add': False,
+            'change': True,
+            'has_change_permission': self.has_change_permission(request, user),
+        }
+        
+        return TemplateResponse(
+            request,
+            'admin/auth/user/change_password.html',
+            context
+        )
 
-    # Fix 8: Override get_form with proper error handling
-    def get_form(self, request, obj=None, **kwargs):
-        try:
-            form = super().get_form(request, obj, **kwargs)
-            return form
-        except Exception as e:
-            # Log the error and return a basic form
-            print(f"Error getting form: {str(e)}")
-            return super().get_form(request, obj, **kwargs)
-
-    # Fix 9: Add get_queryset with error handling
+    # Override get_queryset with error handling
     def get_queryset(self, request):
         try:
             return super().get_queryset(request)
         except Exception as e:
-            print(f"Error getting queryset: {str(e)}")
+            print(f"Error in get_queryset: {e}")
             return self.model.objects.none()
 
-    # Fix 10: Override has_module_permission to always return True for superusers
-    def has_module_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        return super().has_module_permission(request)
+    # Override changelist_view with error handling
+    def changelist_view(self, request, extra_context=None):
+        try:
+            return super().changelist_view(request, extra_context)
+        except Exception as e:
+            print(f"Error in changelist_view: {e}")
+            # Return a basic response instead of crashing
+            from django.shortcuts import render
+            return render(request, 'admin/app_index.html', {
+                'title': 'User Management',
+                'app_label': self.model._meta.app_label,
+            })
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
