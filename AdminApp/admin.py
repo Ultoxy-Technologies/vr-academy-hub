@@ -48,23 +48,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.utils.timezone import localtime
 from .models import CustomUser
-
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.utils.html import format_html
-from django.utils.timezone import localtime
-from django.contrib.auth.forms import AdminPasswordChangeForm
-from django.shortcuts import redirect
-from django.urls import path
-from django.template.response import TemplateResponse
-from django.contrib import messages
-from .models import CustomUser
-
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.utils.html import format_html
-from .models import CustomUser
-
+ 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     
