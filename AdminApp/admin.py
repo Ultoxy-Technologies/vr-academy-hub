@@ -60,35 +60,124 @@ from django.template.response import TemplateResponse
 from django.contrib import messages
 from .models import CustomUser
 
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
+from .models import CustomUser
 
-@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    # Ultra-minimal configuration
-    list_display = ('id', 'name', 'mobile_number', 'email', 'is_active')
-    list_filter = ('is_active',)  # Only one simple filter
-    search_fields = ('name', 'mobile_number')
-    ordering = ('-date_joined',)
+    model = CustomUser
     
+    # Simple list display
+    list_display = [
+        'id',
+        'name', 
+        'mobile_number', 
+        'email', 
+        'role_colored', 
+        'is_active',
+        'date_joined'
+    ]
+    
+    # Simple filters
+    list_filter = [
+        'role',
+        'is_active',
+        'dist',
+    ]
+    
+    # Simple search
+    search_fields = [
+        'name', 
+        'mobile_number', 
+        'email',
+    ]
+    
+    # Simple ordering
+    ordering = ['-date_joined']
+    
+    # Simple list per page
+    list_per_page = 25
+    
+    # Simple actions
+    actions = ['activate_users', 'deactivate_users']
+    
+    # Simplified fieldsets
     fieldsets = (
-        (None, {
-            'fields': ('mobile_number', 'name', 'email', 'password')
+        ('Personal Info', {
+            'fields': ('name', 'mobile_number', 'email', 'dob')
+        }),
+        ('Address', {
+            'fields': ('dist', 'taluka', 'village')
+        }),
+        ('Role & Status', {
+            'fields': ('role', 'is_active', 'is_staff', 'is_superuser')
         }),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('groups', 'user_permissions'),
+            'classes': ('collapse',)
         }),
-        ('Important dates', {
+        ('Important Dates', {
             'fields': ('last_login', 'date_joined'),
+            'classes': ('collapse',)
+        }),
+        ('Actions', {
+            'fields': ('action',),
+            'classes': ('collapse',)
         }),
     )
     
+    # Simple add fields
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile_number', 'name', 'email', 'password1', 'password2'),
+            'fields': (
+                'name',
+                'mobile_number',
+                'email',
+                'password1',
+                'password2',
+                'role',
+            ),
         }),
     )
     
-    filter_horizontal = ('groups', 'user_permissions',)
+    # Readonly fields
+    readonly_fields = ['date_joined', 'last_login']
+    
+    def role_colored(self, obj):
+        """Simple colored role display"""
+        colors = {
+            'is_website_manager': 'blue',
+            'is_crm_manager': 'green',
+            'is_enrollment': 'orange',
+            'is_crm_and_enrollment': 'purple',
+            'is_staff': 'gray',
+            'is_student': 'green',
+        }
+        color = colors.get(obj.role, 'black')
+        role_name = obj.get_role_display() if obj.role else 'No Role'
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            color,
+            role_name
+        )
+    role_colored.short_description = 'Role'
+    role_colored.admin_order_field = 'role'
+    
+    # Simple actions
+    def activate_users(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'{updated} users activated.')
+    activate_users.short_description = "Activate selected users"
+    
+    def deactivate_users(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'{updated} users deactivated.')
+    deactivate_users.short_description = "Deactivate selected users"
+
+# Register the model
+admin.site.register(CustomUser, CustomUserAdmin)
 # -----------------------------
 # INLINE for Photos under Category
 # -----------------------------
