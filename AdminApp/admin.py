@@ -526,6 +526,9 @@ class EventAdmin(admin.ModelAdmin):
 
 
 
+from django.contrib import admin
+from .models import EventRegistration
+
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(admin.ModelAdmin):
     list_display = (
@@ -567,11 +570,9 @@ class EventRegistrationAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Registration Details', {
             'fields': ('registration_id', 'event', 'payment_status'),
-            'classes': ('wide',)
         }),
         ('Personal Information', {
             'fields': ('full_name', 'email', 'mobile_number', 'address'),
-            'classes': ('collapse',)
         }),
         ('Payment Information', {
             'fields': (
@@ -580,22 +581,17 @@ class EventRegistrationAdmin(admin.ModelAdmin):
                 'razorpay_payment_id',
                 'razorpay_signature',
             ),
-            'classes': ('collapse',)
         }),
         ('Additional Information', {
             'fields': ('special_requirements',),
-            'classes': ('collapse',)
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
         }),
     )
 
     def get_queryset(self, request):
-        """Optimize queryset by selecting related event"""
-        qs = super().get_queryset(request)
-        return qs.select_related('event')
+        return super().get_queryset(request).select_related('event')
     
     
 from .models import CRM_Student_Interested_for_options, CRMFollowup
