@@ -527,6 +527,7 @@ class EventAdmin(admin.ModelAdmin):
 
 
 from django.contrib import admin
+from django.db.models import DecimalField
 from .models import EventRegistration
 
 @admin.register(EventRegistration)
@@ -535,7 +536,7 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         'registration_id',
         'full_name',
         'email',
-        'event',
+        'get_event_title',  # Use a method instead of direct 'event'
         'amount_paid',
         'payment_status',
         'created_at',
@@ -543,7 +544,6 @@ class EventRegistrationAdmin(admin.ModelAdmin):
 
     list_filter = (
         'payment_status',
-        'event',
         'created_at',
     )
 
@@ -552,7 +552,6 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         'full_name',
         'email',
         'mobile_number',
-        'event__title',
     )
 
     readonly_fields = (
@@ -569,7 +568,7 @@ class EventRegistrationAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Registration Details', {
-            'fields': ('registration_id', 'event', 'payment_status'),
+            'fields': ('registration_id', 'payment_status'),
         }),
         ('Personal Information', {
             'fields': ('full_name', 'email', 'mobile_number', 'address'),
@@ -590,9 +589,19 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         }),
     )
 
+    def get_event_title(self, obj):
+        """Safe method to display event title"""
+        try:
+            return obj.event.title if obj.event else "No Event"
+        except:
+            return "Error"
+    get_event_title.short_description = 'Event'
+    get_event_title.admin_order_field = 'event__title'
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('event')
     
+
     
 from .models import CRM_Student_Interested_for_options, CRMFollowup
 
