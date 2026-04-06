@@ -588,21 +588,7 @@ class EventRegistrationAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at'),
         }),
     )
-
-    def get_event_title(self, obj):
-        """Safe method to display event title"""
-        try:
-            return obj.event.title if obj.event else "No Event"
-        except:
-            return "Error"
-    get_event_title.short_description = 'Event'
-    get_event_title.admin_order_field = 'event__title'
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('event')
-    
-
-    
+ 
 from .models import CRM_Student_Interested_for_options, CRMFollowup
 
 # Register your models here.
