@@ -526,7 +526,6 @@ class EventAdmin(admin.ModelAdmin):
 
 
 
-
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(admin.ModelAdmin):
     list_display = (
@@ -593,16 +592,12 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Optional Jazzmin customization
-    jazzmin_icon = "fa fa-ticket"  # You can pick any FontAwesome icon
-
     def get_queryset(self, request):
         """Optimize queryset by selecting related event"""
         qs = super().get_queryset(request)
         return qs.select_related('event')
     
-
- 
+    
 from .models import CRM_Student_Interested_for_options, CRMFollowup
 
 # Register your models here.
