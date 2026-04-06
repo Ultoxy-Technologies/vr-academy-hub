@@ -532,62 +532,10 @@ from .models import EventRegistration
 
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(admin.ModelAdmin):
-    list_display = (
-        'registration_id',
-        'full_name',
-        'email',
-        'get_event_title',  # Use a method instead of direct 'event'
-        'amount_paid',
-        'payment_status',
-        'created_at',
-    )
-
-    list_filter = (
-        'payment_status',
-        'created_at',
-    )
-
-    search_fields = (
-        'registration_id',
-        'full_name',
-        'email',
-        'mobile_number',
-    )
-
-    readonly_fields = (
-        'registration_id',
-        'razorpay_order_id',
-        'razorpay_payment_id',
-        'razorpay_signature',
-        'created_at',
-        'updated_at',
-    )
-
-    ordering = ('-created_at',)
-    list_per_page = 25
-
-    fieldsets = (
-        ('Registration Details', {
-            'fields': ('registration_id', 'payment_status'),
-        }),
-        ('Personal Information', {
-            'fields': ('full_name', 'email', 'mobile_number', 'address'),
-        }),
-        ('Payment Information', {
-            'fields': (
-                'amount_paid',
-                'razorpay_order_id',
-                'razorpay_payment_id',
-                'razorpay_signature',
-            ),
-        }),
-        ('Additional Information', {
-            'fields': ('special_requirements',),
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-        }),
-    )
+    list_display = ['registration_id', 'full_name', 'email', 'payment_status', 'created_at']
+    list_filter = ['payment_status']
+    search_fields = ['registration_id', 'full_name', 'email']
+    readonly_fields = ['registration_id', 'created_at', 'updated_at']
  
 from .models import CRM_Student_Interested_for_options, CRMFollowup
 
