@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, F
 from AdminApp.models import CRMFollowup
 import csv
 from django.http import HttpResponse
@@ -182,9 +182,12 @@ def crm_follow_up_list(request):
     date_to = request.GET.get('date_to', '')
     branch = request.GET.get('branch', '')
     address = request.GET.get('address', '')
+    grid_filter = request.GET.get('grid_filter', '')
+    sort_field = request.GET.get('sort', '')
+    sort_order = request.GET.get('order', 'asc')
     
     # Start with all follow-ups
-    followups = CRMFollowup.objects.all().order_by('-follow_up_date')
+    followups = CRMFollowup.objects.all()
     brances=Branch.objects.all()
     # Apply filters
     if search_query:
@@ -238,7 +241,38 @@ def crm_follow_up_list(request):
         next_followup_reminder__lt=timezone.now(),
         status__in=['interested', 'planning', 'under_review']
     ).count()
+
+    # Apply grid filter
+    if grid_filter == 'high_priority':
+        followups = followups.filter(priority='high')
+    elif grid_filter == 'pending_followups':
+        followups = followups.filter(
+            next_followup_reminder__lt=timezone.now(),
+            status__in=['interested', 'planning', 'under_review']
+        )
+    elif grid_filter == 'today_followups':
+        followups = followups.filter(follow_up_date__date=today)
     
+    # Apply Sorting
+    sort_map = {
+        'name': 'name',
+        'mobile': 'mobile_number',
+        'status': 'status',
+        'priority': 'priority',
+        'next_followup': 'next_followup_reminder',
+        'branch': 'branch__branch_name',
+        'followup_by': 'follow_up_by__first_name',
+    }
+
+    if sort_field in sort_map:
+        db_field = sort_map[sort_field]
+        if sort_order == 'desc':
+            followups = followups.order_by(F(db_field).desc(nulls_last=True))
+        else:
+            followups = followups.order_by(F(db_field).asc(nulls_last=True))
+    else:
+        followups = followups.order_by('-follow_up_date')
+
     # Add overdue flag to each followup
     for followup in followups:
         followup.is_overdue = (
@@ -247,7 +281,15 @@ def crm_follow_up_list(request):
         )
     
     # Pagination
-    paginator = Paginator(followups, 10)  # Show 10 items per page
+    per_page = request.GET.get('per_page', '10')
+    try:
+        per_page = int(per_page)
+        if per_page not in [10, 25, 50, 100, 200]:
+            per_page = 10
+    except (ValueError, TypeError):
+        per_page = 10
+        
+    paginator = Paginator(followups, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -260,6 +302,10 @@ def crm_follow_up_list(request):
         'search_query': search_query,
         'status_filter': status_filter,
         'priority_filter': priority_filter,
+        'grid_filter': grid_filter,
+        'sort_field': sort_field,
+        'sort_order': sort_order,
+        'per_page': per_page,
         'date_from': date_from,
         'date_to': date_to,
         'branches': brances,

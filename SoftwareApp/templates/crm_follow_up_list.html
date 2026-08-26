@@ -54,6 +54,26 @@
         letter-spacing: 0.5px;
     }
 
+    .table-modern thead th.sortable-th {
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+    }
+
+    .table-modern thead th.sortable-th:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .sort-icon {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 6px;
+    }
+
+    .sortable-th:hover .sort-icon {
+        transform: scale(1.15);
+    }
+
     .table-modern tbody td {
         padding: 1.2rem 1.5rem;
         border-bottom: 1px solid #f1f3fa;
@@ -165,11 +185,31 @@
         padding: 1.5rem;
         text-align: center;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        transition: transform 0.3s;
+        transition: all 0.25s ease-in-out;
+        cursor: pointer;
+        border: 2.5px solid transparent;
+        position: relative;
+        user-select: none;
     }
 
     .stat-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 22px rgba(102, 126, 234, 0.15);
+        border-color: rgba(102, 126, 234, 0.35);
+    }
+
+    /* Active Grid Filter (Dotted Border) */
+    .stat-card.active-grid-filter {
+        border: 2.5px dotted #667eea !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.07) 0%, rgba(118, 75, 162, 0.07) 100%) !important;
+        box-shadow: 0 4px 18px rgba(102, 126, 234, 0.2) !important;
+        transform: translateY(-2px);
+    }
+
+    .stat-card.active-grid-filter .stat-number {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     .stat-number {
@@ -186,6 +226,45 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         margin-top: 0.5rem;
+    }
+
+    /* Table Settings & Controls Bar */
+    .table-settings-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .table-settings-bar .form-select-sm {
+        border-color: #cbd5e1;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .dropdown-menu-columns {
+        min-width: 230px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 12px 16px;
+    }
+
+    .dropdown-menu-columns .form-check-input {
+        cursor: pointer;
+    }
+
+    .dropdown-menu-columns .form-check-label {
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: #334155;
+        font-weight: 500;
     }
 
     /* Mobile Responsive */
@@ -403,25 +482,25 @@
     <!-- Stats Summary -->
     <div class="row mb-4">
         <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+            <div class="stat-card {% if grid_filter == 'total_leads' or not grid_filter %}active-grid-filter{% endif %}" onclick="applyGridFilter('total_leads')" role="button" title="Click to view all leads">
                 <div class="stat-number">{{ total_leads }}</div>
                 <div class="stat-label">Total Leads</div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+            <div class="stat-card {% if grid_filter == 'high_priority' %}active-grid-filter{% endif %}" onclick="applyGridFilter('high_priority')" role="button" title="Click to filter by High Priority">
                 <div class="stat-number">{{ high_priority }}</div>
                 <div class="stat-label">High Priority</div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+            <div class="stat-card {% if grid_filter == 'pending_followups' %}active-grid-filter{% endif %}" onclick="applyGridFilter('pending_followups')" role="button" title="Click to filter by Pending Follow-ups">
                 <div class="stat-number">{{ pending_followups }}</div>
                 <div class="stat-label">Pending Follow-ups</div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+            <div class="stat-card {% if grid_filter == 'today_followups' %}active-grid-filter{% endif %}" onclick="applyGridFilter('today_followups')" role="button" title="Click to filter by Today's Follow-ups">
                 <div class="stat-number">{{ today_followups }}</div>
                 <div class="stat-label">Today's Follow-ups</div>
             </div>
@@ -431,24 +510,28 @@
     <!-- Filter Card -->
     <div class="card card-modern filter-card">
         <div class="card-body">
-            <form method="get" class="row g-3">
+            <form method="get" class="row g-3" id="crmFilterForm">
+                <input type="hidden" name="grid_filter" id="gridFilterInput" value="{{ grid_filter }}">
+                <input type="hidden" name="per_page" id="perPageInput" value="{{ per_page }}">
+                <input type="hidden" name="sort" id="sortInput" value="{{ sort_field }}">
+                <input type="hidden" name="order" id="orderInput" value="{{ sort_order }}">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
-                        <option value="interested">Interested</option>
-                        <option value="planning">Planning</option>
-                        <option value="not_interested">Not Interested</option>
-                        <option value="class_joined">Class Joined</option>
+                        <option value="interested" {% if status_filter == 'interested' %}selected{% endif %}>Interested</option>
+                        <option value="planning" {% if status_filter == 'planning' %}selected{% endif %}>Planning</option>
+                        <option value="not_interested" {% if status_filter == 'not_interested' %}selected{% endif %}>Not Interested</option>
+                        <option value="class_joined" {% if status_filter == 'class_joined' %}selected{% endif %}>Class Joined</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Priority</label>
                     <select name="priority" class="form-select">
-                        <option value="" selected>All Priority</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
+                        <option value="" {% if not priority_filter %}selected{% endif %}>All Priority</option>
+                        <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>High</option>
+                        <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
                     </select>
                 </div>
                 
@@ -457,7 +540,7 @@
                     <select name="branch" class="form-select">
                         <option value="" selected>All Branches</option>
                         {% for branch in branches  %}
-                        <option value="{{branch.id}}">{{branch.branch_name}}</option> 
+                        <option value="{{branch.id}}" {% if request.GET.branch == branch.id|stringformat:"s" %}selected{% endif %}>{{branch.branch_name}}</option> 
                         {% endfor %}
                     </select>
                 </div>
@@ -469,16 +552,16 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" name="date_from" class="form-control">
+                    <input type="date" name="date_from" class="form-control" value="{{ request.GET.date_from }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" name="date_to" class="form-control">
+                    <input type="date" name="date_to" class="form-control" value="{{ request.GET.date_to }}">
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label">Name or Mobile</label>
-                     <input type="text" name="search" placeholder="Search by name or mobile..." class="form-control"  value="{{ request.GET.address }}">
+                     <input type="text" name="search" placeholder="Search by name or mobile..." class="form-control"  value="{{ request.GET.search|default:search_query }}">
                 </div>
 
                 <div class="col-md-3 d-flex justify-content-between"> 
@@ -487,7 +570,7 @@
                         <button type="submit" class="btn btn-action btn-filter me-2">
                             <i class="bi bi-funnel me-1"></i> Apply Filters
                         </button>
-                        <a href="{% url 'crm_follow_up_list' %}" class="btn btn-light">
+                        <a href="{% url 'crm_follow_up_list' %}?grid_filter=total_leads&per_page={{ per_page }}" onclick="clearFiltersAndCache()" class="btn btn-light">
                             <i class="bi bi-x-circle me-1"></i> Clear
                         </a>
                     </div>
@@ -499,34 +582,202 @@
     <!-- Main Table -->
     <div class="card card-modern">
         <div class="card-body">
+            <!-- Table Settings & Controls Bar -->
+            <div class="table-settings-bar">
+                <!-- Records Per Page Selector -->
+                <div class="d-flex align-items-center gap-2">
+                    <label for="perPageSelect" class="form-label mb-0 text-muted fw-semibold" style="font-size: 0.85rem;">
+                        <i class="bi bi-list-ol text-primary me-1"></i> Show
+                    </label>
+                    <select id="perPageSelect" class="form-select form-select-sm" style="width: auto; border-radius: 6px; font-weight: 500;" onchange="changePerPage(this.value)">
+                        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                        <option value="200" {% if per_page == 200 %}selected{% endif %}>200</option>
+                    </select>
+                    <span class="text-muted fw-semibold" style="font-size: 0.85rem;">records per page</span>
+                </div>
+
+                <!-- Column Visibility Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 shadow-none" type="button" id="columnToggleDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="border-radius: 6px; font-size: 0.85rem; font-weight: 500;">
+                        <i class="bi bi-layout-three-columns me-1"></i> Column Visibility
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-columns" aria-labelledby="columnToggleDropdown">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="fw-bold text-dark" style="font-size: 0.85rem;"><i class="bi bi-sliders me-1"></i> Toggle Columns</span>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.75rem;" onclick="resetColumns()">Reset</button>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_name" data-column="col-name" checked onchange="toggleColumn('col-name', this.checked)">
+                            <label class="form-check-label" for="toggle_col_name">Name</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_mobile" data-column="col-mobile" checked onchange="toggleColumn('col-mobile', this.checked)">
+                            <label class="form-check-label" for="toggle_col_mobile">Mobile</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_status" data-column="col-status" checked onchange="toggleColumn('col-status', this.checked)">
+                            <label class="form-check-label" for="toggle_col_status">Status</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_priority" data-column="col-priority" checked onchange="toggleColumn('col-priority', this.checked)">
+                            <label class="form-check-label" for="toggle_col_priority">Priority</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_next_followup" data-column="col-next-followup" checked onchange="toggleColumn('col-next-followup', this.checked)">
+                            <label class="form-check-label" for="toggle_col_next_followup">Next Follow-up</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_branch" data-column="col-branch" checked onchange="toggleColumn('col-branch', this.checked)">
+                            <label class="form-check-label" for="toggle_col_branch">Branch</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_followup_by" data-column="col-followup-by" checked onchange="toggleColumn('col-followup-by', this.checked)">
+                            <label class="form-check-label" for="toggle_col_followup_by">Last Follow Up By</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_actions" data-column="col-actions" checked onchange="toggleColumn('col-actions', this.checked)">
+                            <label class="form-check-label" for="toggle_col_actions">Actions</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-modern">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Next Follow-up</th>
-                            <th>Branch</th>
-                            <th>Last Follow Up By</th>
-                            <th>Actions</th>
+                            <th class="col-name sortable-th" onclick="sortBy('name')" role="button" title="Click to sort by Name">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Name</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'name' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-mobile sortable-th" onclick="sortBy('mobile')" role="button" title="Click to sort by Mobile">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Mobile</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'mobile' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-numeric-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-numeric-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-status sortable-th" onclick="sortBy('status')" role="button" title="Click to sort by Status">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Status</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'status' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-priority sortable-th" onclick="sortBy('priority')" role="button" title="Click to sort by Priority">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Priority</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'priority' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-next-followup sortable-th" onclick="sortBy('next_followup')" role="button" title="Click to sort by Next Follow-up">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Next Follow-up</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'next_followup' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-branch sortable-th" onclick="sortBy('branch')" role="button" title="Click to sort by Branch">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Branch</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'branch' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-followup-by sortable-th" onclick="sortBy('followup_by')" role="button" title="Click to sort by Last Follow Up By">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Last Follow Up By</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'followup_by' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for followup in followups %}
                         <tr>
-                            <td>
+                            <td class="col-name">
                                 <strong>{{ followup.name }}</strong>
                                 <br>
                                 <small class="text-muted">{{ followup.student_interested_for|default:"N/A" }}</small>
                             </td>
-                            <td>
+                            <td class="col-mobile">
                                 <a href="tel:{{ followup.mobile_number }}" class="text-decoration-none">
                                     <i class="bi bi-telephone me-1"></i> {{ followup.mobile_number }}
                                 </a>
                             </td>
-                            <td>
+                            <td class="col-status">
                                 {% if followup.status == 'interested' %}
                                     <span class="badge badge-status badge-interested">Interested</span>
                                 {% elif followup.status == 'planning' %}
@@ -539,7 +790,7 @@
                                     <span class="badge badge-secondary bg-secondary">{{ followup.status|title }}</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="col-priority">
                                 {% if followup.priority == 'high' %}
                                     <span class="badge badge-status badge-high">High</span>
                                 {% elif followup.priority == 'medium' %}
@@ -550,7 +801,7 @@
                                     <span class="badge badge-secondary bg-secondary">Not Set</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="col-next-followup">
                                 {% if followup.next_followup_reminder %}
                                     {% if followup.is_overdue %}
                                         <span class="text-danger">
@@ -565,112 +816,51 @@
                                     <span class="text-muted">Not Scheduled</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="col-branch">
                                 {% if followup.branch %} 
                                     <span class="text-muted">{{ followup.branch }}</span>
                                 {% else %}
                                     <span class="text-muted">---</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="col-followup-by">
                                 {% if followup.follow_up_by %} 
                                     <span class="text-muted">{{ followup.follow_up_by }}</span>
                                 {% else %}
                                     <span class="text-muted">---</span>
                                 {% endif %}
                             </td>
-                            <td><div class="btn-group" role="group">
-                                <a href="{% url 'followup_detail' followup.id %}" 
-                                class="btn btn-sm btn-outline-primary" 
-                                title="View Follow-Up">
-                                    <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
-                                </a>
-                                <a href="javascript:void(0);" 
-                                class="btn btn-sm btn-outline-warning" 
-                                data-url="{% url 'update_followup' followup.id %}" 
-                                onclick="openUpdateModal(this)">
-                                    <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit</span>
-                                </a> 
-                                
-                                <!-- <a href="{% url 'enroll_student_from_follow_up' followup.id %}" 
-                                class="btn btn-sm btn-outline-info" onclick="openCreateModal(this)"
-                                title="View Follow-Up">
-                                    <i class="bi bi-person-add"></i> <span class="d-none d-md-inline">Enroll</span>
-                                </a> -->
-                                <a href="javascript:void(0);" 
-                                data-url="{% url 'enroll_student_from_follow_up' followup.id  %}" 
-                                class="btn btn-sm btn-outline-info"  
-                                onclick="openCreateModal(this)">
-                                <i class="bi bi-plus-circle me-1"></i> New Enrollment
-                                </a>
-                                <script>
-                                    // Update Modal Function
-                                    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
-                                        const url = element.dataset.url;
-                                        
-                                        // Calculate center position
-                                        const width = customWidth;
-                                        const height = customHeight;
-                                        const left = Math.max(0, (window.screen.width - width) / 2);
-                                        const top = Math.max(0, (window.screen.height - height) / 2);
-                                        
-                                        // Window features
-                                        const features = [
-                                            `width=${width}`,
-                                            `height=${height}`,
-                                            `left=${left}`,
-                                            `top=${top}`,
-                                            'scrollbars=yes',
-                                            'resizable=yes',
-                                            'centerscreen=yes',
-                                            'location=no',
-                                            'menubar=no',
-                                            'toolbar=no',
-                                            'status=no',
-                                            'titlebar=no'
-                                        ].join(',');
-                                        
-                                        // Open centered window
-                                        const newWindow = window.open(url, "updateWindow", features);
-                                        
-                                        if (newWindow) {
-                                            newWindow.focus();
-                                            
-                                            // Check if window is closed to refresh parent
-                                            const checkWindow = setInterval(function() {
-                                                if (newWindow.closed) {
-                                                    clearInterval(checkWindow);
-                                                    window.location.reload();
-                                                }
-                                            }, 500);
-                                        }
-                                        return false;
-                                    }
-                                </script>
-                                <a href="{% url 'crm_delete_follow_up' followup.id %}" 
-                                class="btn btn-sm btn-outline-danger btn-delete" 
-                                title="Delete Follow-Up"
-                                onclick="confirmDelete(this); return false;">
-                                    <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
-                                </a>
-                                <script>
-                                    // Delete Confirmation
-                                    function confirmDelete(button) {
-                                        var info = button.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
-                                        var deleteUrl = button.getAttribute('href');
-                                        document.getElementById('delete_info').textContent = info;
-                                        document.getElementById('deleteButton').setAttribute('href', deleteUrl);
-                                        
-                                        $('#deleteModal').modal('show');
-                                        return false;
-                                    }
-                                </script>
-                            </div>
-                           </td>
+                            <td class="col-actions">
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'followup_detail' followup.id %}" 
+                                    class="btn btn-sm btn-outline-primary" 
+                                    title="View Follow-Up">
+                                        <i class="bi bi-eye"></i> <span class="d-none d-md-inline">View</span>
+                                    </a>
+                                    <a href="javascript:void(0);" 
+                                    class="btn btn-sm btn-outline-warning" 
+                                    data-url="{% url 'update_followup' followup.id %}" 
+                                    onclick="openUpdateModal(this)">
+                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit</span>
+                                    </a> 
+                                    <a href="javascript:void(0);" 
+                                    data-url="{% url 'enroll_student_from_follow_up' followup.id  %}" 
+                                    class="btn btn-sm btn-outline-info"  
+                                    onclick="openCreateModal(this)">
+                                        <i class="bi bi-plus-circle me-1"></i> New Enrollment
+                                    </a>
+                                    <a href="{% url 'crm_delete_follow_up' followup.id %}" 
+                                    class="btn btn-sm btn-outline-danger btn-delete" 
+                                    title="Delete Follow-Up"
+                                    onclick="confirmDelete(this); return false;">
+                                        <i class="bi bi-trash"></i> <span class="d-none d-md-inline">Delete</span>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <i class="bi bi-inbox display-4 text-muted mb-3"></i>
                                 <h5>No follow-ups found</h5>
                                 <p class="text-muted">Try adjusting your filters or add a new follow-up</p>
@@ -791,7 +981,159 @@
 
 
 <script>
-        
+    const GRID_FILTER_STORAGE_KEY = 'crm_followup_grid_filter';
+    const PER_PAGE_STORAGE_KEY = 'crm_followup_per_page';
+    const COLUMN_STORAGE_KEY = 'crm_followup_column_visibility';
+
+    const DEFAULT_COLUMNS = {
+        'col-name': true,
+        'col-mobile': true,
+        'col-status': true,
+        'col-priority': true,
+        'col-next-followup': true,
+        'col-branch': true,
+        'col-followup-by': true,
+        'col-actions': true
+    };
+
+    function getColumnSettings() {
+        try {
+            const saved = localStorage.getItem(COLUMN_STORAGE_KEY);
+            if (saved) {
+                return Object.assign({}, DEFAULT_COLUMNS, JSON.parse(saved));
+            }
+        } catch (e) {
+            console.error('Error parsing column settings', e);
+        }
+        return Object.assign({}, DEFAULT_COLUMNS);
+    }
+
+    function applyColumnVisibility(settings) {
+        let css = '';
+        for (const [colClass, isVisible] of Object.entries(settings)) {
+            if (!isVisible) {
+                css += `.${colClass} { display: none !important; }\n`;
+            }
+            const checkbox = document.querySelector(`.col-toggle-checkbox[data-column="${colClass}"]`);
+            if (checkbox) {
+                checkbox.checked = isVisible;
+            }
+        }
+        let styleEl = document.getElementById('columnVisibilityStyles');
+        if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = 'columnVisibilityStyles';
+            document.head.appendChild(styleEl);
+        }
+        styleEl.textContent = css;
+    }
+
+    function toggleColumn(colClass, isVisible) {
+        const settings = getColumnSettings();
+        settings[colClass] = isVisible;
+        localStorage.setItem(COLUMN_STORAGE_KEY, JSON.stringify(settings));
+        applyColumnVisibility(settings);
+    }
+
+    function resetColumns() {
+        localStorage.removeItem(COLUMN_STORAGE_KEY);
+        applyColumnVisibility(DEFAULT_COLUMNS);
+    }
+
+    // Apply column settings immediately
+    applyColumnVisibility(getColumnSettings());
+
+    // Auto-restore cached grid filter and per_page if visiting without query params
+    (function initTableSettings() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let redirectNeeded = false;
+
+        // Grid filter
+        const urlGridFilter = urlParams.get('grid_filter');
+        const cachedFilter = localStorage.getItem(GRID_FILTER_STORAGE_KEY);
+        if (urlGridFilter) {
+            localStorage.setItem(GRID_FILTER_STORAGE_KEY, urlGridFilter);
+        } else if (cachedFilter && cachedFilter !== 'total_leads') {
+            urlParams.set('grid_filter', cachedFilter);
+            redirectNeeded = true;
+        }
+
+        // Per page
+        const urlPerPage = urlParams.get('per_page');
+        const cachedPerPage = localStorage.getItem(PER_PAGE_STORAGE_KEY);
+        if (urlPerPage) {
+            localStorage.setItem(PER_PAGE_STORAGE_KEY, urlPerPage);
+        } else if (cachedPerPage && cachedPerPage !== '10') {
+            urlParams.set('per_page', cachedPerPage);
+            redirectNeeded = true;
+        }
+
+        if (redirectNeeded) {
+            window.location.replace(window.location.pathname + '?' + urlParams.toString());
+        }
+    })();
+
+    // Function to change per_page
+    function changePerPage(value) {
+        localStorage.setItem(PER_PAGE_STORAGE_KEY, value);
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+    }
+
+    // Function to apply grid filter when a card is clicked
+    function applyGridFilter(filterType) {
+        const url = new URL(window.location.href);
+        const currentFilter = url.searchParams.get('grid_filter') || '';
+
+        let newFilter = filterType;
+        // If clicking on the already active filter (except total_leads), toggle back to total_leads
+        if (currentFilter === filterType && filterType !== 'total_leads') {
+            newFilter = 'total_leads';
+        }
+
+        // Save to browser cache
+        localStorage.setItem(GRID_FILTER_STORAGE_KEY, newFilter);
+
+        // Update URL query parameters
+        if (newFilter && newFilter !== 'total_leads') {
+            url.searchParams.set('grid_filter', newFilter);
+        } else {
+            url.searchParams.set('grid_filter', 'total_leads');
+        }
+
+        // Reset page to 1 on filter change
+        url.searchParams.delete('page');
+
+        window.location.href = url.toString();
+    }
+
+    // Function to sort table columns
+    function sortBy(field) {
+        const url = new URL(window.location.href);
+        const currentSort = url.searchParams.get('sort') || '';
+        const currentOrder = url.searchParams.get('order') || '';
+
+        let newOrder = 'asc';
+        if (currentSort === field) {
+            newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            newOrder = (field === 'next_followup') ? 'desc' : 'asc';
+        }
+
+        url.searchParams.set('sort', field);
+        url.searchParams.set('order', newOrder);
+        url.searchParams.delete('page');
+
+        window.location.href = url.toString();
+    }
+
+    // Function to clear filters and cache
+    function clearFiltersAndCache() {
+        localStorage.setItem(GRID_FILTER_STORAGE_KEY, 'total_leads');
+    }
+
     // Update Modal Function
     function openUpdateModal(element) {
         const url = element.dataset.url;
@@ -806,7 +1148,7 @@
             }, 500);
         }
         return false;
-}
+    }
 </script>     
 
 </main>
