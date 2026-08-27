@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, F
 from AdminApp.models import CRMFollowup
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from datetime import date, datetime
 from django.contrib import messages
 from .forms import BranchForm
@@ -187,8 +187,8 @@ def crm_follow_up_list(request):
     sort_order = request.GET.get('order', 'asc').strip()
     
     # Start with all follow-ups
-    followups = CRMFollowup.objects.all()
-    brances = Branch.objects.all()
+    followups = CRMFollowup.objects.all().select_related('branch', 'student_interested_for', 'follow_up_by')
+    branches = Branch.objects.all()
 
     # Apply search filter (name, mobile, notes, address, interest option)
     if search_query:
@@ -214,51 +214,56 @@ def crm_follow_up_list(request):
         followups = followups.filter(priority=priority_filter)
     
     if branch:
-        followups = followups.filter(branch=branch)
+        try:
+            branch_id = int(branch)
+            followups = followups.filter(branch_id=branch_id)
+        except (ValueError, TypeError):
+            followups = followups.filter(branch=branch)
     
     if address:
-        print("Address Filter Applied:", address)
         followups = followups.filter(address__icontains=address)
     
     if date_from:
         try:
-            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-            followups = followups.filter(follow_up_date__gte=date_from_obj)
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+            followups = followups.filter(
+                Q(follow_up_date__date__gte=date_from_obj) | Q(created_at__date__gte=date_from_obj)
+            )
         except ValueError:
             pass
     
     if date_to:
         try:
-            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
-            followups = followups.filter(follow_up_date__lte=date_to_obj)
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+            followups = followups.filter(
+                Q(follow_up_date__date__lte=date_to_obj) | Q(created_at__date__lte=date_to_obj)
+            )
         except ValueError:
             pass
     
     # Calculate stats
+    from django.utils import timezone
+    now = timezone.now()
+    today = date.today()
+
     total_leads = followups.count()
     high_priority = followups.filter(priority='high').count()
-    
-    # Get today's follow-ups
-    today = date.today()
     today_followups = followups.filter(
-        follow_up_date__date=today
+        Q(follow_up_date__date=today) | Q(next_followup_reminder__date=today)
     ).count()
-    
-    # Get pending follow-ups (where next_followup_reminder is in past)
-    from django.utils import timezone
     pending_followups = followups.filter(
-        next_followup_reminder__lt=timezone.now()
+        next_followup_reminder__lt=now
     ).count()
 
     # Apply grid filter
     if grid_filter == 'high_priority':
         followups = followups.filter(priority='high')
     elif grid_filter == 'pending_followups':
-        followups = followups.filter(
-            next_followup_reminder__lt=timezone.now()
-        )
+        followups = followups.filter(next_followup_reminder__lt=now)
     elif grid_filter == 'today_followups':
-        followups = followups.filter(follow_up_date__date=today)
+        followups = followups.filter(
+            Q(follow_up_date__date=today) | Q(next_followup_reminder__date=today)
+        )
     
     # Apply Sorting
     sort_map = {
@@ -278,13 +283,13 @@ def crm_follow_up_list(request):
         else:
             followups = followups.order_by(F(db_field).asc(nulls_last=True))
     else:
-        followups = followups.order_by('-follow_up_date')
+        followups = followups.order_by('-follow_up_date', '-id')
 
     # Add overdue flag to each followup
     for followup in followups:
-        followup.is_overdue = (
+        followup.is_overdue = bool(
             followup.next_followup_reminder and 
-            followup.next_followup_reminder < timezone.now()
+            followup.next_followup_reminder < now
         )
     
     # Pagination
@@ -315,10 +320,59 @@ def crm_follow_up_list(request):
         'per_page': per_page,
         'date_from': date_from,
         'date_to': date_to,
-        'branches': brances,
+        'branches': branches,
+        'status_choices': CRMFollowup.STATUS,
+        'priority_choices': CRMFollowup.PRIORITY_CHOICES,
     }
     
     return render(request, 'crm_follow_up_list.html', context)
+
+
+@login_required
+@has_a_auhtenticated_user
+def followup_suggestions_api(request):
+    """
+    Returns auto-suggestions for Name and Mobile number as the user types in the filter bar.
+    """
+    q = request.GET.get('q', '').strip()
+    if not q or len(q) < 1:
+        return JsonResponse({'suggestions': []})
+
+    import re
+    digits = re.sub(r'\D', '', q)
+    filter_q = (
+        Q(name__icontains=q) |
+        Q(mobile_number__icontains=q) |
+        Q(address__icontains=q) |
+        Q(student_interested_for__interest_option__icontains=q)
+    )
+    if digits:
+        filter_q |= Q(mobile_number__icontains=digits)
+        if len(digits) >= 10:
+            filter_q |= Q(mobile_number__icontains=digits[-10:])
+
+    qs = CRMFollowup.objects.filter(filter_q).select_related('branch', 'student_interested_for').order_by('-id')[:12]
+
+    results = []
+    seen = set()
+    for f in qs:
+        key = f"{f.name}_{f.mobile_number}"
+        if key not in seen:
+            seen.add(key)
+            results.append({
+                'id': f.id,
+                'name': f.name,
+                'mobile': f.mobile_number,
+                'status': f.status,
+                'status_display': f.get_status_display() or f.status,
+                'priority': f.priority,
+                'priority_display': f.get_priority_display() or f.priority,
+                'branch': f.branch.branch_name if f.branch else '',
+                'interest': f.student_interested_for.interest_option if f.student_interested_for else '',
+                'address': f.address or '',
+            })
+
+    return JsonResponse({'suggestions': results})
 
 
 @login_required

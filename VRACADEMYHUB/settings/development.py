@@ -61,8 +61,14 @@ LOGGING = {
 # RAZORPAY_KEY_SECRET = 'lWVYlpQE8ftiRcrmfv1M8arF'
 
 
-# Email (optional: console backend for dev)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email Configuration (SMTP with environment variable override)
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'prameshwar4378@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'rxfv klps utdv tiro')
+DEFAULT_FROM_EMAIL = f"VR Academy Hub <{EMAIL_HOST_USER}>"
 
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False

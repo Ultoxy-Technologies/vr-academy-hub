@@ -141,3 +141,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
 }
+
+# EMAIL DEFAULTS
+DEFAULT_FROM_EMAIL = 'VR Academy Hub <prameshwar4378@gmail.com>'
+SERVER_EMAIL = 'prameshwar4378@gmail.com'

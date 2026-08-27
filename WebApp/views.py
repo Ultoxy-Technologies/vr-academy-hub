@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from AdminApp.models import PasswordResetOTP,PhotoGalleryCategories,EventRegistration, PhotoGallery, VideoGallery,FreeCourse,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate,Event
 from django.contrib import messages
 from AdminApp.models import Enquiry
@@ -303,9 +304,13 @@ def login_user(request):
         else:
             messages.error(request, "Invalid mobile number or password.")
     else:
-        form = CustomUserLoginForm()
+        mobile_initial = request.GET.get('mobile', '').strip()
+        if mobile_initial:
+            form = CustomUserLoginForm(initial={'mobile_number': mobile_initial})
+        else:
+            form = CustomUserLoginForm()
     
-    return render(request, 'login.html',{'form': form})
+    return render(request, 'login.html', {'form': form})
 
 from django.contrib.auth import logout as DeleteSession
 
@@ -318,8 +323,8 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
-import datetime
-import threading  # ✅ Added for background email sending
+from datetime import datetime
+import threading
 
 User = get_user_model()
 
@@ -329,41 +334,51 @@ def send_password_forgat_email_in_background(subject, message, from_email, recip
 
     def send_async():
         try:
+            sender = from_email or getattr(settings, 'DEFAULT_FROM_EMAIL', 'vrtrainingacademy@gmail.com')
             email = EmailMessage(
                 subject=subject,
                 body=message,
-                from_email=from_email,
+                from_email=sender,
                 to=recipient_list,
             )
-            email.content_subtype = "html"  # ✅ ensure email renders HTML properly
-            email.send(fail_silently=False)
-            print(f"✅ Email sent successfully to {recipient_list[0]} in background.")
+            email.content_subtype = "html"
+            sent_count = email.send(fail_silently=False)
+            if sent_count:
+                print(f"[OK] Password reset email delivered to {recipient_list[0]} via SMTP.")
+            else:
+                print(f"[WARN] Email send returned 0 sent messages for {recipient_list[0]}.")
         except Exception as e:
-            print(f"❌ Error sending email: {e}")
+            print(f"[ERROR] Failed to deliver email to {recipient_list[0]}: {e}")
 
-    threading.Thread(target=send_async).start()  # run in background thread
+    thread = threading.Thread(target=send_async, daemon=True)
+    thread.start()
 
-
-
-
-    threading.Thread(target=send_async).start()
-from django.core.mail import EmailMessage
-from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from datetime import datetime
 
 # --- Password Reset View ---
 def request_password_reset(request):
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+        identifier = request.POST.get('email', '').strip()
+
+        if not identifier:
+            messages.error(request, 'Please enter your registered email address or mobile number.')
+            return render(request, 'request_password_reset.html')
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.filter(
+                Q(email__iexact=identifier) | Q(mobile_number=identifier)
+            ).first()
 
-            # Generate new OTP
+            if not user:
+                messages.error(request, f'No account found with "{identifier}". Please check and try again.')
+                return render(request, 'request_password_reset.html')
+
+            # Clean old OTPs & generate new OTP
+            PasswordResetOTP.objects.filter(user=user).delete()
             otp = PasswordResetOTP.generate_otp()
             PasswordResetOTP.objects.create(user=user, otp=otp)
+
+            target_email = user.email or identifier
+            current_year = timezone.now().year
 
             # Email content
             subject = "Your Password Reset OTP - VR Academy Hub"
@@ -371,36 +386,36 @@ def request_password_reset(request):
             <html>
             <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px 0;">
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" 
-                       style="max-width: 600px; background-color: #ffffff; border-radius: 10px; 
-                              overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                       style="max-width: 600px; background-color: #ffffff; border-radius: 12px; 
+                              overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
                     <tr>
-                        <td align="center" style="background-color: #2c7be5; padding: 20px 0;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">VR Academy Hub</h1>
+                        <td align="center" style="background: linear-gradient(135deg, #2563eb, #4f46e5); padding: 25px 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">VR Academy Hub</h1>
                         </td>
                     </tr>
 
                     <tr>
                         <td style="padding: 30px; color: #333333;">
-                            <p style="font-size: 16px;">Hello <strong>{user.name}</strong>,</p>
+                            <p style="font-size: 16px;">Hello <strong>{user.name or user.mobile_number}</strong>,</p>
 
                             <p style="font-size: 15px; line-height: 1.6;">
                                 We received a request to reset your password. Please use the One-Time Password (OTP) below to proceed:
                             </p>
 
                             <p style="text-align: center; margin: 30px 0;">
-                                <span style="display: inline-block; font-size: 28px; font-weight: bold; color: #2c7be5; 
-                                            background-color: #eef5ff; padding: 15px 40px; border-radius: 8px; 
-                                            letter-spacing: 3px;">
+                                <span style="display: inline-block; font-size: 30px; font-weight: 800; color: #2563eb; 
+                                            background-color: #eef2ff; border: 2px dashed #6366f1; padding: 14px 36px; border-radius: 10px; 
+                                            letter-spacing: 4px;">
                                     {otp}
                                 </span>
                             </p>
 
                             <p style="font-size: 14px; color: #555;">
-                                This code is valid for <strong>10 minutes</strong>.
+                                This code is valid for <strong>15 minutes</strong>.
                             </p>
 
                             <p style="font-size: 14px; color: #555;">
-                                Your username: <strong>{user.mobile_number}</strong>
+                                Your login username: <strong>{user.mobile_number}</strong>
                             </p>
 
                             <p style="font-size: 13px; color: #888; margin-top: 25px;">
@@ -416,8 +431,8 @@ def request_password_reset(request):
                     </tr>
 
                     <tr>
-                        <td align="center" style="background-color: #f1f3f5; padding: 15px; font-size: 12px; color: #999;">
-                            © {datetime.now().year} VR Academy Hub. All rights reserved.
+                        <td align="center" style="background-color: #f8fafc; padding: 15px; font-size: 12px; color: #94a3b8;">
+                            © {current_year} VR Academy Hub. All rights reserved.
                         </td>
                     </tr>
                 </table>
@@ -425,67 +440,93 @@ def request_password_reset(request):
             </html>
             """
 
-            # ✅ Send email in background (non-blocking & HTML formatted)
-            send_password_forgat_email_in_background(
-                subject=subject,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-            )
+            # Send email in background
+            if user.email:
+                send_password_forgat_email_in_background(
+                    subject=subject,
+                    message=message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'vrtrainingacademy@gmail.com'),
+                    recipient_list=[user.email],
+                )
 
-            messages.success(request, f"OTP has been sent to {email}")
-            print("✅ OTP sent successfully to email (in background).")
+            if getattr(settings, 'DEBUG', False):
+                messages.success(request, f"OTP has been generated for {target_email}. (Dev OTP: {otp})")
+            else:
+                messages.success(request, f"OTP has been sent to {target_email}. Please enter the OTP to reset your password.")
+
+            print(f"[OK] OTP {otp} generated for user {user.mobile_number} ({target_email})")
 
             # Redirect to reset password page
-            return redirect(f"/reset-password/?email={email}")
+            return redirect(f"/reset-password/?email={target_email}")
 
-        except User.DoesNotExist:
-            messages.error(request, 'No user found with this email.')
-            print("❌ No user found with this email.")
+        except Exception as e:
+            print(f"[ERROR] Error in request_password_reset: {e}")
+            messages.error(request, 'An error occurred while processing your request. Please try again.')
             return render(request, 'request_password_reset.html')
 
     return render(request, 'request_password_reset.html')
 
 
-
-
 def reset_password_with_otp(request):
-    print("Reset Password with OTP called.")
-    email = request.GET.get('email') or request.POST.get('email')
+    identifier = request.GET.get('email', '').strip() or request.POST.get('email', '').strip()
 
     if request.method == 'POST':
         otp = request.POST.get('otp', '').strip()
         new_password = request.POST.get('new_password', '').strip()
 
+        if not identifier:
+            messages.error(request, 'Email or Mobile number missing. Please request a new OTP.')
+            return redirect('/forgot-password/')
+
+        if not otp:
+            messages.error(request, 'Please enter the OTP.')
+            return render(request, 'reset_password.html', {'email': identifier})
+
+        if not new_password:
+            messages.error(request, 'Please enter a new password.')
+            return render(request, 'reset_password.html', {'email': identifier})
+
+        if len(new_password) < 4:
+            messages.error(request, 'Password must be at least 4 characters long.')
+            return render(request, 'reset_password.html', {'email': identifier})
+
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.filter(
+                Q(email__iexact=identifier) | Q(mobile_number=identifier)
+            ).first()
+
+            if not user:
+                messages.error(request, f'No user found for "{identifier}".')
+                return redirect('/forgot-password/')
+
             otp_entry = PasswordResetOTP.objects.filter(user=user, otp=otp).last()
 
             if not otp_entry:
-                print("Invalid OTP entered.")
-                messages.error(request, 'Invalid OTP. Please check your email and try again.')
-                return render(request, 'reset_password.html', {'email': email})
+                messages.error(request, 'Invalid OTP. Please check your OTP and try again.')
+                return render(request, 'reset_password.html', {'email': identifier})
 
-            if not otp_entry.is_valid():
-                print("OTP has expired.")
-                messages.error(request, 'OTP expired. Please request a new one.')
+            if not otp_entry.is_valid(minutes_valid=15):
+                messages.error(request, 'OTP has expired. Please request a new one.')
                 return redirect('/forgot-password/')
 
-            # ✅ OTP valid → reset password
+            # OTP is valid -> reset password
             user.set_password(new_password)
             user.save()
-            otp_entry.delete()
+            PasswordResetOTP.objects.filter(user=user).delete()
 
-            print("✅ Password reset successfully.")
-            messages.success(request, 'Your password has been reset successfully. You can now log in.')
-            return redirect('/login/')  # change to your actual login route
+            print(f"[OK] Password reset successfully for {user.mobile_number}.")
+            messages.success(
+                request,
+                f"Your password has been reset successfully! Your Login Username (Mobile Number) is: {user.mobile_number}. You can now log in."
+            )
+            return redirect(f"/login/?mobile={user.mobile_number}")
 
-        except User.DoesNotExist:
-            print("❌ No user found with this email.")
-            messages.error(request, 'No user found with this email.')
-            return redirect('/forgot-password/')
+        except Exception as e:
+            print(f"[ERROR] Error resetting password: {e}")
+            messages.error(request, 'An error occurred while resetting password. Please try again.')
+            return render(request, 'reset_password.html', {'email': identifier})
 
-    return render(request, 'reset_password.html', {'email': email})
+    return render(request, 'reset_password.html', {'email': identifier})
 
 
 from django.shortcuts import render, get_object_or_404 

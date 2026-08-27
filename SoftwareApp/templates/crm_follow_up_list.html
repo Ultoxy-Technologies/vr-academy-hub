@@ -267,6 +267,84 @@
         font-weight: 500;
     }
 
+    /* Auto Suggestions Dropdown Panel */
+    .suggestions-dropdown-panel {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 1050;
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        max-height: 380px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .suggestions-list-container {
+        overflow-y: auto;
+        max-height: 320px;
+    }
+
+    .suggestion-item {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .suggestion-item:hover, .suggestion-item.active {
+        background: #eef2ff;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #1e293b;
+    }
+
+    .suggestion-mobile {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .suggestion-meta {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .suggestion-highlight {
+        background-color: #fef08a;
+        color: #854d0e;
+        font-weight: 700;
+        border-radius: 2px;
+        padding: 0 2px;
+    }
+
+    .suggestion-spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        vertical-align: -0.125em;
+        border: 0.15em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: .75s linear infinite spinner-border;
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
         .table-modern {
@@ -516,61 +594,83 @@
                 <input type="hidden" name="sort" id="sortInput" value="{{ sort_field }}">
                 <input type="hidden" name="order" id="orderInput" value="{{ sort_order }}">
                 <div class="col-md-3">
-                    <label class="form-label">Status</label>
+                    <label class="form-label fw-semibold text-dark">Status</label>
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
-                        <option value="interested" {% if status_filter == 'interested' %}selected{% endif %}>Interested</option>
-                        <option value="planning" {% if status_filter == 'planning' %}selected{% endif %}>Planning</option>
-                        <option value="not_interested" {% if status_filter == 'not_interested' %}selected{% endif %}>Not Interested</option>
-                        <option value="class_joined" {% if status_filter == 'class_joined' %}selected{% endif %}>Class Joined</option>
+                        {% for val, label in status_choices %}
+                        <option value="{{ val }}" {% if status_filter == val or request.GET.status == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Priority</label>
+                    <label class="form-label fw-semibold text-dark">Priority</label>
                     <select name="priority" class="form-select">
-                        <option value="" {% if not priority_filter %}selected{% endif %}>All Priority</option>
-                        <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>High</option>
-                        <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
-                        <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
+                        <option value="" {% if not priority_filter and not request.GET.priority %}selected{% endif %}>All Priority</option>
+                        {% for val, label in priority_choices %}
+                        <option value="{{ val }}" {% if priority_filter == val or request.GET.priority == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Branch</label>
+                    <label class="form-label fw-semibold text-dark">Branch</label>
                     <select name="branch" class="form-select">
                         <option value="" selected>All Branches</option>
-                        {% for branch in branches  %}
-                        <option value="{{branch.id}}" {% if request.GET.branch == branch.id|stringformat:"s" %}selected{% endif %}>{{branch.branch_name}}</option> 
+                        {% for branch_item in branches %}
+                        <option value="{{ branch_item.id }}" {% if request.GET.branch == branch_item.id|stringformat:"s" %}selected{% endif %}>{{ branch_item.branch_name }}</option> 
                         {% endfor %}
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Address</label>
-                     <input type="text" name="address" placeholder="Search address..." class="form-control"  value="{{ request.GET.address }}">
+                    <label class="form-label fw-semibold text-dark">Address</label>
+                    <input type="text" name="address" placeholder="Search address..." class="form-control" value="{{ request.GET.address }}">
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Date From</label>
+                    <label class="form-label fw-semibold text-dark">Date From</label>
                     <input type="date" name="date_from" class="form-control" value="{{ request.GET.date_from }}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Date To</label>
+                    <label class="form-label fw-semibold text-dark">Date To</label>
                     <input type="date" name="date_to" class="form-control" value="{{ request.GET.date_to }}">
                 </div>
                 
-                <div class="col-md-3">
-                    <label class="form-label">Name or Mobile</label>
-                     <input type="text" name="search" placeholder="Search by name or mobile..." class="form-control"  value="{{ request.GET.search|default:search_query }}">
+                <!-- Name or Mobile with Auto Suggestions -->
+                <div class="col-md-3 position-relative" id="searchAutoSuggestWrapper">
+                    <label class="form-label fw-semibold text-dark">Name or Mobile</label>
+                    <div class="input-group">
+                        <input type="text" 
+                               name="search" 
+                               id="followupSearchInput"
+                               placeholder="Search by name or mobile..." 
+                               class="form-control"  
+                               value="{{ request.GET.search|default:search_query }}"
+                               autocomplete="off">
+                        {% if request.GET.search or search_query %}
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearSearchInput()" title="Clear search">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <!-- Auto Suggestion Dropdown Panel -->
+                    <div id="searchSuggestionsDropdown" class="suggestions-dropdown-panel d-none">
+                        <div class="suggestions-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                            <span class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;"><i class="bi bi-person-lines-fill me-1 text-primary"></i> Suggestions</span>
+                            <span id="suggestionsCountBadge" class="badge bg-primary rounded-pill" style="font-size: 0.7rem;">0</span>
+                        </div>
+                        <div id="suggestionsList" class="suggestions-list-container">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
                 </div>
 
-                <div class="col-md-3 d-flex justify-content-between"> 
-                    <div>
-                    <br>
-                        <button type="submit" class="btn btn-action btn-filter me-2">
+                <div class="col-md-3 d-flex align-items-end"> 
+                    <div class="w-100 d-flex gap-2">
+                        <button type="submit" class="btn btn-action btn-filter flex-grow-1">
                             <i class="bi bi-funnel me-1"></i> Apply Filters
                         </button>
-                        <a href="{% url 'crm_follow_up_list' %}?grid_filter=total_leads&per_page={{ per_page }}" onclick="clearFiltersAndCache()" class="btn btn-light">
+                        <a href="{% url 'crm_follow_up_list' %}?grid_filter=total_leads" onclick="clearFiltersAndCache()" class="btn btn-light border px-3" title="Clear all filters">
                             <i class="bi bi-x-circle me-1"></i> Clear
                         </a>
                     </div>
@@ -1043,39 +1143,185 @@
     // Apply column settings immediately
     applyColumnVisibility(getColumnSettings());
 
-    // Auto-restore cached grid filter and per_page if visiting without query params
-    (function initTableSettings() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let redirectNeeded = false;
+    // ==========================================
+    // AUTO SUGGESTIONS FOR NAME & MOBILE FILTER
+    // ==========================================
+    const searchInput = document.getElementById('followupSearchInput');
+    const suggestionsDropdown = document.getElementById('searchSuggestionsDropdown');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const suggestionsCountBadge = document.getElementById('suggestionsCountBadge');
+    let debounceTimer = null;
+    let selectedSuggestionIndex = -1;
+    let currentSuggestions = [];
 
-        // Grid filter
-        const urlGridFilter = urlParams.get('grid_filter');
-        const cachedFilter = localStorage.getItem(GRID_FILTER_STORAGE_KEY);
-        if (urlGridFilter) {
-            localStorage.setItem(GRID_FILTER_STORAGE_KEY, urlGridFilter);
-        } else if (cachedFilter && cachedFilter !== 'total_leads') {
-            urlParams.set('grid_filter', cachedFilter);
-            redirectNeeded = true;
+    function clearSearchInput() {
+        if (searchInput) {
+            searchInput.value = '';
+            closeSuggestions();
+            document.getElementById('crmFilterForm').submit();
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function highlightMatch(text, query) {
+        if (!text || !query) return escapeHtml(text);
+        const safeText = escapeHtml(text);
+        const safeQuery = escapeHtml(query);
+        const regex = new RegExp(`(${safeQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return safeText.replace(regex, '<span class="suggestion-highlight">$1</span>');
+    }
+
+    function getStatusBadgeHtml(status, label) {
+        const s = (status || '').toLowerCase();
+        let bgClass = 'bg-secondary';
+        if (s === 'interested') bgClass = 'bg-success';
+        else if (s === 'planning') bgClass = 'bg-primary';
+        else if (s === 'under_review') bgClass = 'bg-warning text-dark';
+        else if (s === 'class_joined' || s === 'class_completed') bgClass = 'bg-info text-dark';
+        else if (s === 'not_interested') bgClass = 'bg-danger';
+        return `<span class="badge ${bgClass}" style="font-size: 0.72rem; font-weight: 600;">${escapeHtml(label || status)}</span>`;
+    }
+
+    function renderSuggestions(suggestions, query) {
+        currentSuggestions = suggestions;
+        selectedSuggestionIndex = -1;
+
+        if (!suggestions || suggestions.length === 0) {
+            suggestionsCountBadge.textContent = '0';
+            suggestionsList.innerHTML = `
+                <div class="p-3 text-center text-muted" style="font-size: 0.85rem;">
+                    <i class="bi bi-search me-1"></i> No matching leads found for "<strong>${escapeHtml(query)}</strong>"
+                </div>
+            `;
+            suggestionsDropdown.classList.remove('d-none');
+            return;
         }
 
-        // Per page
-        const urlPerPage = urlParams.get('per_page');
-        const cachedPerPage = localStorage.getItem(PER_PAGE_STORAGE_KEY);
-        if (urlPerPage) {
-            localStorage.setItem(PER_PAGE_STORAGE_KEY, urlPerPage);
-        } else if (cachedPerPage && cachedPerPage !== '10') {
-            urlParams.set('per_page', cachedPerPage);
-            redirectNeeded = true;
-        }
+        suggestionsCountBadge.textContent = suggestions.length;
+        let html = '';
+        suggestions.forEach((item, index) => {
+            const highlightedName = highlightMatch(item.name, query);
+            const highlightedMobile = highlightMatch(item.mobile, query);
+            const statusBadge = getStatusBadgeHtml(item.status, item.status_display);
+            const metaInfo = [item.branch, item.interest].filter(Boolean).map(escapeHtml).join(' • ');
 
-        if (redirectNeeded) {
-            window.location.replace(window.location.pathname + '?' + urlParams.toString());
+            html += `
+                <div class="suggestion-item" data-index="${index}" onclick="selectSuggestion(${index})">
+                    <div class="d-flex flex-column">
+                        <div class="suggestion-name">${highlightedName}</div>
+                        <div class="suggestion-mobile">
+                            <i class="bi bi-telephone-fill text-muted me-1" style="font-size: 0.72rem;"></i>${highlightedMobile}
+                            ${metaInfo ? `<span class="ms-2 text-muted" style="font-size: 0.75rem;">(${metaInfo})</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="suggestion-meta">
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        });
+
+        suggestionsList.innerHTML = html;
+        suggestionsDropdown.classList.remove('d-none');
+    }
+
+    function selectSuggestion(index) {
+        if (index >= 0 && index < currentSuggestions.length) {
+            const item = currentSuggestions[index];
+            searchInput.value = item.name || item.mobile;
+            closeSuggestions();
+            document.getElementById('crmFilterForm').submit();
         }
-    })();
+    }
+
+    function closeSuggestions() {
+        if (suggestionsDropdown) {
+            suggestionsDropdown.classList.add('d-none');
+            selectedSuggestionIndex = -1;
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < 1) {
+                closeSuggestions();
+                return;
+            }
+
+            suggestionsDropdown.classList.remove('d-none');
+            suggestionsCountBadge.innerHTML = '<span class="suggestion-spinner"></span>';
+            suggestionsList.innerHTML = `
+                <div class="p-3 text-center text-muted" style="font-size: 0.85rem;">
+                    <span class="suggestion-spinner me-2 text-primary"></span> Searching leads...
+                </div>
+            `;
+
+            debounceTimer = setTimeout(() => {
+                fetch(`{% url 'followup_suggestions_api' %}?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        renderSuggestions(data.suggestions || [], query);
+                    })
+                    .catch(err => {
+                        console.error('Error fetching suggestions:', err);
+                        closeSuggestions();
+                    });
+            }, 180);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (suggestionsDropdown.classList.contains('d-none')) return;
+
+            const items = suggestionsList.querySelectorAll('.suggestion-item');
+            if (!items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+                updateSuggestionHighlight(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length;
+                updateSuggestionHighlight(items);
+            } else if (e.key === 'Enter') {
+                if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < currentSuggestions.length) {
+                    e.preventDefault();
+                    selectSuggestion(selectedSuggestionIndex);
+                }
+            } else if (e.key === 'Escape') {
+                closeSuggestions();
+            }
+        });
+    }
+
+    function updateSuggestionHighlight(items) {
+        items.forEach((el, idx) => {
+            if (idx === selectedSuggestionIndex) {
+                el.classList.add('active');
+                el.scrollIntoView({ block: 'nearest' });
+            } else {
+                el.classList.remove('active');
+            }
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('searchAutoSuggestWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeSuggestions();
+        }
+    });
 
     // Function to change per_page
     function changePerPage(value) {
-        localStorage.setItem(PER_PAGE_STORAGE_KEY, value);
         const url = new URL(window.location.href);
         url.searchParams.set('per_page', value);
         url.searchParams.delete('page');
@@ -1088,24 +1334,17 @@
         const currentFilter = url.searchParams.get('grid_filter') || '';
 
         let newFilter = filterType;
-        // If clicking on the already active filter (except total_leads), toggle back to total_leads
         if (currentFilter === filterType && filterType !== 'total_leads') {
             newFilter = 'total_leads';
         }
 
-        // Save to browser cache
-        localStorage.setItem(GRID_FILTER_STORAGE_KEY, newFilter);
-
-        // Update URL query parameters
         if (newFilter && newFilter !== 'total_leads') {
             url.searchParams.set('grid_filter', newFilter);
         } else {
-            url.searchParams.set('grid_filter', 'total_leads');
+            url.searchParams.delete('grid_filter');
         }
 
-        // Reset page to 1 on filter change
         url.searchParams.delete('page');
-
         window.location.href = url.toString();
     }
 
@@ -1131,7 +1370,7 @@
 
     // Function to clear filters and cache
     function clearFiltersAndCache() {
-        localStorage.setItem(GRID_FILTER_STORAGE_KEY, 'total_leads');
+        if (searchInput) searchInput.value = '';
     }
 
     // Update Modal Function

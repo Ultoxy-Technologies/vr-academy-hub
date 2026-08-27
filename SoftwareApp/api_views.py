@@ -161,8 +161,54 @@ class ForgotPasswordRequestOTPAPIView(views.APIView):
         otp_code = PasswordResetOTP.generate_otp(length=6)
         PasswordResetOTP.objects.create(user=user, otp=otp_code)
 
+        if user.email:
+            from WebApp.views import send_password_forgat_email_in_background
+            subject = "Your Password Reset OTP - VR Academy Hub"
+            message = f"""
+            <html>
+            <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px 0;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" 
+                       style="max-width: 600px; background-color: #ffffff; border-radius: 12px; 
+                              overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <tr>
+                        <td align="center" style="background: linear-gradient(135deg, #2563eb, #4f46e5); padding: 25px 0;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">VR Academy Hub</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px; color: #333333;">
+                            <p style="font-size: 16px;">Hello <strong>{user.name or user.mobile_number}</strong>,</p>
+                            <p style="font-size: 15px; line-height: 1.6;">
+                                We received a request to reset your password. Please use the One-Time Password (OTP) below to proceed:
+                            </p>
+                            <p style="text-align: center; margin: 30px 0;">
+                                <span style="display: inline-block; font-size: 30px; font-weight: 800; color: #2563eb; 
+                                            background-color: #eef2ff; border: 2px dashed #6366f1; padding: 14px 36px; border-radius: 10px; 
+                                            letter-spacing: 4px;">
+                                    {otp_code}
+                                </span>
+                            </p>
+                            <p style="font-size: 14px; color: #555;">
+                                This code is valid for <strong>15 minutes</strong>.
+                            </p>
+                            <p style="font-size: 14px; color: #555;">
+                                Your login username: <strong>{user.mobile_number}</strong>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            """
+            send_password_forgat_email_in_background(
+                subject=subject,
+                message=message,
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'vrtrainingacademy@gmail.com'),
+                recipient_list=[user.email],
+            )
+
         return Response({
-            'message': 'Password reset OTP generated successfully.',
+            'message': f'Password reset OTP sent to {user.email or identifier}.',
             'identifier': identifier,
             'otp_debug': otp_code,
         })
@@ -247,15 +293,19 @@ def apply_followup_filters(queryset, params):
 
     if date_from:
         try:
-            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-            queryset = queryset.filter(follow_up_date__gte=date_from_obj)
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+            queryset = queryset.filter(
+                Q(follow_up_date__date__gte=date_from_obj) | Q(created_at__date__gte=date_from_obj)
+            )
         except ValueError:
             pass
 
     if date_to:
         try:
-            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
-            queryset = queryset.filter(follow_up_date__lte=date_to_obj)
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+            queryset = queryset.filter(
+                Q(follow_up_date__date__lte=date_to_obj) | Q(created_at__date__lte=date_to_obj)
+            )
         except ValueError:
             pass
 
