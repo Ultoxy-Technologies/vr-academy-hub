@@ -41,17 +41,61 @@ class EnquiryAdmin(admin.ModelAdmin):
 
 
 # -----------------------------
-# Custome user 
+# Custom user 
 # -----------------------------
-from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['name', 'mobile_number', 'email', 'role', 'is_active']
-    list_filter = ['role', 'is_active']
+class CustomUserAdmin(UserAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
+    model = CustomUser
+
+    list_display = ['name', 'mobile_number', 'email', 'role', 'is_active', 'is_staff']
+    list_filter = ['role', 'is_active', 'is_staff', 'is_superuser']
     search_fields = ['name', 'mobile_number', 'email']
     ordering = ['-date_joined']
-    
+
+    fieldsets = (
+        (None, {'fields': ('mobile_number', 'password')}),
+        ('Personal Info', {
+            'fields': (
+                'name',
+                'email',
+                'role',
+                'dob',
+                'dist',
+                'taluka',
+                'village',
+                'action',
+            )
+        }),
+        ('Permissions', {
+            'fields': (
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Important Dates', {
+            'fields': ('last_login', 'date_joined'),
+            'classes': ('collapse',),
+        }),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('mobile_number', 'name', 'email', 'role', 'password1', 'password2'),
+        }),
+    )
+
+    filter_horizontal = ('groups', 'user_permissions')
+
     def activate_users(self, request, queryset):
         queryset.update(is_active=True)
     activate_users.short_description = "Activate selected users"

@@ -28,6 +28,8 @@ from django.views.i18n import set_language
 urlpatterns = [
     # 🌐 Language switching endpoint
     path('i18n/', include('django.conf.urls.i18n')),
+    # 🚀 Mobile & Client REST API
+    path('api/', include('SoftwareApp.api_urls')),
 ]
 
 # 🌍 Add language-based URL patterns (this allows URLs like /en/, /hi/, /mr/)

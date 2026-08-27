@@ -175,28 +175,37 @@ def crm_software_dashboard(request):
 @has_a_auhtenticated_user
 def crm_follow_up_list(request):
     # Get filter parameters
-    search_query = request.GET.get('search', '')
-    status_filter = request.GET.get('status', '')
-    priority_filter = request.GET.get('priority', '')
-    date_from = request.GET.get('date_from', '')
-    date_to = request.GET.get('date_to', '')
-    branch = request.GET.get('branch', '')
-    address = request.GET.get('address', '')
-    grid_filter = request.GET.get('grid_filter', '')
-    sort_field = request.GET.get('sort', '')
-    sort_order = request.GET.get('order', 'asc')
+    search_query = request.GET.get('search', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+    priority_filter = request.GET.get('priority', '').strip()
+    date_from = request.GET.get('date_from', '').strip()
+    date_to = request.GET.get('date_to', '').strip()
+    branch = request.GET.get('branch', '').strip()
+    address = request.GET.get('address', '').strip()
+    grid_filter = request.GET.get('grid_filter', '').strip()
+    sort_field = request.GET.get('sort', '').strip()
+    sort_order = request.GET.get('order', 'asc').strip()
     
     # Start with all follow-ups
     followups = CRMFollowup.objects.all()
-    brances=Branch.objects.all()
-    # Apply filters
+    brances = Branch.objects.all()
+
+    # Apply search filter (name, mobile, notes, address, interest option)
     if search_query:
-        followups = followups.filter(
+        import re
+        digits = re.sub(r'\D', '', search_query)
+        search_filter = (
             Q(name__icontains=search_query) |
             Q(mobile_number__icontains=search_query) |
             Q(follow_up_notes__icontains=search_query) |
-            Q(address__icontains=search_query) 
+            Q(address__icontains=search_query) |
+            Q(student_interested_for__interest_option__icontains=search_query)
         )
+        if digits:
+            search_filter |= Q(mobile_number__icontains=digits)
+            if len(digits) >= 10:
+                search_filter |= Q(mobile_number__icontains=digits[-10:])
+        followups = followups.filter(search_filter)
     
     if status_filter:
         followups = followups.filter(status=status_filter)
@@ -208,7 +217,7 @@ def crm_follow_up_list(request):
         followups = followups.filter(branch=branch)
     
     if address:
-        print( "Address Filter Applied:", address)
+        print("Address Filter Applied:", address)
         followups = followups.filter(address__icontains=address)
     
     if date_from:
@@ -238,8 +247,7 @@ def crm_follow_up_list(request):
     # Get pending follow-ups (where next_followup_reminder is in past)
     from django.utils import timezone
     pending_followups = followups.filter(
-        next_followup_reminder__lt=timezone.now(),
-        status__in=['interested', 'planning', 'under_review']
+        next_followup_reminder__lt=timezone.now()
     ).count()
 
     # Apply grid filter
@@ -247,8 +255,7 @@ def crm_follow_up_list(request):
         followups = followups.filter(priority='high')
     elif grid_filter == 'pending_followups':
         followups = followups.filter(
-            next_followup_reminder__lt=timezone.now(),
-            status__in=['interested', 'planning', 'under_review']
+            next_followup_reminder__lt=timezone.now()
         )
     elif grid_filter == 'today_followups':
         followups = followups.filter(follow_up_date__date=today)
