@@ -121,14 +121,16 @@ class Enquiry(models.Model):
     phone = models.CharField(max_length=15)
     email = models.EmailField()
     message = models.TextField()
-    submitted_at = models.DateTimeField(auto_now_add=True)
+    submitted_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     remark = models.TextField(blank=True, null=True)
     is_added_in_CRMFollowup_model = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = "Enquiry"
+        verbose_name_plural = "Enquiries"
+
     def __str__(self):
-        name = self.full_name or "Anonymous"
-        email = self.email or "No Email"
-        return f"{name} ({email})"
+        return f"{self.full_name or 'Enquiry'} ({self.email or self.phone or ''})"
 
 
 # Create your models here.

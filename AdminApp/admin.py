@@ -7,38 +7,9 @@ from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUs
 
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'phone', 'email', 'submitted_at_display', 'is_added_in_CRMFollowup_model')
-    list_display_links = ('id', 'full_name')
-    list_per_page = 25
-    ordering = ('-submitted_at',)
-    search_fields = ('full_name', 'email', 'phone', 'remark')
-    list_filter = ('is_added_in_CRMFollowup_model',)
+    list_display = ['id', 'full_name', 'phone', 'email']
+    search_fields = ['full_name', 'phone', 'email']
 
-    fieldsets = (
-        ('Enquiry Details', {
-            'fields': ('full_name', 'phone', 'email', 'message')
-        }),
-        ('Admin Notes', {
-            'fields': ('remark',),
-            'classes': ('collapse',),
-        }),
-        ('System Information', {
-            'fields': ('submitted_at', 'is_added_in_CRMFollowup_model'),
-            'classes': ('collapse',),
-        }),
-    )
-
-    readonly_fields = ('submitted_at',)
-
-    def submitted_at_display(self, obj):
-        if obj.submitted_at:
-            return obj.submitted_at.strftime('%d-%m-%Y %I:%M %p')
-        return "-"
-    submitted_at_display.short_description = "Submitted At"
-    submitted_at_display.admin_order_field = 'submitted_at'
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).order_by('-submitted_at')
 
 
 
