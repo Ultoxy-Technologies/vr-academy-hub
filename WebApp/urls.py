@@ -21,5 +21,6 @@ urlpatterns = [
     path('create-order/<int:event_id>/', create_razorpay_order, name='create_order'),
 
     path('events/', event_list, name='event_list'),
+    path('captcha/refresh/', refresh_enquiry_captcha, name='refresh_enquiry_captcha'),
     
 ]

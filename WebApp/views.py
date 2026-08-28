@@ -42,27 +42,90 @@ import threading
 
 
 # --- Function to send email in background ---
+import random
+from django.http import JsonResponse
+
+# --- Helper to Generate Math & Anti-Bot CAPTCHA ---
+def generate_captcha(request):
+    """Generate random arithmetic challenge and store solution in session."""
+    ops = [('+', lambda a, b: a + b), ('-', lambda a, b: a - b), ('×', lambda a, b: a * b)]
+    op_symbol, op_func = random.choice(ops)
+    if op_symbol == '×':
+        num1 = random.randint(2, 9)
+        num2 = random.randint(2, 9)
+    elif op_symbol == '-':
+        num1 = random.randint(10, 30)
+        num2 = random.randint(1, num1)
+    else:
+        num1 = random.randint(5, 30)
+        num2 = random.randint(1, 25)
+
+    answer = op_func(num1, num2)
+    question = f"{num1} {op_symbol} {num2}"
+    request.session['enquiry_captcha_answer'] = str(answer)
+    request.session.modified = True
+    return question
+
+
+def refresh_enquiry_captcha(request):
+    """AJAX endpoint to generate a fresh CAPTCHA without page reload."""
+    question = generate_captcha(request)
+    return JsonResponse({'status': 'success', 'question': question})
+
+
+# --- Function to send email in background ---
 def send_email_in_background(email_message):
     try:
-        email_message.send()
+        email_message.send(fail_silently=True)
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(f"[ERROR] Error sending enquiry email: {e}")
 
 
-# --- Contact Form View ---
+# --- Contact Form View with CAPTCHA & Anti-Bot Honeypot ---
 def contact_us(request):
     if request.method == "POST":
+        # 1. Honeypot check (hidden field to trap spam bots)
+        honeypot = request.POST.get("hp_check", "").strip()
+        if honeypot:
+            messages.error(request, "Spam detected.")
+            return redirect("/contact-us")
+
         name = request.POST.get("name", "").strip()
         phone = request.POST.get("phone", "").strip()
         email = request.POST.get("email", "").strip()
         message_text = request.POST.get("message", "").strip()
+        captcha_input = request.POST.get("captcha", "").strip()
+        session_captcha = str(request.session.get("enquiry_captcha_answer", "")).strip()
 
-        # Basic validation
+        form_data = {
+            'name': name,
+            'phone': phone,
+            'email': email,
+            'message': message_text,
+        }
+
+        # 2. CAPTCHA validation
+        if not captcha_input or captcha_input != session_captcha:
+            messages.error(request, "Incorrect Security CAPTCHA answer. Please solve the challenge and try again.")
+            new_question = generate_captcha(request)
+            return render(request, 'contact_us.html', {
+                'form_data': form_data,
+                'captcha_question': new_question,
+            })
+
+        # 3. Basic validation
         if not all([name, phone, email, message_text]):
             messages.error(request, "All fields are required.")
-            return redirect("/contact-us")
+            new_question = generate_captcha(request)
+            return render(request, 'contact_us.html', {
+                'form_data': form_data,
+                'captcha_question': new_question,
+            })
 
-        # Save to database
+        # 4. Invalidate used CAPTCHA
+        request.session.pop('enquiry_captcha_answer', None)
+
+        # 5. Save to database
         enquiry = Enquiry.objects.create(
             full_name=name,
             phone=phone,
@@ -70,7 +133,7 @@ def contact_us(request):
             message=message_text
         )
 
-        # Send email notification
+        # 6. Send email notification
         try:
             subject = "📩 New Enquiry Received from Website"
             current_datetime = datetime.now().strftime("%d %B %Y, %I:%M %p")
@@ -84,27 +147,29 @@ def contact_us(request):
                 'submitted_on': current_datetime
             })
 
+            target_email = getattr(settings, 'EMAIL_HOST_USER', 'prameshwar4378@gmail.com')
             email_message = EmailMessage(
                 subject=subject,
                 body=email_body,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=['prameshwar4378@gmail.com'],  # Change to admin or target email
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', target_email),
+                to=[target_email],
             )
             email_message.content_subtype = 'html'
 
             # Send asynchronously
-            threading.Thread(target=send_email_in_background, args=(email_message,)).start()
+            threading.Thread(target=send_email_in_background, args=(email_message,), daemon=True).start()
 
             messages.success(request, "Thank you! Your enquiry has been submitted successfully.")
             return redirect("/contact-us")
 
         except Exception as e:
-            print(f"Email Error: {e}")
+            print(f"[ERROR] Enquiry Email Notification Error: {e}")
             messages.error(request, "Your enquiry was saved, but email notification failed.")
             return redirect("/contact-us")
 
-    # GET request → render contact form
-    return render(request, 'contact_us.html')
+    # GET request → render contact form with fresh CAPTCHA
+    captcha_question = generate_captcha(request)
+    return render(request, 'contact_us.html', {'captcha_question': captcha_question})
 
 
 
