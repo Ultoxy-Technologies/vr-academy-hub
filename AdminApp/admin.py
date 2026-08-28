@@ -7,34 +7,36 @@ from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUs
 
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
-    # Simple list view - Remove 'has_remark' from list_display
-    list_display = ['id', 'full_name', 'phone', 'email', 'submitted_at']
-    list_display_links = ['id', 'full_name']
-    list_per_page = 20
-    ordering = ['-submitted_at']
-    search_fields = ['full_name', 'email', 'phone']
-    
-    # Add list_filter if needed (commented out for now to debug)
-    # list_filter = ['submitted_at']
+    list_display = ('id', 'full_name', 'phone', 'email', 'submitted_at_display', 'is_added_in_CRMFollowup_model')
+    list_display_links = ('id', 'full_name')
+    list_per_page = 25
+    ordering = ('-submitted_at',)
+    search_fields = ('full_name', 'email', 'phone', 'remark')
+    list_filter = ('is_added_in_CRMFollowup_model',)
 
-    # Simple fields organization
-    fieldsets = [
+    fieldsets = (
         ('Enquiry Details', {
-            'fields': ['full_name', 'phone', 'email', 'message']
+            'fields': ('full_name', 'phone', 'email', 'message')
         }),
         ('Admin Notes', {
-            'fields': ['remark'],
-            'classes': ['collapse']
+            'fields': ('remark',),
+            'classes': ('collapse',),
         }),
         ('System Information', {
-            'fields': ['submitted_at', 'is_added_in_CRMFollowup_model'],
-            'classes': ['collapse']
+            'fields': ('submitted_at', 'is_added_in_CRMFollowup_model'),
+            'classes': ('collapse',),
         }),
-    ]
+    )
 
-    # Read-only fields
-    readonly_fields = ['submitted_at']
- 
+    readonly_fields = ('submitted_at',)
+
+    def submitted_at_display(self, obj):
+        if obj.submitted_at:
+            return obj.submitted_at.strftime('%d-%m-%Y %I:%M %p')
+        return "-"
+    submitted_at_display.short_description = "Submitted At"
+    submitted_at_display.admin_order_field = 'submitted_at'
+
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('-submitted_at')
 
@@ -56,6 +58,9 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ['role', 'is_active', 'is_staff', 'is_superuser']
     search_fields = ['name', 'mobile_number', 'email']
     ordering = ['-date_joined']
+
+    def get_ordering(self, request):
+        return ['-date_joined']
 
     fieldsets = (
         (None, {'fields': ('mobile_number', 'password')}),

@@ -126,7 +126,9 @@ class Enquiry(models.Model):
     is_added_in_CRMFollowup_model = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.full_name} ({self.email})"
+        name = self.full_name or "Anonymous"
+        email = self.email or "No Email"
+        return f"{name} ({email})"
 
 
 # Create your models here.
