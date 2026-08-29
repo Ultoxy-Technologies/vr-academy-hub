@@ -17,6 +17,12 @@ from .api_views import (
     LoginAPIView,
     UserProfileAPIView,
 )
+from .report_views import (
+    AvailableReportsCatalogAPIView,
+    DailyCallingAgendaAPIView,
+    CounselorPerformanceAPIView,
+    BranchFunnelReportAPIView,
+)
 
 urlpatterns = [
     # Auth & Profile
@@ -42,4 +48,10 @@ urlpatterns = [
     # Enquiries
     path('crm/enquiries/', EnquiryListAPIView.as_view(), name='api_crm_enquiries'),
     path('crm/enquiries/<int:pk>/convert/', EnquiryConvertToFollowupAPIView.as_view(), name='api_crm_enquiry_convert'),
+
+    # Reports & Sales Performance (RBAC Scoped)
+    path('crm/reports/catalog/', AvailableReportsCatalogAPIView.as_view(), name='api_crm_reports_catalog'),
+    path('crm/reports/agenda/', DailyCallingAgendaAPIView.as_view(), name='api_crm_reports_agenda'),
+    path('crm/reports/performance/', CounselorPerformanceAPIView.as_view(), name='api_crm_reports_performance'),
+    path('crm/reports/branch-funnel/', BranchFunnelReportAPIView.as_view(), name='api_crm_reports_branch_funnel'),
 ]
