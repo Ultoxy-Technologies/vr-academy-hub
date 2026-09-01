@@ -70,7 +70,7 @@ class LoginAPIView(views.APIView):
             )
 
         refresh = RefreshToken.for_user(user)
-        user_data = UserProfileSerializer(user).data
+        user_data = UserProfileSerializer(user, context={'request': request}).data
 
         return Response({
             'access': str(refresh.access_token),
@@ -83,7 +83,7 @@ class CurrentUserAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = UserProfileSerializer(request.user)
+        serializer = UserProfileSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
 
@@ -95,11 +95,11 @@ class UserProfileAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = UserProfileSerializer(request.user)
+        serializer = UserProfileSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
     def patch(self, request):
-        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        serializer = UserProfileSerializer(request.user, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

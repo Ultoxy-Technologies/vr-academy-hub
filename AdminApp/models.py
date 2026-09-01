@@ -60,6 +60,7 @@ class CustomUser(AbstractUser):
 
     username = None
     name = models.CharField(max_length=150)
+    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True, verbose_name='Profile Image')
     dob = models.DateField(verbose_name='Date of Birth', null=True, blank=True)
     dist = models.CharField(max_length=100)
     taluka = models.CharField(max_length=100)

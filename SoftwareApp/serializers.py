@@ -9,11 +9,12 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     role_display = serializers.CharField(source='get_role_display', read_only=True)
+    profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'role', 'role_display', 'name', 'mobile_number',
+            'id', 'email', 'role', 'role_display', 'name', 'profile_image', 'mobile_number',
             'dob', 'dist', 'taluka', 'village', 'is_active', 'is_staff', 'is_superuser',
             'date_joined', 'last_login', 'full_name'
         ]
@@ -24,12 +25,24 @@ class UserSerializer(serializers.ModelSerializer):
             name = f"{getattr(obj, 'first_name', '')} {getattr(obj, 'last_name', '')}".strip()
         return name if name else getattr(obj, 'mobile_number', str(obj))
 
+    def get_profile_image(self, obj):
+        if hasattr(obj, 'profile_image') and obj.profile_image:
+            try:
+                request = self.context.get('request')
+                if request is not None:
+                    return request.build_absolute_uri(obj.profile_image.url)
+                return obj.profile_image.url
+            except Exception:
+                return None
+        return None
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     role_display = serializers.CharField(source='get_role_display', read_only=True)
     assigned_leads_count = serializers.SerializerMethodField()
     recorded_followups_count = serializers.SerializerMethodField()
+    profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -37,6 +50,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'full_name',
+            'profile_image',
             'mobile_number',
             'email',
             'role',
@@ -84,6 +98,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return CRMFollowup.history.filter(history_user=obj).count()
         except Exception:
             return 0
+
+    def get_profile_image(self, obj):
+        if hasattr(obj, 'profile_image') and obj.profile_image:
+            try:
+                request = self.context.get('request')
+                if request is not None:
+                    return request.build_absolute_uri(obj.profile_image.url)
+                return obj.profile_image.url
+            except Exception:
+                return None
+        return None
 
 
 class ChangePasswordSerializer(serializers.Serializer):

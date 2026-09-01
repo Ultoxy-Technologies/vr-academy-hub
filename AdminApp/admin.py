@@ -25,10 +25,17 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     model = CustomUser
 
-    list_display = ['name', 'mobile_number', 'email', 'role', 'is_active', 'is_staff']
+    list_display = ['profile_image_preview', 'name', 'mobile_number', 'email', 'role', 'is_active', 'is_staff']
     list_filter = ['role', 'is_active', 'is_staff', 'is_superuser']
     search_fields = ['name', 'mobile_number', 'email']
     ordering = ['-date_joined']
+
+    def profile_image_preview(self, obj):
+        if obj.profile_image:
+            return format_html('<img src="{}" width="38" height="38" style="object-fit:cover; border-radius:50%; border:1.5px solid #6366F1;" />', obj.profile_image.url)
+        initial = (obj.name[0] if obj.name else obj.mobile_number[0] if obj.mobile_number else 'U').upper()
+        return format_html('<div style="width:38px; height:38px; border-radius:50%; background:#EEF2FF; color:#4F46E5; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:15px; border:1px solid #C7D2FE;">{}</div>', initial)
+    profile_image_preview.short_description = "Photo"
 
     def get_ordering(self, request):
         return ['-date_joined']
@@ -37,6 +44,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('mobile_number', 'password')}),
         ('Personal Info', {
             'fields': (
+                'profile_image',
                 'name',
                 'email',
                 'role',
@@ -66,7 +74,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile_number', 'name', 'email', 'role', 'password1', 'password2'),
+            'fields': ('mobile_number', 'name', 'profile_image', 'email', 'role', 'password1', 'password2'),
         }),
     )
 
