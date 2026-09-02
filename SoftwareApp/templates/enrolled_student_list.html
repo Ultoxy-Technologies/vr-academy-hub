@@ -1,13 +1,14 @@
 <!-- templates/enrolled_student_list.html -->
 {% extends "enrollment_software_base.html" %}
 
-{% block title %}Enrollment Management - Student List{% endblock title %}
+{% block title %}Enrollment Management - Enrolled Students{% endblock title %}
 
 {% block content %}
 <style>
-    .card-body{
-        padding:0px!important;
+    .card-body {
+        padding: 0px !important;
     }
+    
     /* Modern Card Design */
     .card-modern {
         border: none;
@@ -23,20 +24,35 @@
         font-size: 0.75rem;
         font-weight: 600;
         letter-spacing: 0.3px;
+        display: inline-block;
     }
 
-    .badge-active { background: linear-gradient(135deg, #2ed573, #1dd1a1); }
-    .badge-completed { background: linear-gradient(135deg, #3498db, #2980b9); }
-    .badge-cancelled { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
-    .badge-discontinued { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
-    .badge-on_hold { background: linear-gradient(135deg, #f39c12, #e67e22); }
-    .badge-pending { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .badge-active { background: linear-gradient(135deg, #2ed573, #1dd1a1); color: white; }
+    .badge-completed { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+    .badge-cancelled { background: linear-gradient(135deg, #ff6b6b, #ff4757); color: white; }
+    .badge-discontinued { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
+    .badge-on_hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .badge-pending { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
 
     /* Payment Status Badges */
-    .badge-payment-completed { background: linear-gradient(135deg, #27ae60, #219653); }
-    .badge-payment-partial { background: linear-gradient(135deg, #f39c12, #d68910); }
-    .badge-payment-pending { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-    .badge-payment-overdue { background: linear-gradient(135deg, #8e44ad, #732d91); }
+    .badge-payment-completed { background: linear-gradient(135deg, #27ae60, #219653); color: white; }
+    .badge-payment-partial { background: linear-gradient(135deg, #f39c12, #d68910); color: white; }
+    .badge-payment-pending { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+    .badge-payment-overdue { background: linear-gradient(135deg, #8e44ad, #732d91); color: white; }
+
+    /* Branch & Course Pills */
+    .badge-branch {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+    }
+
+    .badge-batch {
+        background: #ede9fe;
+        color: #6d28d9;
+        font-weight: 700;
+    }
 
     /* Table Styling */
     .table-modern {
@@ -46,23 +62,46 @@
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        margin-bottom: 0;
     }
 
     .table-modern thead th {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.25rem;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         letter-spacing: 0.5px;
+        vertical-align: middle;
+    }
+
+    .table-modern thead th.sortable-th {
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+    }
+
+    .table-modern thead th.sortable-th:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .sort-icon {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 6px;
+    }
+
+    .sortable-th:hover .sort-icon {
+        transform: scale(1.15);
     }
 
     .table-modern tbody td {
-        padding: 1.2rem 1.5rem;
+        padding: 1.1rem 1.25rem;
         border-bottom: 1px solid #f1f3fa;
         vertical-align: middle;
+        font-size: 0.9rem;
     }
 
     .table-modern tbody tr:hover {
@@ -75,6 +114,7 @@
         border: none;
         border-radius: 12px;
         margin-bottom: 2rem;
+        padding: 1.25rem;
     }
 
     /* Action Buttons */
@@ -85,6 +125,9 @@
         font-size: 0.85rem;
         transition: all 0.3s;
         border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .btn-export {
@@ -127,6 +170,7 @@
         margin: 0 3px;
         border-radius: 8px;
         font-weight: 600;
+        transition: all 0.2s ease;
     }
 
     .pagination-modern .page-item.active .page-link {
@@ -138,31 +182,6 @@
         background-color: rgba(102, 126, 234, 0.1);
     }
 
-    /* Search Box */
-    .search-box {
-        position: relative;
-        background: white;
-        border-radius: 50px;
-        padding: 0.5rem 1.5rem;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-    }
-
-    .search-box input {
-        border: none;
-        background: transparent;
-        width: 100%;
-        padding: 0.5rem;
-    }
-
-    .search-box input:focus {
-        outline: none;
-        box-shadow: none;
-    }
-
-    .search-box i {
-        color: #667eea;
-    }
-
     /* Stats Cards */
     .stat-card {
         background: white;
@@ -170,15 +189,35 @@
         padding: 1.5rem;
         text-align: center;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        transition: transform 0.3s;
+        transition: all 0.25s ease-in-out;
+        cursor: pointer;
+        border: 2.5px solid transparent;
+        position: relative;
+        user-select: none;
     }
 
     .stat-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 22px rgba(102, 126, 234, 0.15);
+        border-color: rgba(102, 126, 234, 0.35);
+    }
+
+    /* Active Grid Filter (Dotted Border) */
+    .stat-card.active-grid-filter {
+        border: 2.5px dotted #667eea !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.07) 0%, rgba(118, 75, 162, 0.07) 100%) !important;
+        box-shadow: 0 4px 18px rgba(102, 126, 234, 0.2) !important;
+        transform: translateY(-2px);
+    }
+
+    .stat-card.active-grid-filter .stat-number {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     .stat-number {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
         font-weight: 700;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
@@ -187,27 +226,168 @@
 
     .stat-label {
         color: #6c757d;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         margin-top: 0.5rem;
+        font-weight: 600;
     }
 
-    /* Progress Bar */
+    /* Table Settings & Controls Bar */
+    .table-settings-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .table-settings-bar .form-select-sm {
+        border-color: #cbd5e1;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .dropdown-menu-columns {
+        min-width: 230px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 12px 16px;
+    }
+
+    .dropdown-menu-columns .form-check-input {
+        cursor: pointer;
+    }
+
+    .dropdown-menu-columns .form-check-label {
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    /* Auto Suggestions Dropdown Panel */
+    .suggestions-dropdown-panel {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 1050;
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        max-height: 380px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .suggestions-list-container {
+        overflow-y: auto;
+        max-height: 320px;
+    }
+
+    .suggestion-item {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .suggestion-item:hover, .suggestion-item.active {
+        background: #eef2ff;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #1e293b;
+    }
+
+    .suggestion-mobile {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .suggestion-meta {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .suggestion-highlight {
+        background-color: #fef08a;
+        color: #854d0e;
+        font-weight: 700;
+        border-radius: 2px;
+        padding: 0 2px;
+    }
+
+    .suggestion-spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        vertical-align: -0.125em;
+        border: 0.15em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: .75s linear infinite spinner-border;
+    }
+
+    /* Progress Container */
     .progress-container {
         width: 100px;
         height: 6px;
-        background: #e9ecef;
+        background-color: #e2e8f0;
         border-radius: 3px;
         overflow: hidden;
-        display: inline-block;
-        margin-left: 10px;
+        margin-left: 8px;
     }
 
-    .progress-bar {
+    .progress-bar-custom {
         height: 100%;
-        background: linear-gradient(90deg, #2ecc71, #27ae60);
         border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+
+    /* Overdue Warning */
+    .overdue-warning {
+        color: #e11d48;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    /* Amount labels */
+    .amount-total {
+        font-weight: 700;
+        color: #0f172a;
+        font-size: 0.95rem;
+    }
+
+    .amount-paid {
+        color: #16a34a;
+        font-weight: 600;
+    }
+
+    .amount-balance {
+        color: #ea580c;
+        font-weight: 600;
     }
 
     /* Mobile Responsive */
@@ -220,200 +400,100 @@
         .table-modern thead th,
         .table-modern tbody td {
             padding: 0.8rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .stat-card {
             margin-bottom: 1rem;
         }
-        
-        .btn-action {
-            padding: 0.5rem 0.8rem;
-            font-size: 0.75rem;
-        }
-    }
-
-    /* Amount Styling */
-    .amount-paid {
-        color: #27ae60;
-        font-weight: 600;
-    }
-
-    .amount-balance {
-        color: #e74c3c;
-        font-weight: 600;
-    }
-
-    .amount-total {
-        color: #2c3e50;
-        font-weight: 600;
-    }
-
-    /* Overdue Warning */
-    .overdue-warning {
-        color: #e74c3c;
-        font-weight: 600;
-        animation: blink 2s infinite;
-    }
-
-    @keyframes blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0.5; }
     }
 </style>
 
+<!-- Add Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
 <main id="main" class="main">
-    <div class="pagetitle">
-        <div class="d-flex justify-content-between align-items-center">
+    <div class="pagetitle mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h1>Enrolled Students</h1>
+                <h1 style="font-size: 1.6rem; font-weight: 800; color: #1e293b;">Enrolled Students</h1>
                 <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/software/enrollment-dashboard/">Home</a></li>
                         <li class="breadcrumb-item active">Enrolled Students</li>
                     </ol>
                 </nav>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-action btn-import" data-bs-toggle="modal" data-bs-target="#importModal">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-action btn-import shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
                     <i class="bi bi-download me-1"></i> Import
                 </button>
-                <a href="{% url 'export_enrollments' %}" class="btn btn-action btn-export">
+                <a href="{% url 'export_enrollments' %}?{{ request.GET.urlencode }}" class="btn btn-action btn-export shadow-sm">
                     <i class="bi bi-upload me-1"></i> Export
                 </a> 
                 <a href="javascript:void(0);" 
-                    data-url="{% url 'create_enrollment' %}" 
-                    class="btn btn-primary"  
-                    onclick="openCreateModal(this)">
-                    <i class="bi bi-plus-circle me-1"></i> New Enrollment
+                   data-url="{% url 'create_enrollment' %}" 
+                   class="btn btn-action btn-primary shadow-sm"  
+                   onclick="openCreateModal(this)">
+                    <i class="bi bi-plus-circle me-1"></i> Add New
                 </a>
-                <script>
-                    // Update Modal Function
-                    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
-                        const url = element.dataset.url;
-                        
-                        // Calculate center position
-                        const width = customWidth;
-                        const height = customHeight;
-                        const left = Math.max(0, (window.screen.width - width) / 2);
-                        const top = Math.max(0, (window.screen.height - height) / 2);
-                        
-                        // Window features
-                        const features = [
-                            `width=${width}`,
-                            `height=${height}`,
-                            `left=${left}`,
-                            `top=${top}`,
-                            'scrollbars=yes',
-                            'resizable=yes',
-                            'centerscreen=yes',
-                            'location=no',
-                            'menubar=no',
-                            'toolbar=no',
-                            'status=no',
-                            'titlebar=no'
-                        ].join(',');
-                        
-                        // Open centered window
-                        const newWindow = window.open(url, "updateWindow", features);
-                        
-                        if (newWindow) {
-                            newWindow.focus();
-                            
-                            // Check if window is closed to refresh parent
-                            const checkWindow = setInterval(function() {
-                                if (newWindow.closed) {
-                                    clearInterval(checkWindow);
-                                    window.location.reload();
-                                }
-                            }, 500);
-                        }
-                        return false;
-                    }
-                </script>
             </div>
         </div>
     </div>
 
-    <!-- Messages Container -->
+    <!-- Alert Messages Container -->
+    {% if messages %}
     <div class="row">
-        <div class="col-sm-12">
-            <div class="messages-container">
-                {% for msg in messages %}
-                {% if "Bulk import" in msg|safe or "Import stopped" in msg|safe or "Error importing" in msg|safe or "Successfully imported" in msg|safe %}
-                <div class="message-card message-{{ msg.tags }} animate__animated animate__fadeInRight mb-3">
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-icon">
-                                {% if msg.tags == 'success' %}
-                                <i class="fas fa-check-circle"></i>
-                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}
-                                <i class="fas fa-times-circle"></i>
-                                {% elif msg.tags == 'warning' %}
-                                <i class="fas fa-exclamation-circle"></i>
-                                {% else %}
-                                <i class="fas fa-info-circle"></i>
-                                {% endif %}
-                            </span>
-                            <span class="message-title">
-                                {% if msg.tags == 'success' %}Success!
-                                {% elif msg.tags == 'error' or msg.tags == 'danger' %}Error!
-                                {% elif msg.tags == 'warning' %}Warning!
-                                {% else %}Info
-                                {% endif %}
-                            </span>
-                            <button type="button" class="btn-close-message" data-bs-dismiss="alert">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="message-body">
-                            {{ msg|safe }}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                {% endfor %}
+        <div class="col-12">
+            {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-info-circle me-2"></i> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
         </div>
     </div>
+    {% endif %}
 
-    <!-- Add Animate.css for animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
-    <!-- Stats Summary -->
+    <!-- Stats Summary Cards (Clickable Grid Filters) -->
     <div class="row mb-4">
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="stat-card {% if grid_filter == 'total_enrollments' or not grid_filter %}active-grid-filter{% endif %}" onclick="applyGridFilter('total_enrollments')" role="button" title="Click to view all enrollments">
                 <div class="stat-number">{{ total_enrollments }}</div>
                 <div class="stat-label">Total Enrollments</div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="stat-card {% if grid_filter == 'active_enrollments' %}active-grid-filter{% endif %}" onclick="applyGridFilter('active_enrollments')" role="button" title="Click to filter by Active Students">
                 <div class="stat-number">{{ active_enrollments }}</div>
                 <div class="stat-label">Active Students</div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="stat-card {% if grid_filter == 'pending_payments' %}active-grid-filter{% endif %}" onclick="applyGridFilter('pending_payments')" role="button" title="Click to filter by Pending/Partial Payments">
                 <div class="stat-number">{{ pending_payments }}</div>
                 <div class="stat-label">Pending Payments</div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="stat-card">
-                <div class="stat-number">₹{{ total_revenue|floatformat:0 }}</div>
-                <div class="stat-label">Total Revenue</div>
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="stat-card {% if grid_filter == 'today_enrollments' %}active-grid-filter{% endif %}" onclick="applyGridFilter('today_enrollments')" role="button" title="Click to filter by Today's Enrollments">
+                <div class="stat-number">{{ today_enrollments }}</div>
+                <div class="stat-label">Today's Enrolled</div>
             </div>
         </div>
     </div>
 
     <!-- Filter Card -->
-    <div class="card card-modern filter-card">
-        <div class="card-body">
-            <form method="get" class="row g-3">
+    <div class="card card-modern filter-card shadow-sm">
+        <div class="card-body p-3">
+            <form method="get" class="row g-3" id="enrollmentFilterForm">
+                <input type="hidden" name="grid_filter" id="gridFilterInput" value="{{ grid_filter }}">
+                <input type="hidden" name="per_page" id="perPageInput" value="{{ per_page }}">
+                <input type="hidden" name="sort" id="sortInput" value="{{ sort_field }}">
+                <input type="hidden" name="order" id="orderInput" value="{{ sort_order }}">
+                
                 <div class="col-md-3">
-                    <label class="form-label">Status</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Status</label>
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
                         {% for status_code, status_name in status_choices %}
@@ -425,7 +505,7 @@
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Payment Status</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Payment Status</label>
                     <select name="payment_status" class="form-select">
                         <option value="">All Payment Status</option>
                         {% for status_code, status_name in payment_status_choices %}
@@ -437,54 +517,74 @@
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Batch</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Batch</label>
                     <select name="batch" class="form-select">
                         <option value="">All Batches</option>
-                        {% for batch in batches %}
-                        <option value="{{ batch.id }}" {% if batch_filter == batch.id|stringformat:"s" %}selected{% endif %}>
-                            {{ batch.batch_code }} - {{ batch.batch_title }}
+                        {% for b in batches %}
+                        <option value="{{ b.id }}" {% if batch_filter == b.id|stringformat:"s" %}selected{% endif %}>
+                            {{ b.batch_code }} - {{ b.batch_title }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Branch</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Branch</label>
                     <select name="branch" class="form-select">
                         <option value="">All Branches</option>
-                        {% for branch in branches %}
-                        <option value="{{ branch.id }}" {% if branch_filter == branch.id|stringformat:"s" %}selected{% endif %}>
-                            {{ branch.branch_name }}
+                        {% for br in branches %}
+                        <option value="{{ br.id }}" {% if branch_filter == br.id|stringformat:"s" %}selected{% endif %}>
+                            {{ br.branch_name }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Date From</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Date From</label>
                     <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Date To</label>
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Date To</label>
                     <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
                 </div>
                 
-                <div class="col-md-3">
-                    <label class="form-label">Search</label>
-                    <div class="search-box"> 
-                        
-                        <input type="text" name="search" placeholder="Search by name, mobile, or enrollment ID..." 
-                               class="form-control border-0" value="{{ search_query }}">
+                <!-- Name, Mobile, or ID with Auto Suggestions -->
+                <div class="col-md-3 position-relative" id="searchAutoSuggestWrapper">
+                    <label class="form-label fw-semibold text-dark mb-1" style="font-size: 0.85rem;">Name or Mobile</label>
+                    <div class="input-group">
+                        <input type="text" 
+                               name="search" 
+                               id="enrollmentSearchInput"
+                               placeholder="Search by name, mobile, ID..." 
+                               class="form-control"  
+                               value="{{ search_query }}"
+                               autocomplete="off">
+                        {% if search_query %}
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearSearchInput()" title="Clear search">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <!-- Auto Suggestion Dropdown Panel -->
+                    <div id="searchSuggestionsDropdown" class="suggestions-dropdown-panel d-none">
+                        <div class="suggestions-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                            <span class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;"><i class="bi bi-person-lines-fill me-1 text-primary"></i> Suggestions</span>
+                            <span id="suggestionsCountBadge" class="badge bg-primary rounded-pill" style="font-size: 0.7rem;">0</span>
+                        </div>
+                        <div id="suggestionsList" class="suggestions-list-container">
+                            <!-- Populated dynamically via JS -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-3 d-flex justify-content-between align-items-end">
-                    <div>
-                        <button type="submit" class="btn btn-action btn-filter me-2">
+                <div class="col-md-3 d-flex align-items-end"> 
+                    <div class="w-100 d-flex gap-2">
+                        <button type="submit" class="btn btn-action btn-filter flex-grow-1">
                             <i class="bi bi-funnel me-1"></i> Apply Filters
                         </button>
-                        <a href="{% url 'enrolled_student_list' %}" class="btn btn-light">
+                        <a href="{% url 'enrolled_student_list' %}?grid_filter=total_enrollments" onclick="clearFiltersAndCache()" class="btn btn-light border px-3" title="Clear all filters">
                             <i class="bi bi-x-circle me-1"></i> Clear
                         </a>
                     </div>
@@ -493,48 +593,208 @@
         </div>
     </div>
 
-    <!-- Main Table -->
-    <div class="card card-modern">
+    <!-- Main Table Card -->
+    <div class="card card-modern shadow-sm">
         <div class="card-body">
+            <!-- Table Settings & Controls Bar -->
+            <div class="table-settings-bar">
+                <!-- Records Per Page Selector -->
+                <div class="d-flex align-items-center gap-2">
+                    <label for="perPageSelect" class="form-label mb-0 text-muted fw-semibold" style="font-size: 0.85rem;">
+                        <i class="bi bi-list-ol text-primary me-1"></i> Show
+                    </label>
+                    <select id="perPageSelect" class="form-select form-select-sm" style="width: auto; border-radius: 6px; font-weight: 500;" onchange="changePerPage(this.value)">
+                        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                        <option value="200" {% if per_page == 200 %}selected{% endif %}>200</option>
+                    </select>
+                    <span class="text-muted fw-semibold" style="font-size: 0.85rem;">records per page</span>
+                </div>
+
+                <!-- Column Visibility Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 shadow-none" type="button" id="columnToggleDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" style="border-radius: 6px; font-size: 0.85rem; font-weight: 500;">
+                        <i class="bi bi-layout-three-columns me-1"></i> Column Visibility
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-columns" aria-labelledby="columnToggleDropdown">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="fw-bold text-dark" style="font-size: 0.85rem;"><i class="bi bi-sliders me-1"></i> Toggle Columns</span>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.75rem;" onclick="resetColumns()">Reset</button>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_id" data-column="col-id" checked onchange="toggleColumn('col-id', this.checked)">
+                            <label class="form-check-label" for="toggle_col_id">Enrollment ID</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_student" data-column="col-student" checked onchange="toggleColumn('col-student', this.checked)">
+                            <label class="form-check-label" for="toggle_col_student">Student</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_course" data-column="col-course" checked onchange="toggleColumn('col-course', this.checked)">
+                            <label class="form-check-label" for="toggle_col_course">Batch & Course</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_status" data-column="col-status" checked onchange="toggleColumn('col-status', this.checked)">
+                            <label class="form-check-label" for="toggle_col_status">Status</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_branch" data-column="col-branch" checked onchange="toggleColumn('col-branch', this.checked)">
+                            <label class="form-check-label" for="toggle_col_branch">Branch</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_fees" data-column="col-fees" checked onchange="toggleColumn('col-fees', this.checked)">
+                            <label class="form-check-label" for="toggle_col_fees">Fees & Balance</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_progress" data-column="col-progress" checked onchange="toggleColumn('col-progress', this.checked)">
+                            <label class="form-check-label" for="toggle_col_progress">Progress</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input col-toggle-checkbox" type="checkbox" id="toggle_col_actions" data-column="col-actions" checked onchange="toggleColumn('col-actions', this.checked)">
+                            <label class="form-check-label" for="toggle_col_actions">Actions</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Responsive -->
             <div class="table-responsive">
                 <table class="table table-modern">
                     <thead>
                         <tr>
-                            <th>Enrollment ID</th>
-                            <th>Student</th>
-                            <th>Batch & Course</th>
-                            <th>Status</th>
-                            <th>Branch</th>
-                            <th>Fees</th>
-                            <th>Progress</th>
-                            <th>Actions</th>
+                            <th class="col-id sortable-th" onclick="sortBy('id')" role="button" title="Click to sort by ID">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>ID & Date</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'id' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-numeric-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-numeric-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-student sortable-th" onclick="sortBy('name')" role="button" title="Click to sort by Student Name">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Student</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'name' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-course sortable-th" onclick="sortBy('course')" role="button" title="Click to sort by Course">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Batch & Course</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'course' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-status sortable-th" onclick="sortBy('status')" role="button" title="Click to sort by Status">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Status</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'status' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-branch sortable-th" onclick="sortBy('branch')" role="button" title="Click to sort by Branch">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Branch</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'branch' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-alpha-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-alpha-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-fees sortable-th" onclick="sortBy('fees')" role="button" title="Click to sort by Fees">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span>Fees & Payment</span>
+                                    <span class="sort-icon">
+                                        {% if sort_field == 'fees' %}
+                                            {% if sort_order == 'desc' %}
+                                                <i class="bi bi-sort-numeric-down-alt text-warning fs-6"></i>
+                                            {% else %}
+                                                <i class="bi bi-sort-numeric-down text-warning fs-6"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="bi bi-arrow-down-up opacity-50" style="font-size: 0.75rem;"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </th>
+                            <th class="col-progress">Progress</th>
+                            <th class="col-actions text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for enrollment in enrollments %}
                         <tr>
-                            <td>
-                                <strong>{{ enrollment.enrollment_id }}</strong>
+                            <td class="col-id">
+                                <span class="badge bg-light text-dark border fw-bold" style="font-size: 0.8rem; letter-spacing: 0.3px;">
+                                    {{ enrollment.enrollment_id_display }}
+                                </span>
                                 <br>
-                                <small class="text-muted">{{ enrollment.enrollment_date|date:"M d, Y" }}</small>
+                                <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ enrollment.enrollment_date|date:"M d, Y" }}</small>
                             </td>
-                            <td>
-                                <strong>{{ enrollment.student.name }}</strong>
-                                <br>
-                                <a href="tel:{{ enrollment.student.mobile_number }}" class="text-decoration-none text-muted">
-                                    <i class="bi bi-telephone me-1"></i> {{ enrollment.student.mobile_number }}
-                                </a>
+                            <td class="col-student">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div>
+                                        <strong class="text-dark" style="font-size: 0.95rem;">{{ enrollment.student.name }}</strong>
+                                        <br>
+                                        <a href="tel:{{ enrollment.student.mobile_number }}" class="text-decoration-none text-muted" style="font-size: 0.85rem;">
+                                            <i class="bi bi-telephone me-1 text-primary"></i> {{ enrollment.student.mobile_number }}
+                                        </a>
+                                    </div>
+                                </div>
                             </td>
-                            <td>
+                            <td class="col-course">
                                 {% if enrollment.batch %}
-                                    <strong>{{ enrollment.batch.batch_code }}</strong>
+                                    <span class="badge badge-batch mb-1">{{ enrollment.batch.batch_code }}</span>
                                     <br>
-                                    <small class="text-muted">{{ enrollment.course_title|truncatechars:30 }}</small>
+                                    <span class="text-dark fw-semibold" style="font-size: 0.85rem;">{{ enrollment.course_title|default:enrollment.batch.batch_title|truncatechars:35 }}</span>
                                 {% else %}
-                                    <span class="text-muted">Not assigned</span>
+                                    <span class="text-muted">—</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="col-status">
                                 {% if enrollment.status == 'active' %}
                                     <span class="badge badge-status badge-active">Active</span>
                                 {% elif enrollment.status == 'completed' %}
@@ -545,73 +805,78 @@
                                     <span class="badge badge-status badge-discontinued">Discontinued</span>
                                 {% elif enrollment.status == 'on_hold' %}
                                     <span class="badge badge-status badge-on_hold">On Hold</span>
-                                {% elif enrollment.status == 'pending' %}
-                                    <span class="badge badge-status badge-pending">Pending</span>
                                 {% else %}
-                                    <span class="badge badge-secondary">{{ enrollment.status|title }}</span>
-                                {% endif %} 
-                            </td>
-                            <td>
-                                <small>
-                                    {% if enrollment.branch.branch_name %} 
-                                        <span class="badge badge-status badge-on_hold">{{ enrollment.branch.branch_name }}</span>
-                                    {% else %}
-                                        <span class="badge badge-status badge-discontinued">---</span>
+                                    <span class="badge badge-secondary bg-secondary">{{ enrollment.status|title }}</span>
+                                {% endif %}
+                                <br>
+                                <small style="margin-top: 3px; display: inline-block;">
+                                    {% if enrollment.payment_status == 'completed' %}
+                                        <span class="badge badge-status badge-payment-completed" style="font-size: 0.68rem;">Paid In Full</span>
+                                    {% elif enrollment.payment_status == 'partial' %}
+                                        <span class="badge badge-status badge-payment-partial" style="font-size: 0.68rem;">Partial</span>
+                                    {% elif enrollment.payment_status == 'pending' %}
+                                        <span class="badge badge-status badge-payment-pending" style="font-size: 0.68rem;">Pending</span>
+                                    {% elif enrollment.payment_status == 'overdue' %}
+                                        <span class="badge badge-status badge-payment-overdue" style="font-size: 0.68rem;">Overdue</span>
                                     {% endif %}
                                 </small>
                             </td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span class="amount-total">₹{{ enrollment.total_fees|floatformat:0 }}</span>
-                                    <small>
-                                        <span class="amount-paid">Paid: ₹{{ enrollment.display_paid|floatformat:0 }}</span>
+                            <td class="col-branch">
+                                {% if enrollment.branch.branch_name %} 
+                                    <span class="badge badge-branch">{{ enrollment.branch.branch_name }}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="col-fees">
+                                <div class="d-flex flex-column gap-1">
+                                    <span class="amount-total">₹{{ enrollment.net_fees|floatformat:0 }}</span>
+                                    <div style="font-size: 0.8rem;">
+                                        <span class="amount-paid"><i class="bi bi-check2-circle me-1"></i>Paid: ₹{{ enrollment.display_paid|floatformat:0 }}</span>
                                         <br>
-                                        <span class="amount-balance">Balance: ₹{{ enrollment.display_balance|floatformat:0 }}</span>
-                                        
+                                        <span class="amount-balance"><i class="bi bi-hourglass-split me-1"></i>Bal: ₹{{ enrollment.display_balance|floatformat:0 }}</span>
                                         {% if enrollment.is_payment_overdue %}
                                             <br>
-                                            <small class="overdue-warning">
-                                                <i class="bi bi-exclamation-triangle"></i> Payment Overdue
-                                            </small>
+                                            <span class="overdue-warning">
+                                                <i class="bi bi-exclamation-triangle-fill"></i> Overdue
+                                            </span>
                                         {% endif %}
-                                    </small>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    {{ enrollment.display_progress|floatformat:0 }}%
-                                    <div class="progress-container">
-                                        <div class="progress-bar" style="width: {{ enrollment.display_progress }}%"></div>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="btn-group" role="group">
+                            <td class="col-progress">
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-bold" style="font-size: 0.8rem; min-width: 38px;">{{ enrollment.display_progress|floatformat:0 }}%</span>
+                                    <div class="progress-container">
+                                        <div class="progress-bar-custom {% if enrollment.display_progress >= 100 %}bg-success{% elif enrollment.display_progress >= 50 %}bg-primary{% else %}bg-warning{% endif %}" 
+                                             style="width: {{ enrollment.display_progress }}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="col-actions text-center">
+                                <div class="btn-group btn-group-sm" role="group">
                                     <a href="{% url 'enrollment_detail' enrollment.pk %}" 
-                                    class="btn btn-sm btn-outline-primary" 
-                                    title="View Enrollment">
-                                        <i class="bi bi-eye"></i>
-                                        <span class="d-none d-md-inline">View</span>
+                                       class="btn btn-outline-primary" 
+                                       title="View Enrollment Details">
+                                        <i class="bi bi-eye"></i> View
                                     </a>
-                                    <!-- <a href="javascript:void(0);" 
-                                    class="btn btn-sm btn-outline-warning" 
-                                    data-url="" 
-                                    onclick="openUpdateModal(this)">
-                                        <i class="bi bi-pencil-square"></i>
-                                        <span class="d-none d-md-inline">Edit</span>
+                                    <a href="javascript:void(0);" 
+                                       data-url="{% url 'update_enrollment' enrollment.pk %}" 
+                                       class="btn btn-outline-warning" 
+                                       onclick="openUpdateModal(this)"
+                                       title="Edit Enrollment">
+                                        <i class="bi bi-pencil-square"></i> Edit
                                     </a> 
-                                    <a href="" 
-                                    class="btn btn-sm btn-outline-success" 
-                                    title="Record Payment">
-                                        <i class="bi bi-cash"></i>
-                                        <span class="d-none d-md-inline">Payment</span>
-                                    </a> -->
+                                    <a href="{% url 'record_payment' enrollment.pk %}" 
+                                       class="btn btn-outline-success" 
+                                       title="Record New Payment">
+                                        <i class="bi bi-cash-stack"></i>
+                                    </a>
                                     <a href="{% url 'delete_enrollment' enrollment.pk %}" 
-                                    class="btn btn-sm btn-outline-danger btn-delete" 
-                                    title="Delete Enrollment"
-                                    onclick="confirmDelete(this); return false;">
+                                       class="btn btn-outline-danger" 
+                                       title="Delete Enrollment"
+                                       onclick="confirmDelete(this); return false;">
                                         <i class="bi bi-trash"></i>
-                                        <span class="d-none d-md-inline">Delete</span>
                                     </a>
                                 </div>
                             </td>
@@ -619,228 +884,556 @@
                         {% empty %}
                         <tr>
                             <td colspan="8" class="text-center py-5">
-                                <i class="bi bi-people display-4 text-muted mb-3"></i>
-                                <h5>No enrollments found</h5>
-                                <p class="text-muted">Try adjusting your filters or add a new enrollment</p>
+                                <i class="bi bi-people display-4 text-muted mb-3 d-block"></i>
+                                <h5 class="fw-bold text-dark">No enrollments found</h5>
+                                <p class="text-muted">Try adjusting your filters or click below to clear them</p>
+                                <a href="{% url 'enrolled_student_list' %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <!-- Add this at the bottom of your enrolled_student_list.html template -->
-{% if enrollments.paginator.num_pages > 1 %}
-<div class="mt-4">
-    <nav aria-label="Enrollments pagination" class="mb-3">
-        <ul class="pagination pagination-modern justify-content-center">
-            <!-- First Page -->
-            {% if enrollments.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   aria-label="First">
-                    <i class="bi bi-chevron-double-left"></i>
-                </a>
-            </li>
-            
-            <!-- Previous Page -->
-            <li class="page-item">
-                <a class="page-link" href="?page={{ enrollments.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   aria-label="Previous">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
-            </li>
-            {% endif %}
 
-            <!-- Page Numbers -->
-            {% for num in enrollments.paginator.page_range %}
-                {% if num == enrollments.number %}
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ num }}</span>
-                    </li>
-                {% elif num > enrollments.number|add:'-3' and num < enrollments.number|add:'3' %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-
-            <!-- Next Page -->
-            {% if enrollments.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ enrollments.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   aria-label="Next">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-            
-            <!-- Last Page -->
-            <li class="page-item">
-                <a class="page-link" href="?page={{ enrollments.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                   aria-label="Last">
-                    <i class="bi bi-chevron-double-right"></i>
-                </a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    
-    <!-- Showing X to Y of Z entries -->
-    <div class="text-center">
-        <p class="text-muted mb-0">
-            Showing {{ enrollments.start_index }} - {{ enrollments.end_index }} of {{ enrollments.paginator.count }} enrollments
-        </p>
-        
-        <!-- Page info and navigation -->
-        <span class="text-muted me-3">Page {{ enrollments.number }} of {{ enrollments.paginator.num_pages }}</span>
-        <div class="d-flex justify-content-center align-items-center mt-2">
-            <br>
-            <!-- Jump to page input -->
-            <form method="get" class="d-inline-flex align-items-center" style="max-width: 200px;">
- 
-                <label for="jumpPage" class="form-label me-2 mb-0">Go to:</label>
-                <input type="number" 
-                       id="jumpPage" 
-                       name="page" 
-                       class="form-control form-control-sm" 
-                       style="width: 70px;"
-                       min="1" 
-                       max="{{ enrollments.paginator.num_pages }}" 
-                       value="{{ enrollments.number }}">
-                <button type="submit" class="btn btn-sm btn-primary ms-2">Go</button>
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-<!-- Add this CSS for better pagination styling -->
-<style>
-.pagination-modern .page-item .page-link {
-    border-radius: 0.375rem;
-    margin: 0 3px;
-    border: 1px solid #dee2e6;
-    color: #495057;
-    transition: all 0.2s ease;
-}
-
-.pagination-modern .page-item.active .page-link {
-    background-color: #1a5f7a;
-    border-color: #1a5f7a;
-    color: white;
-}
-
-.pagination-modern .page-item .page-link:hover {
-    background-color: #e9ecef;
-    border-color: #dee2e6;
-}
-
-.pagination-modern .page-item.disabled .page-link {
-    color: #6c757d;
-    background-color: #f8f9fa;
-}
-</style>
-
-            <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel">
-                                <i class="bi bi-exclamation-triangle text-danger me-2"></i> Confirm Deletion
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete enrollment <strong id="delete_info"></strong>?
-                            <div class="alert alert-warning mt-3">
-                                <i class="bi bi-exclamation-circle me-2"></i> 
-                                This will delete all associated payment records and cannot be undone.
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <a id="deleteButton" href="#" class="btn btn-danger">
-                                <i class="bi bi-trash me-2"></i> Delete Enrollment
+            <!-- Modern Pagination -->
+            {% if enrollments.paginator.num_pages > 1 %}
+            <div class="p-3 border-top bg-light">
+                <nav aria-label="Enrollments pagination" class="mb-2">
+                    <ul class="pagination pagination-modern justify-content-center mb-0">
+                        <!-- First Page -->
+                        {% if enrollments.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link shadow-none" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First" title="First Page">
+                                <i class="bi bi-chevron-double-left"></i>
                             </a>
-                        </div>
+                        </li>
+                        
+                        <!-- Previous Page -->
+                        <li class="page-item">
+                            <a class="page-link shadow-none" href="?page={{ enrollments.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous" title="Previous Page">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link shadow-none"><i class="bi bi-chevron-double-left"></i></span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link shadow-none"><i class="bi bi-chevron-left"></i></span>
+                        </li>
+                        {% endif %}
+
+                        <!-- Page Numbers -->
+                        {% for num in enrollments.paginator.page_range %}
+                            {% if num == enrollments.number %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link shadow-none">{{ num }}</span>
+                                </li>
+                            {% elif num > enrollments.number|add:'-3' and num < enrollments.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link shadow-none" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Next Page -->
+                        {% if enrollments.has_next %}
+                        <li class="page-item">
+                            <a class="page-link shadow-none" href="?page={{ enrollments.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next" title="Next Page">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        
+                        <!-- Last Page -->
+                        <li class="page-item">
+                            <a class="page-link shadow-none" href="?page={{ enrollments.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last" title="Last Page">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link shadow-none"><i class="bi bi-chevron-right"></i></span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link shadow-none"><i class="bi bi-chevron-double-right"></i></span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                
+                <!-- Showing X to Y of Z entries and Jump to page -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 text-muted" style="font-size: 0.85rem;">
+                    <div>
+                        Showing <strong>{{ enrollments.start_index }}</strong> - <strong>{{ enrollments.end_index }}</strong> of <strong>{{ enrollments.paginator.count }}</strong> enrollments (Page <strong>{{ enrollments.number }}</strong> of <strong>{{ enrollments.paginator.num_pages }}</strong>)
+                    </div>
+                    <div>
+                        <!-- Jump to page input -->
+                        <form method="get" class="d-inline-flex align-items-center">
+                            {% for key, value in request.GET.items %}
+                                {% if key != 'page' %}
+                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                {% endif %}
+                            {% endfor %}
+                            <label for="jumpPage" class="form-label me-2 mb-0 fw-semibold text-muted">Go to:</label>
+                            <input type="number" 
+                                   id="jumpPage" 
+                                   name="page" 
+                                   class="form-control form-control-sm text-center" 
+                                   style="width: 65px; border-radius: 6px;"
+                                   min="1" 
+                                   max="{{ enrollments.paginator.num_pages }}" 
+                                   value="{{ enrollments.number }}">
+                            <button type="submit" class="btn btn-sm btn-primary ms-2 px-2" style="border-radius: 6px;">Go</button>
+                        </form>
                     </div>
                 </div>
             </div>
- 
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-2">Are you sure you want to delete enrollment for <strong id="delete_info" class="text-danger"></strong>?</p>
+                    <div class="alert alert-warning mb-0 mt-3 d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle-fill fs-4 me-2 text-warning"></i> 
+                        <div>This will delete all associated payment records and cannot be undone.</div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a id="deleteButton" href="#" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete Enrollment
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Import Modal -->
     <div class="modal fade" id="importModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Import Enrollments</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-arrow-up me-2"></i> Import Enrollments</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form method="post" enctype="multipart/form-data" action="">
+                <form method="post" enctype="multipart/form-data" action="{% url 'import_enrollments' %}">
                     {% csrf_token %}
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
                         <div class="mb-3">
-                            <label class="form-label">Select CSV File</label>
+                            <label class="form-label fw-bold">Select CSV File</label>
                             <input type="file" class="form-control" name="csv_file" accept=".csv" required>
                         </div>
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Download the <a href=""><b style="color: #ff7300;">template file</b></a> for proper formatting.
+                        <div class="alert alert-info d-flex align-items-center mb-0">
+                            <i class="bi bi-info-circle-fill fs-5 me-2 text-info"></i>
+                            <div>
+                                Download the <a href="{% url 'download_enrollment_template' %}" class="fw-bold text-primary">template file</a> for proper column formatting.
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Import</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-upload me-1"></i> Upload & Import</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <script>
-        // Update Modal Function (reused from above)
-        function openUpdateModal(element) {
-            const url = element.dataset.url;
-            const newWindow = window.open(url, "updateWindow", "width=1200,height=800,scrollbars=yes,resizable=yes");
-            if (newWindow) {
-                newWindow.focus();
-                const checkWindow = setInterval(function() {
-                    if (newWindow.closed) {
-                        clearInterval(checkWindow);
-                        window.location.reload();
-                    }
-                }, 500);
-            }
-            return false;
-        }
-        
-        // Delete Confirmation
-        function confirmDelete(button) {
-            var info = button.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
-            var deleteUrl = button.getAttribute('href');
-            document.getElementById('delete_info').textContent = info;
-            document.getElementById('deleteButton').setAttribute('href', deleteUrl);
-            
-            $('#deleteModal').modal('show');
-            return false;
-        }
-    </script>     
-
 </main>
+
+<script>
+    // ==========================================
+    // COLUMN VISIBILITY MANAGEMENT & STORAGE
+    // ==========================================
+    const COLUMN_STORAGE_KEY = 'enrolled_students_col_prefs';
+    const DEFAULT_COLUMNS = {
+        'col-id': true,
+        'col-student': true,
+        'col-course': true,
+        'col-status': true,
+        'col-branch': true,
+        'col-fees': true,
+        'col-progress': true,
+        'col-actions': true
+    };
+
+    function getColumnSettings() {
+        try {
+            const saved = localStorage.getItem(COLUMN_STORAGE_KEY);
+            if (saved) {
+                return Object.assign({}, DEFAULT_COLUMNS, JSON.parse(saved));
+            }
+        } catch (e) {
+            console.error('Error parsing column settings', e);
+        }
+        return Object.assign({}, DEFAULT_COLUMNS);
+    }
+
+    function applyColumnVisibility(settings) {
+        let css = '';
+        for (const [colClass, isVisible] of Object.entries(settings)) {
+            if (!isVisible) {
+                css += `.${colClass} { display: none !important; }\n`;
+            }
+            const checkbox = document.querySelector(`.col-toggle-checkbox[data-column="${colClass}"]`);
+            if (checkbox) {
+                checkbox.checked = isVisible;
+            }
+        }
+        let styleEl = document.getElementById('columnVisibilityStyles');
+        if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = 'columnVisibilityStyles';
+            document.head.appendChild(styleEl);
+        }
+        styleEl.textContent = css;
+    }
+
+    function toggleColumn(colClass, isVisible) {
+        const settings = getColumnSettings();
+        settings[colClass] = isVisible;
+        localStorage.setItem(COLUMN_STORAGE_KEY, JSON.stringify(settings));
+        applyColumnVisibility(settings);
+    }
+
+    function resetColumns() {
+        localStorage.removeItem(COLUMN_STORAGE_KEY);
+        applyColumnVisibility(DEFAULT_COLUMNS);
+    }
+
+    // Apply column settings on page load
+    applyColumnVisibility(getColumnSettings());
+
+    // ==========================================
+    // AUTO SUGGESTIONS FOR NAME & MOBILE FILTER
+    // ==========================================
+    const searchInput = document.getElementById('enrollmentSearchInput');
+    const suggestionsDropdown = document.getElementById('searchSuggestionsDropdown');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const suggestionsCountBadge = document.getElementById('suggestionsCountBadge');
+    let debounceTimer = null;
+    let selectedSuggestionIndex = -1;
+    let currentSuggestions = [];
+
+    function clearSearchInput() {
+        if (searchInput) {
+            searchInput.value = '';
+            document.getElementById('enrollmentFilterForm').submit();
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.toString().replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function highlightMatch(text, query) {
+        if (!text || !query) return escapeHtml(text);
+        const safeText = escapeHtml(text);
+        const safeQuery = escapeHtml(query);
+        const regex = new RegExp(`(${safeQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return safeText.replace(regex, '<span class="suggestion-highlight">$1</span>');
+    }
+
+    function getStatusBadgeHtml(status, label) {
+        const s = (status || '').toLowerCase();
+        let bgClass = 'bg-secondary';
+        if (s === 'active') bgClass = 'bg-success';
+        else if (s === 'completed') bgClass = 'bg-primary';
+        else if (s === 'cancelled' || s === 'discontinued') bgClass = 'bg-danger';
+        else if (s === 'on_hold') bgClass = 'bg-warning text-dark';
+        return `<span class="badge ${bgClass}" style="font-size: 0.72rem; font-weight: 600;">${escapeHtml(label || status)}</span>`;
+    }
+
+    function renderSuggestions(suggestions, query) {
+        currentSuggestions = suggestions;
+        selectedSuggestionIndex = -1;
+
+        if (!suggestions || suggestions.length === 0) {
+            suggestionsCountBadge.textContent = '0';
+            suggestionsList.innerHTML = `
+                <div class="p-3 text-center text-muted" style="font-size: 0.85rem;">
+                    <i class="bi bi-search me-1"></i> No matching students found for "<strong>${escapeHtml(query)}</strong>"
+                </div>
+            `;
+            suggestionsDropdown.classList.remove('d-none');
+            return;
+        }
+
+        suggestionsCountBadge.textContent = suggestions.length;
+        let html = '';
+        suggestions.forEach((item, index) => {
+            const highlightedName = highlightMatch(item.name, query);
+            const highlightedMobile = highlightMatch(item.mobile, query);
+            const statusBadge = getStatusBadgeHtml(item.status, item.status_display);
+            const metaInfo = [item.enrollment_id, item.branch, item.course].filter(Boolean).map(escapeHtml).join(' • ');
+
+            html += `
+                <div class="suggestion-item" data-index="${index}" onclick="selectSuggestion(${index})">
+                    <div class="d-flex flex-column">
+                        <div class="suggestion-name">${highlightedName}</div>
+                        <div class="suggestion-mobile">
+                            <i class="bi bi-telephone-fill text-muted me-1" style="font-size: 0.72rem;"></i>${highlightedMobile}
+                            ${metaInfo ? `<span class="ms-2 text-muted" style="font-size: 0.75rem;">(${metaInfo})</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="suggestion-meta">
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        });
+
+        suggestionsList.innerHTML = html;
+        suggestionsDropdown.classList.remove('d-none');
+    }
+
+    function selectSuggestion(index) {
+        if (index >= 0 && index < currentSuggestions.length) {
+            const item = currentSuggestions[index];
+            searchInput.value = item.name || item.mobile || item.enrollment_id;
+            closeSuggestions();
+            document.getElementById('enrollmentFilterForm').submit();
+        }
+    }
+
+    function closeSuggestions() {
+        if (suggestionsDropdown) {
+            suggestionsDropdown.classList.add('d-none');
+            selectedSuggestionIndex = -1;
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (query.length < 1) {
+                closeSuggestions();
+                return;
+            }
+
+            suggestionsDropdown.classList.remove('d-none');
+            suggestionsCountBadge.innerHTML = '<span class="suggestion-spinner"></span>';
+            suggestionsList.innerHTML = `
+                <div class="p-3 text-center text-muted" style="font-size: 0.85rem;">
+                    <span class="suggestion-spinner me-2 text-primary"></span> Searching enrollments...
+                </div>
+            `;
+
+            debounceTimer = setTimeout(() => {
+                fetch(`{% url 'enrollment_suggestions_api' %}?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        renderSuggestions(data.suggestions || [], query);
+                    })
+                    .catch(err => {
+                        console.error('Error fetching suggestions:', err);
+                        closeSuggestions();
+                    });
+            }, 180);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (suggestionsDropdown.classList.contains('d-none')) return;
+
+            const items = suggestionsList.querySelectorAll('.suggestion-item');
+            if (!items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+                updateSuggestionHighlight(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedSuggestionIndex = (selectedSuggestionIndex - 1 + items.length) % items.length;
+                updateSuggestionHighlight(items);
+            } else if (e.key === 'Enter') {
+                if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < currentSuggestions.length) {
+                    e.preventDefault();
+                    selectSuggestion(selectedSuggestionIndex);
+                }
+            } else if (e.key === 'Escape') {
+                closeSuggestions();
+            }
+        });
+    }
+
+    function updateSuggestionHighlight(items) {
+        items.forEach((el, idx) => {
+            if (idx === selectedSuggestionIndex) {
+                el.classList.add('active');
+                el.scrollIntoView({ block: 'nearest' });
+            } else {
+                el.classList.remove('active');
+            }
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('searchAutoSuggestWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeSuggestions();
+        }
+    });
+
+    // Function to change per_page
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+    }
+
+    // Function to apply grid filter when a card is clicked
+    function applyGridFilter(filterType) {
+        const url = new URL(window.location.href);
+        const currentFilter = url.searchParams.get('grid_filter') || '';
+
+        let newFilter = filterType;
+        if (currentFilter === filterType && filterType !== 'total_enrollments') {
+            newFilter = 'total_enrollments';
+        }
+
+        if (newFilter && newFilter !== 'total_enrollments') {
+            url.searchParams.set('grid_filter', newFilter);
+        } else {
+            url.searchParams.delete('grid_filter');
+        }
+
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+    }
+
+    // Function to sort table columns
+    function sortBy(field) {
+        const url = new URL(window.location.href);
+        const currentSort = url.searchParams.get('sort') || '';
+        const currentOrder = url.searchParams.get('order') || '';
+
+        let newOrder = 'asc';
+        if (currentSort === field) {
+            newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            newOrder = (field === 'date' || field === 'id') ? 'desc' : 'asc';
+        }
+
+        url.searchParams.set('sort', field);
+        url.searchParams.set('order', newOrder);
+        url.searchParams.delete('page');
+
+        window.location.href = url.toString();
+    }
+
+    // Function to clear filters and cache
+    function clearFiltersAndCache() {
+        if (searchInput) searchInput.value = '';
+    }
+
+    // Update Modal Function
+    function openUpdateModal(element, customWidth = 1200, customHeight = 800) {
+        const url = element.dataset.url;
+        const width = customWidth;
+        const height = customHeight;
+        const left = Math.max(0, (window.screen.width - width) / 2);
+        const top = Math.max(0, (window.screen.height - height) / 2);
+        
+        const features = [
+            `width=${width}`,
+            `height=${height}`,
+            `left=${left}`,
+            `top=${top}`,
+            'scrollbars=yes',
+            'resizable=yes',
+            'centerscreen=yes',
+            'location=no',
+            'menubar=no',
+            'toolbar=no',
+            'status=no',
+            'titlebar=no'
+        ].join(',');
+        
+        const newWindow = window.open(url, "updateWindow", features);
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+
+    function openCreateModal(element, customWidth = 1200, customHeight = 800) {
+        const url = element.dataset.url;
+        const width = customWidth;
+        const height = customHeight;
+        const left = Math.max(0, (window.screen.width - width) / 2);
+        const top = Math.max(0, (window.screen.height - height) / 2);
+        
+        const features = [
+            `width=${width}`,
+            `height=${height}`,
+            `left=${left}`,
+            `top=${top}`,
+            'scrollbars=yes',
+            'resizable=yes',
+            'centerscreen=yes',
+            'location=no',
+            'menubar=no',
+            'toolbar=no',
+            'status=no',
+            'titlebar=no'
+        ].join(',');
+        
+        const newWindow = window.open(url, "createWindow", features);
+        if (newWindow) {
+            newWindow.focus();
+            const checkWindow = setInterval(function() {
+                if (newWindow.closed) {
+                    clearInterval(checkWindow);
+                    window.location.reload();
+                }
+            }, 500);
+        }
+        return false;
+    }
+
+    // Delete Confirmation Function
+    function confirmDelete(button) {
+        const row = button.closest('tr');
+        const studentName = row ? row.querySelector('.col-student strong')?.textContent.trim() : '';
+        const idInfo = row ? row.querySelector('.col-id .badge')?.textContent.trim() : '';
+        const deleteUrl = button.getAttribute('href');
+        
+        document.getElementById('delete_info').textContent = `${studentName} (${idInfo})`;
+        document.getElementById('deleteButton').setAttribute('href', deleteUrl);
+        
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+        return false;
+    }
+</script>
 {% endblock content %}

@@ -23,6 +23,7 @@ urlpatterns = [
 
     # Enrollment Management URLs
     path('enrollment-dashboard/', enrollment_dashboard, name='enrollment_dashboard'),
+    path('enrollments/suggestions/', enrollment_suggestions_api, name='enrollment_suggestions_api'),
     path('enrollments/', enrolled_student_list, name='enrolled_student_list'),
     path('enrollments/<int:pk>/', enrollment_detail, name='enrollment_detail'),
     path('enrollments/export/', export_enrollments, name='export_enrollments'),

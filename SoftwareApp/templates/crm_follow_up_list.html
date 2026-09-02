@@ -30,8 +30,12 @@
 
     .badge-interested { background: linear-gradient(135deg, #2ed573, #1dd1a1); }
     .badge-planning { background: linear-gradient(135deg, #3498db, #2980b9); }
-    .badge-not_interested { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+    .badge-under_review { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .badge-on_hold { background: linear-gradient(135deg, #64748b, #475569); }
+    .badge-trader { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; }
     .badge-class_joined { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    .badge-class_completed { background: linear-gradient(135deg, #0d9488, #0f766e); }
+    .badge-not_interested { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
 
     /* Table Styling */
     .table-modern {
@@ -882,10 +886,18 @@
                                     <span class="badge badge-status badge-interested">Interested</span>
                                 {% elif followup.status == 'planning' %}
                                     <span class="badge badge-status badge-planning">Planning</span>
-                                {% elif followup.status == 'not_interested' %}
-                                    <span class="badge badge-status badge-not_interested">Not Interested</span>
+                                {% elif followup.status == 'under_review' %}
+                                    <span class="badge badge-status badge-under_review">Under Review</span>
+                                {% elif followup.status == 'on_hold' %}
+                                    <span class="badge badge-status badge-on_hold">On Hold</span>
+                                {% elif followup.status == 'trader' %}
+                                    <span class="badge badge-status badge-trader">Trader</span>
                                 {% elif followup.status == 'class_joined' %}
                                     <span class="badge badge-status badge-class_joined">Class Joined</span>
+                                {% elif followup.status == 'class_completed' %}
+                                    <span class="badge badge-status badge-class_completed">Class Completed</span>
+                                {% elif followup.status == 'not_interested' %}
+                                    <span class="badge badge-status badge-not_interested">Not Interested</span>
                                 {% else %}
                                     <span class="badge badge-secondary bg-secondary">{{ followup.status|title }}</span>
                                 {% endif %}
@@ -1182,7 +1194,8 @@
         if (s === 'interested') bgClass = 'bg-success';
         else if (s === 'planning') bgClass = 'bg-primary';
         else if (s === 'under_review') bgClass = 'bg-warning text-dark';
-        else if (s === 'class_joined' || s === 'class_completed') bgClass = 'bg-info text-dark';
+        else if (s === 'trader') bgClass = 'bg-info text-white';
+        else if (s === 'class_joined' || s === 'class_completed') bgClass = 'bg-purple text-white';
         else if (s === 'not_interested') bgClass = 'bg-danger';
         return `<span class="badge ${bgClass}" style="font-size: 0.72rem; font-weight: 600;">${escapeHtml(label || status)}</span>`;
     }

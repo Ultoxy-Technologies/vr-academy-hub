@@ -561,6 +561,7 @@ class CRMFollowup(models.Model):
         ('planning', 'Planning'),
         ('under_review', 'Under Review'),
         ('on_hold', 'On Hold'),
+        ('trader', 'Trader'),
         ('class_joined', 'Class Joined'),
         ('class_completed', 'Class Completed'),
         ('not_interested', 'Not Interested'),

@@ -525,121 +525,224 @@ def export_enrollments_filtered(request):
 
 @login_required
 @has_a_auhtenticated_user
+def enrollment_suggestions_api(request):
+    """
+    Returns auto-suggestions for Student Name, Mobile, Course, and Enrollment ID
+    as the user types in the filter bar.
+    """
+    q = request.GET.get('q', '').strip()
+    if not q or len(q) < 1:
+        return JsonResponse({'suggestions': []})
+
+    import re
+    digits = re.sub(r'\D', '', q)
+    filter_q = (
+        Q(student__name__icontains=q) |
+        Q(student__mobile_number__icontains=q) |
+        Q(student__email__icontains=q) |
+        Q(course_title__icontains=q) |
+        Q(batch__batch_code__icontains=q) |
+        Q(batch__batch_title__icontains=q) |
+        Q(branch__branch_name__icontains=q)
+    )
+    if digits:
+        filter_q |= Q(student__mobile_number__icontains=digits)
+        if len(digits) >= 10:
+            filter_q |= Q(student__mobile_number__icontains=digits[-10:])
+        try:
+            filter_q |= Q(id=int(digits))
+        except (ValueError, TypeError):
+            pass
+
+    qs = Enrollment.objects.filter(filter_q).select_related(
+        'student', 'batch', 'branch'
+    ).order_by('-id')[:12]
+
+    results = []
+    seen = set()
+    for e in qs:
+        student_name = e.student.name if e.student else 'Unknown'
+        mobile = e.student.mobile_number if e.student else ''
+        key = f"{e.id}_{student_name}_{mobile}"
+        if key not in seen:
+            seen.add(key)
+            results.append({
+                'id': e.id,
+                'enrollment_id': f"ENR-{str(e.id).zfill(6)}",
+                'name': student_name,
+                'mobile': mobile,
+                'course': e.course_title or (e.batch.batch_code if e.batch else ''),
+                'status': e.status,
+                'status_display': e.get_status_display() or e.status.capitalize(),
+                'payment_status': e.payment_status,
+                'payment_status_display': e.get_payment_status_display() or e.payment_status.capitalize(),
+                'branch': e.branch.branch_name if e.branch else '',
+                'date': e.enrollment_date.strftime('%b %d, %Y') if e.enrollment_date else '',
+            })
+
+    return JsonResponse({'suggestions': results})
+
+
+@login_required
+@has_a_auhtenticated_user
 def enrolled_student_list(request):
     """
-    List all enrollments with filtering, pagination, and statistics
-    Follows the exact pattern of crm_follow_up_list
+    List all enrollments with interactive filtering, sorting, pagination,
+    column customization, live search suggestions, and dynamic statistics.
+    Follows the exact pattern and features of crm_follow_up_list.
     """
-    # Get filter parameters
-    search_query = request.GET.get('search', '')
-    status_filter = request.GET.get('status', '')
-    batch_filter = request.GET.get('batch', '')
-    branch_filter = request.GET.get('branch', '')
-    date_from = request.GET.get('date_from', '')
-    date_to = request.GET.get('date_to', '')
-    payment_status_filter = request.GET.get('payment_status', '')
+    # Filter parameters
+    search_query = request.GET.get('search', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+    batch_filter = request.GET.get('batch', '').strip()
+    branch_filter = request.GET.get('branch', '').strip()
+    date_from = request.GET.get('date_from', '').strip()
+    date_to = request.GET.get('date_to', '').strip()
+    payment_status_filter = request.GET.get('payment_status', '').strip()
+    grid_filter = request.GET.get('grid_filter', '').strip()
     
-    # Start with all enrollments
-    enrollments = Enrollment.objects.all().select_related(
-        'student', 'batch', 'batch__basic_to_advance_cource', 'batch__advance_to_pro_cource'
-    ).prefetch_related('payments').order_by('-enrollment_date')
+    # Base queryset with relations
+    enrollments_qs = Enrollment.objects.all().select_related(
+        'student', 'batch', 'branch'
+    ).prefetch_related('payments')
     
-    # Get all batches for filter dropdown
-    batches = Batch.objects.filter(is_active=True).order_by('batch_code')
-    branches = Branch.objects.filter().order_by('branch_name')
-    
-    # Apply filters
+    # 1. Base Dropdown & Search Filters
     if search_query:
-        enrollments = enrollments.filter(
+        import re
+        digits = re.sub(r'\D', '', search_query)
+        search_q = (
             Q(student__name__icontains=search_query) |
             Q(student__mobile_number__icontains=search_query) |
-            Q(course_title__icontains=search_query)
+            Q(student__email__icontains=search_query) |
+            Q(course_title__icontains=search_query) |
+            Q(batch__batch_code__icontains=search_query) |
+            Q(batch__batch_title__icontains=search_query) |
+            Q(branch__branch_name__icontains=search_query)
         )
+        if digits:
+            search_q |= Q(student__mobile_number__icontains=digits)
+            if len(digits) >= 10:
+                search_q |= Q(student__mobile_number__icontains=digits[-10:])
+            try:
+                search_q |= Q(id=int(digits))
+            except (ValueError, TypeError):
+                pass
+        enrollments_qs = enrollments_qs.filter(search_q)
     
     if status_filter:
-        enrollments = enrollments.filter(status=status_filter)
+        enrollments_qs = enrollments_qs.filter(status=status_filter)
     
     if batch_filter:
-        enrollments = enrollments.filter(batch_id=batch_filter)
+        enrollments_qs = enrollments_qs.filter(batch_id=batch_filter)
     
     if branch_filter:
-        enrollments = enrollments.filter(branch__id=branch_filter)
+        enrollments_qs = enrollments_qs.filter(branch_id=branch_filter)
 
     if payment_status_filter:
-        enrollments = enrollments.filter(payment_status=payment_status_filter)
+        enrollments_qs = enrollments_qs.filter(payment_status=payment_status_filter)
     
     if date_from:
         try:
-            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-            enrollments = enrollments.filter(enrollment_date__gte=date_from_obj)
+            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+            enrollments_qs = enrollments_qs.filter(enrollment_date__gte=date_from_obj)
         except ValueError:
             pass
     
     if date_to:
         try:
-            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
-            enrollments = enrollments.filter(enrollment_date__lte=date_to_obj)
+            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+            enrollments_qs = enrollments_qs.filter(enrollment_date__lte=date_to_obj)
         except ValueError:
             pass
-    
-    # Calculate statistics on ALL filtered data (not just paginated)
-    total_enrollments = enrollments.count()
-    active_enrollments = enrollments.filter(status='active').count()
-    completed_enrollments = enrollments.filter(status='completed').count()
-    pending_payments = enrollments.filter(payment_status__in=['pending', 'partial', 'overdue']).count()
-    
-    # Today's enrollments - FIXED
+            
+    # Calculate statistics on filtered base before grid_filter
     today = date.today()
-    today_enrollments = enrollments.filter(enrollment_date=today).count()
+    total_enrollments = enrollments_qs.count()
+    active_enrollments = enrollments_qs.filter(status='active').count()
+    completed_enrollments = enrollments_qs.filter(status='completed').count()
+    pending_payments = enrollments_qs.filter(payment_status__in=['pending', 'partial', 'overdue']).count()
+    today_enrollments = enrollments_qs.filter(enrollment_date=today).count()
+    fully_paid = enrollments_qs.filter(payment_status='completed').count()
     
-    # Pagination - DO THIS BEFORE calculating revenue for each enrollment
-    paginator = Paginator(enrollments, 50)  # Show 10 enrollments per page
+    # 2. Grid Filter (Top Stats Card click)
+    if grid_filter == 'active_enrollments':
+        enrollments_qs = enrollments_qs.filter(status='active')
+    elif grid_filter == 'completed_enrollments':
+        enrollments_qs = enrollments_qs.filter(status='completed')
+    elif grid_filter == 'pending_payments':
+        enrollments_qs = enrollments_qs.filter(payment_status__in=['pending', 'partial', 'overdue'])
+    elif grid_filter == 'today_enrollments':
+        enrollments_qs = enrollments_qs.filter(enrollment_date=today)
+    elif grid_filter == 'fully_paid':
+        enrollments_qs = enrollments_qs.filter(payment_status='completed')
+        
+    # 3. Sorting
+    sort_field = request.GET.get('sort', '').strip()
+    sort_order = request.GET.get('order', 'asc').strip()
+    sort_map = {
+        'id': 'id',
+        'name': 'student__name',
+        'mobile': 'student__mobile_number',
+        'course': 'course_title',
+        'date': 'enrollment_date',
+        'status': 'status',
+        'branch': 'branch__branch_name',
+        'payment_status': 'payment_status',
+        'fees': 'net_fees',
+    }
+    if sort_field in sort_map:
+        db_field = sort_map[sort_field]
+        if sort_order == 'desc':
+            enrollments_qs = enrollments_qs.order_by(F(db_field).desc(nulls_last=True), '-id')
+        else:
+            enrollments_qs = enrollments_qs.order_by(F(db_field).asc(nulls_last=True), '-id')
+    else:
+        enrollments_qs = enrollments_qs.order_by('-enrollment_date', '-id')
+
+    # 4. Records Per Page Pagination
+    try:
+        per_page = int(request.GET.get('per_page', 25))
+        if per_page not in [10, 25, 50, 100, 200, 500]:
+            per_page = 25
+    except (ValueError, TypeError):
+        per_page = 25
+
+    paginator = Paginator(enrollments_qs, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # Calculate payment data for each enrollment in the CURRENT PAGE only
+    # 5. Financial & Display computations for current page items
     total_revenue = Decimal('0.00')
     pending_revenue = Decimal('0.00')
     
-    for enrollment in page_obj:  # Use page_obj, not enrollments
-        # Calculate paid amount from prefetched payments
-        paid_amount = sum(payment.amount for payment in enrollment.payments.all())
+    for enrollment in page_obj:
+        paid_amount = sum((payment.amount for payment in enrollment.payments.all()), Decimal('0.00'))
         enrollment.display_paid = paid_amount
         enrollment.display_balance = max(enrollment.net_fees - paid_amount, Decimal('0.00'))
         
-        # Calculate progress
         if enrollment.net_fees > 0:
-            enrollment.display_progress = min((paid_amount / enrollment.net_fees * 100), 100)
+            enrollment.display_progress = min(round((paid_amount / enrollment.net_fees * 100), 1), 100.0)
         else:
-            enrollment.display_progress = 100
+            enrollment.display_progress = 100.0
         
-        # Days since enrollment
-        enrollment.days_since_enrollment = (today - enrollment.enrollment_date).days
-        
-        # Check if enrollment is overdue
+        enrollment.days_since_enrollment = (today - enrollment.enrollment_date).days if enrollment.enrollment_date else 0
         enrollment.is_payment_overdue = (
             enrollment.display_balance > 0 and 
             enrollment.class_start_date and 
             enrollment.class_start_date <= today
         )
-        
-        # Generate enrollment ID for display
         enrollment.enrollment_id_display = f"ENR-{str(enrollment.pk).zfill(6)}"
         
-        # Add to totals (for current page only)
         total_revenue += paid_amount
         pending_revenue += enrollment.display_balance
+
+    # Dropdowns data
+    batches = Batch.objects.filter(is_active=True).order_by('batch_code')
+    branches = Branch.objects.all().order_by('branch_name')
     
-    # Calculate overall revenue totals (for all filtered data)
-    overall_total_revenue = Decimal('0.00')
-    overall_pending_revenue = Decimal('0.00')
-    
-    # If you want to calculate overall totals, you need to do a separate query
-    # Or add these calculations in a different way
-    
-    # Prepare context
     context = {
-        'enrollments': page_obj,  # Use page_obj instead of enrollments
+        'enrollments': page_obj,
+        'page_obj': page_obj,
         'batches': batches,
         'branches': branches,
         
@@ -649,10 +752,11 @@ def enrolled_student_list(request):
         'completed_enrollments': completed_enrollments,
         'pending_payments': pending_payments,
         'today_enrollments': today_enrollments,
-        'total_revenue': total_revenue,  # This is for current page only
-        'pending_revenue': pending_revenue,  # This is for current page only
+        'fully_paid': fully_paid,
+        'total_revenue': total_revenue,
+        'pending_revenue': pending_revenue,
         
-        # Filter values
+        # Filter State
         'search_query': search_query,
         'status_filter': status_filter,
         'batch_filter': batch_filter,
@@ -660,13 +764,14 @@ def enrolled_student_list(request):
         'branch_filter': branch_filter,
         'date_from': date_from,
         'date_to': date_to,
+        'grid_filter': grid_filter,
+        'per_page': per_page,
+        'sort_field': sort_field,
+        'sort_order': sort_order,
         
-        # Status choices
+        # Model Choices
         'status_choices': Enrollment.STATUS_CHOICES,
         'payment_status_choices': Enrollment.PAYMENT_STATUS_CHOICES,
-        
-        # Pagination context
-        'page_obj': page_obj,
     }
     
     return render(request, 'enrolled_student_list.html', context)
