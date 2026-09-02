@@ -261,6 +261,16 @@ def apply_followup_filters(queryset, params):
     priority_filter = params.get('priority', '').strip()
     branch = params.get('branch', '').strip()
     address = params.get('address', '').strip()
+
+    # 1. Record Created Date Range (start - end)
+    created_from = params.get('created_from', '').strip()
+    created_to = params.get('created_to', '').strip()
+
+    # 2. Next Followup Date Range (start - end)
+    next_followup_from = params.get('next_followup_from', '').strip() or params.get('followup_from', '').strip()
+    next_followup_to = params.get('next_followup_to', '').strip() or params.get('followup_to', '').strip()
+
+    # General / Legacy date filters
     date_from = params.get('date_from', '').strip()
     date_to = params.get('date_to', '').strip()
 
@@ -291,20 +301,51 @@ def apply_followup_filters(queryset, params):
     if address:
         queryset = queryset.filter(address__icontains=address)
 
-    if date_from:
+    # Apply Created Date Filter (Start - End)
+    if created_from:
+        try:
+            created_from_obj = datetime.strptime(created_from, '%Y-%m-%d').date()
+            queryset = queryset.filter(created_at__date__gte=created_from_obj)
+        except ValueError:
+            pass
+
+    if created_to:
+        try:
+            created_to_obj = datetime.strptime(created_to, '%Y-%m-%d').date()
+            queryset = queryset.filter(created_at__date__lte=created_to_obj)
+        except ValueError:
+            pass
+
+    # Apply Next Follow-up Date Filter (Start - End)
+    if next_followup_from:
+        try:
+            next_followup_from_obj = datetime.strptime(next_followup_from, '%Y-%m-%d').date()
+            queryset = queryset.filter(next_followup_reminder__date__gte=next_followup_from_obj)
+        except ValueError:
+            pass
+
+    if next_followup_to:
+        try:
+            next_followup_to_obj = datetime.strptime(next_followup_to, '%Y-%m-%d').date()
+            queryset = queryset.filter(next_followup_reminder__date__lte=next_followup_to_obj)
+        except ValueError:
+            pass
+
+    # Legacy fallback
+    if date_from and not created_from and not next_followup_from:
         try:
             date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
             queryset = queryset.filter(
-                Q(follow_up_date__date__gte=date_from_obj) | Q(created_at__date__gte=date_from_obj)
+                Q(follow_up_date__date__gte=date_from_obj) | Q(created_at__date__gte=date_from_obj) | Q(next_followup_reminder__date__gte=date_from_obj)
             )
         except ValueError:
             pass
 
-    if date_to:
+    if date_to and not created_to and not next_followup_to:
         try:
             date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
             queryset = queryset.filter(
-                Q(follow_up_date__date__lte=date_to_obj) | Q(created_at__date__lte=date_to_obj)
+                Q(follow_up_date__date__lte=date_to_obj) | Q(created_at__date__lte=date_to_obj) | Q(next_followup_reminder__date__lte=date_to_obj)
             )
         except ValueError:
             pass
