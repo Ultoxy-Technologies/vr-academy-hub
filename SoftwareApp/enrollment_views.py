@@ -716,12 +716,13 @@ def enrolled_student_list(request):
     pending_revenue = Decimal('0.00')
     
     for enrollment in page_obj:
-        paid_amount = sum((payment.amount for payment in enrollment.payments.all()), Decimal('0.00'))
+        net_fees = enrollment.net_fees if enrollment.net_fees is not None else Decimal('0.00')
+        paid_amount = sum((payment.amount for payment in enrollment.payments.all() if payment.amount is not None), Decimal('0.00'))
         enrollment.display_paid = paid_amount
-        enrollment.display_balance = max(enrollment.net_fees - paid_amount, Decimal('0.00'))
+        enrollment.display_balance = max(net_fees - paid_amount, Decimal('0.00'))
         
-        if enrollment.net_fees > 0:
-            enrollment.display_progress = min(round((paid_amount / enrollment.net_fees * 100), 1), 100.0)
+        if net_fees > 0:
+            enrollment.display_progress = min(round((paid_amount / net_fees * 100), 1), 100.0)
         else:
             enrollment.display_progress = 100.0
         

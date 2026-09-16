@@ -327,12 +327,8 @@ class FreeCourseProgressAdmin(admin.ModelAdmin):
     def completion_status(self, obj):
         """Display completion status with colors"""
         if obj.completed:
-            return format_html(
-                '<span style="color: green; font-weight: bold;">✓ Completed</span>'
-            )
-        return format_html(
-            '<span style="color: orange;">In Progress</span>'
-        )
+            return mark_safe('<span style="color: green; font-weight: bold;">✓ Completed</span>')
+        return mark_safe('<span style="color: orange;">In Progress</span>')
     completion_status.short_description = "Status"
     completion_status.admin_order_field = 'completed'
 
@@ -347,12 +343,8 @@ class FreeCourseProgressAdmin(admin.ModelAdmin):
     def certificate_status(self, obj):
         """Show certificate availability"""
         if obj.certificate_ready:
-            return format_html(
-                '<span style="color: green; font-weight: bold;">✓ Available</span>'
-            )
-        return format_html(
-            '<span style="color: #666;">Not Available</span>'
-        )
+            return mark_safe('<span style="color: green; font-weight: bold;">✓ Available</span>')
+        return mark_safe('<span style="color: #666;">Not Available</span>')
     certificate_status.short_description = "Certificate"
 
 # ----------------------------
@@ -714,7 +706,7 @@ class CRMFollowupAdmin(admin.ModelAdmin):
     def follow_up_by_display(self, obj):
         if obj.follow_up_by:
             return obj.follow_up_by.name or obj.follow_up_by.mobile_number or str(obj.follow_up_by)
-        return format_html('<span style="color:#9ca3af;">—</span>')
+        return mark_safe('<span style="color:#9ca3af;">—</span>')
     follow_up_by_display.short_description = 'Follow-up By'
 
     # ================== Bulk Actions ==================
