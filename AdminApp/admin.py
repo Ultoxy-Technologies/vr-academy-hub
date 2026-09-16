@@ -1,7 +1,4 @@
-from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html, mark_safe
 from .models import PhotoGalleryCategories, PhotoGallery, VideoGallery, CustomUser, FreeCourse, FreeCourseProgress, Enquiry,EventRegistration,Event,Basic_to_Advance_Cource,Advance_to_Pro_Cource,Certificate
 
@@ -581,183 +578,30 @@ class CRM_Student_Interested_for_optionsAdmin(admin.ModelAdmin):
 
 @admin.register(CRMFollowup)
 class CRMFollowupAdmin(admin.ModelAdmin):
-    change_list_template = "admin/AdminApp/crmfollowup/change_list.html"
-
     list_display = (
         'id',
         'name',
         'mobile_number',
-        'status_badge',
-        'priority_badge',
-        'student_interested_for',
-        'branch',
-        'follow_up_by_display',
-        'next_followup_reminder',
-        'created_at',
-    )
-    list_display_links = ('id', 'name', 'mobile_number')
-
-    list_filter = (
         'status',
         'priority',
-        'branch',
-        'source',
-        'call_response',
         'student_interested_for',
-        'created_at',
-        'follow_up_date',
+        'branch',
+        'follow_up_by',
         'next_followup_reminder',
+        'created_at',
     )
-
-    search_fields = (
-        'name',
-        'mobile_number',
-        'address',
-        'follow_up_notes',
-    )
-
-    list_per_page = 50
+    search_fields = ('name', 'mobile_number')
+    list_filter = ('status', 'priority', 'branch', 'source')
     ordering = ('-id',)
-    date_hierarchy = 'created_at'
+    list_per_page = 50
 
-    fieldsets = (
-        ('Student Information', {
-            'fields': (
-                'name',
-                'mobile_number',
-                'student_interested_for',
-                'source',
-                'address',
-            )
-        }),
-        ('Lead Status & Branch', {
-            'fields': (
-                'status',
-                'priority',
-                'branch',
-            )
-        }),
-        ('Follow-up Details', {
-            'fields': (
-                'follow_up_by',
-                'call_response',
-                'follow_up_date',
-                'next_followup_reminder',
-                'follow_up_notes',
-            )
-        }),
-        ('Class Information', {
-            'fields': (
-                'class_start_date',
-            ),
-            'classes': ('collapse',)
-        }),
-        ('System Information', {
-            'fields': (
-                'created_at',
-            ),
-            'classes': ('collapse',)
-        }),
-    )
+    actions = ['delete_all_records']
 
-    readonly_fields = ('created_at',)
-
-    def status_badge(self, obj):
-        if not obj.status:
-            return mark_safe('<span class="badge" style="background:#6c757d; color:#fff; padding:3px 8px; border-radius:10px;">Not Set</span>')
-
-        status_colors = {
-            'interested': '#0d6efd',
-            'planning': '#6610f2',
-            'under_review': '#fd7e14',
-            'on_hold': '#f59e0b',
-            'trader': '#0284c7',
-            'class_joined': '#198754',
-            'class_completed': '#20c997',
-            'not_interested': '#dc3545',
-        }
-        color = status_colors.get(obj.status, '#6c757d')
-        text_color = '#000' if obj.status in ['on_hold'] else '#fff'
-        return format_html(
-            '<span class="badge" style="background:{}; color:{}; padding:4px 10px; border-radius:12px; font-weight:600; font-size:11px;">{}</span>',
-            color,
-            text_color,
-            obj.get_status_display()
-        )
-    status_badge.short_description = 'Status'
-
-    def priority_badge(self, obj):
-        if not obj.priority:
-            return mark_safe('<span class="badge" style="background:#6c757d; color:#fff; padding:3px 8px; border-radius:10px;">Not Set</span>')
-
-        priority_colors = {
-            'high': '#dc3545',
-            'medium': '#fd7e14',
-            'low': '#6c757d',
-        }
-        color = priority_colors.get(obj.priority, '#6c757d')
-        return format_html(
-            '<span class="badge" style="background:{}; color:#fff; padding:4px 8px; border-radius:10px; font-weight:600; font-size:11px;">{}</span>',
-            color,
-            obj.get_priority_display()
-        )
-    priority_badge.short_description = 'Priority'
-
-    def follow_up_by_display(self, obj):
-        if obj.follow_up_by:
-            return obj.follow_up_by.name or obj.follow_up_by.mobile_number or str(obj.follow_up_by)
-        return mark_safe('<span style="color:#9ca3af;">—</span>')
-    follow_up_by_display.short_description = 'Follow-up By'
-
-    # ================== Bulk Actions ==================
-    actions = ['delete_selected_followups', 'delete_all_followups_action', 'mark_as_completed', 'mark_as_not_interested']
-
-    def delete_selected_followups(self, request, queryset):
-        count = queryset.count()
-        queryset.delete()
-        self.message_user(request, f"Successfully deleted {count} selected follow-up record(s) in bulk.", messages.SUCCESS)
-    delete_selected_followups.short_description = "Delete selected follow-up records (Bulk)"
-
-    def delete_all_followups_action(self, request, queryset):
+    def delete_all_records(self, request, queryset):
         if not request.user.is_superuser:
-            self.message_user(request, "Only superusers are authorized to delete all records.", messages.ERROR)
-            return HttpResponseRedirect(request.get_full_path())
-        return HttpResponseRedirect(reverse('admin:crmfollowup_delete_all'))
-    delete_all_followups_action.short_description = "⚠️ Delete ALL Follow-up Records (Bulk Wipe)"
-
-    def mark_as_completed(self, request, queryset):
-        updated = queryset.update(status='class_completed')
-        self.message_user(request, f"{updated} follow-up(s) marked as Class Completed.")
-    mark_as_completed.short_description = "Mark selected as Class Completed"
-
-    def mark_as_not_interested(self, request, queryset):
-        updated = queryset.update(status='not_interested')
-        self.message_user(request, f"{updated} follow-up(s) marked as Not Interested.")
-    mark_as_not_interested.short_description = "Mark selected as Not Interested"
-
-    # ================== Custom URLs for Delete All ==================
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('delete-all/', self.admin_site.admin_view(self.delete_all_view), name='crmfollowup_delete_all'),
-        ]
-        return custom_urls + urls
-
-    def delete_all_view(self, request):
-        if not request.user.is_superuser:
-            raise PermissionDenied("Only superusers are authorized to bulk delete all records.")
-
-        total_count = CRMFollowup.objects.count()
-
-        if request.method == 'POST':
-            deleted_count, _ = CRMFollowup.objects.all().delete()
-            self.message_user(request, f"Successfully deleted all {total_count} follow-up record(s) in bulk.", messages.SUCCESS)
-            return HttpResponseRedirect(reverse('admin:AdminApp_crmfollowup_changelist'))
-
-        context = {
-            **self.admin_site.each_context(request),
-            'title': 'Delete All CRM Follow-up Records',
-            'total_count': total_count,
-            'opts': self.model._meta,
-        }
-        return TemplateResponse(request, 'admin/AdminApp/crmfollowup/delete_all_confirmation.html', context)
+            self.message_user(request, "Only superusers can delete all records.", level=messages.ERROR)
+            return
+        count = CRMFollowup.objects.count()
+        CRMFollowup.objects.all().delete()
+        self.message_user(request, f"Successfully deleted all {count} follow-up record(s) in bulk.", level=messages.SUCCESS)
+    delete_all_records.short_description = "Delete ALL CRM follow-up records (Superuser only)"
