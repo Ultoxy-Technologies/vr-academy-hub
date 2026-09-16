@@ -593,7 +593,8 @@ class CRMFollowupAdmin(admin.ModelAdmin):
     search_fields = ('name', 'mobile_number')
     list_filter = ('status', 'priority', 'branch', 'source')
     ordering = ('-id',)
-    list_per_page = 50
+    list_per_page = 500
+    list_max_show_all = 500
 
     actions = ['delete_all_records']
 

@@ -296,7 +296,7 @@ def crm_follow_up_list(request):
     per_page = request.GET.get('per_page', '10')
     try:
         per_page = int(per_page)
-        if per_page not in [10, 25, 50, 100, 200]:
+        if per_page not in [10, 25, 50, 100, 200, 500]:
             per_page = 10
     except (ValueError, TypeError):
         per_page = 10
