@@ -105,6 +105,16 @@ JAZZMIN_SETTINGS = {
     "site_logo": "website/img/logo.png",
     "login_logo": "website/img/logo-for-admin-login.png",
     "theme": "pulse",
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "AdminApp.CustomUser": "fas fa-user-shield",
+        "AdminApp.CRMFollowup": "fas fa-headset",
+        "AdminApp.CRM_Student_Interested_for_options": "fas fa-graduation-cap",
+        "AdminApp.Branch": "fas fa-building",
+        "AdminApp.Enquiry": "fas fa-envelope-open-text",
+        "AdminApp.Event": "fas fa-calendar-alt",
+        "AdminApp.EventRegistration": "fas fa-id-card",
+    },
 }
 
 JAZZMIN_UI_TWEAKS = {

@@ -17,7 +17,7 @@ def has_a_auhtenticated_user(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
-        if user.is_authenticated and user.role == 'is_crm_manager' or user.role == 'is_crm_and_enrollment':
+        if user.is_authenticated and (user.role == 'is_crm_manager' or user.role == 'is_crm_and_enrollment' or user.is_superuser):
             return view_func(request, *args, **kwargs)
         # if not student → redirect to home 
         if user.is_authenticated:
@@ -875,6 +875,35 @@ def delete_follow_up(request, id):
 
     # Redirect back to the page the user came from
     return redirect(request.META.get('HTTP_REFERER', '/software/followups'))
+
+
+@login_required
+@has_a_auhtenticated_user
+def bulk_delete_followups(request):
+    """Bulk delete follow-ups: selected IDs or all records (superuser only)."""
+    if request.method == "POST":
+        action = request.POST.get('bulk_action', '')
+        
+        if action == 'delete_all':
+            if not request.user.is_superuser:
+                messages.error(request, "Only superusers are authorized to delete all follow-up records.")
+                return redirect(request.META.get('HTTP_REFERER', '/software/followups'))
+            
+            count = CRMFollowup.objects.count()
+            CRMFollowup.objects.all().delete()
+            messages.success(request, f"Successfully deleted all {count} follow-up record(s) in bulk.")
+            return redirect('/software/followups')
+            
+        elif action == 'delete_selected':
+            selected_ids = request.POST.getlist('selected_ids')
+            if selected_ids:
+                deleted_count, _ = CRMFollowup.objects.filter(id__in=selected_ids).delete()
+                messages.success(request, f"Successfully deleted {deleted_count} selected follow-up record(s).")
+            else:
+                messages.warning(request, "No follow-up records were selected for deletion.")
+            return redirect(request.META.get('HTTP_REFERER', '/software/followups'))
+            
+    return redirect('/software/followups')
  
 
 

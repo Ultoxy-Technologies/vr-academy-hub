@@ -23,7 +23,7 @@ def has_a_auhtenticated_user(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
-        if user.is_authenticated and user.role == 'is_enrollment' or user.role == 'is_crm_and_enrollment':
+        if user.is_authenticated and (user.role == 'is_enrollment' or user.role == 'is_crm_and_enrollment' or user.is_superuser):
             return view_func(request, *args, **kwargs)
         # if not student → redirect to home 
         if user.is_authenticated:
