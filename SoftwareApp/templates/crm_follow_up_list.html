@@ -387,11 +387,9 @@
                 <a href="{% url 'export_followups' %}" class="btn btn-action btn-export">
                     <i class="bi bi-upload  me-1"></i> Export
                 </a> 
-                {% if request.user.is_superuser %}
-                <button type="button" class="btn btn-action btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllFollowupsModal" title="Delete all follow-up records in bulk (Superuser only)">
+                <button type="button" class="btn btn-action btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllFollowupsModal" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;" title="Delete all follow-up records in bulk">
                     <i class="bi bi-trash3-fill me-1"></i> Delete All
                 </button>
-                {% endif %}
                 <a href="javascript:void(0);" 
                     data-url="{% url 'crm_create_followup' %}" 
                     class="btn btn-primary"  
@@ -1016,8 +1014,7 @@
                 </div>
             </div>
 
-            {% if request.user.is_superuser %}
-            <!-- Bulk Delete All Modal (Superuser Only) -->
+            <!-- Bulk Delete All Modal -->
             <div class="modal fade" id="deleteAllFollowupsModal" tabindex="-1" aria-labelledby="deleteAllFollowupsModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
@@ -1050,7 +1047,6 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
 
             <!-- Pagination -->
             {% if followups.paginator.num_pages > 1 %}

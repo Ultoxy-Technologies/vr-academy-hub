@@ -885,10 +885,6 @@ def bulk_delete_followups(request):
         action = request.POST.get('bulk_action', '')
         
         if action == 'delete_all':
-            if not request.user.is_superuser:
-                messages.error(request, "Only superusers are authorized to delete all follow-up records.")
-                return redirect(request.META.get('HTTP_REFERER', '/software/followups'))
-            
             count = CRMFollowup.objects.count()
             CRMFollowup.objects.all().delete()
             messages.success(request, f"Successfully deleted all {count} follow-up record(s) in bulk.")
